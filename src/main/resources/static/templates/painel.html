@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="refresh" content="1800">
+	<link rel="shortcut icon" href="../assets/img/favicon.ico">
+	<link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
+	<title>Judi - Painel</title>
+	<style>
+		* { box-sizing: border-box; }
+		html, body {
+			margin: 0; padding: 0; height: 100%; overflow: hidden;
+			background: #0b1120; color: #e2e8f0;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+		}
+		.painel {
+			height: 100vh; display: flex; flex-direction: column; padding: 22px 32px;
+		}
+
+		/* ===== TOPO ===== */
+		.painel-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-shrink: 0; }
+		.painel-marca { display: flex; align-items: center; gap: 14px; }
+		.painel-marca-icone {
+			width: 46px; height: 46px; border-radius: 12px;
+			background: linear-gradient(135deg, #1e3a5f, #1a56c4);
+			display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fff;
+		}
+		.painel-marca-texto h1 { margin: 0; font-size: 1.4rem; font-weight: 700; color: #f8fafc; }
+		.painel-marca-texto small { color: #64748b; font-size: .85rem; }
+		.painel-relogio { text-align: right; }
+		.painel-relogio .data { font-size: .95rem; color: #94a3b8; text-transform: capitalize; }
+		.painel-relogio .hora { font-size: 2.1rem; font-weight: 700; color: #f8fafc; line-height: 1; }
+
+		/* ===== KPIs ===== */
+		.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 20px; flex-shrink: 0; }
+		.kpi {
+			border-radius: 16px; padding: 20px 22px; background: #131c31;
+			border-left: 5px solid var(--cor); box-shadow: 0 4px 16px rgba(0,0,0,.25);
+			display: flex; align-items: center; gap: 16px;
+		}
+		.kpi-icone {
+			width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+			background: color-mix(in srgb, var(--cor) 18%, transparent);
+			color: var(--cor); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+		}
+		.kpi-valor { font-size: 2.1rem; font-weight: 800; color: #f8fafc; line-height: 1.1; }
+		.kpi-label { font-size: .8rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+		/* ===== PAINÉIS ===== */
+		.paineis { flex: 1; display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; min-height: 0; }
+		.painel-bloco {
+			background: #131c31; border-radius: 16px; padding: 18px 22px; box-shadow: 0 4px 16px rgba(0,0,0,.25);
+			display: flex; flex-direction: column; min-height: 0;
+		}
+		.painel-bloco h2 {
+			font-size: 1rem; font-weight: 700; color: #f8fafc; margin: 0 0 14px 0;
+			display: flex; align-items: center; gap: 8px;
+		}
+		.painel-lista { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+		.item-linha {
+			display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
+			background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.05);
+		}
+		.item-linha .numero { font-family: 'Courier New', monospace; font-size: .78rem; color: #7dd3fc; }
+		.item-linha .titulo { font-weight: 600; color: #f1f5f9; font-size: .92rem; }
+		.item-linha .sub { font-size: .8rem; color: #94a3b8; }
+		.item-linha .quando { margin-left: auto; font-size: .78rem; color: #64748b; white-space: nowrap; }
+		.badge-sev { font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; flex-shrink: 0; }
+		.badge-sev.INFO { background: rgba(13,110,253,.18); color: #7cb2ff; }
+		.badge-sev.ATENCAO { background: rgba(250,178,25,.18); color: #fbbf24; }
+		.badge-sev.URGENTE { background: rgba(220,53,69,.2); color: #f87171; }
+		.vazio { color: #475569; text-align: center; padding: 30px 0; font-size: .9rem; }
+
+		.painel-rodape { text-align: center; color: #334155; font-size: .74rem; margin-top: 14px; flex-shrink: 0; }
+		.offline-aviso {
+			position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+			background: #7f1d1d; color: #fecaca; padding: 8px 18px; border-radius: 999px; font-size: .82rem;
+			display: none; z-index: 10;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="offline-aviso" id="avisoOffline"><i class="bi bi-wifi-off"></i> Sem conexão com o servidor — tentando novamente...</div>
+
+	<div class="painel">
+
+		<!-- TOPO -->
+		<div class="painel-topo">
+			<div class="painel-marca">
+				<div class="painel-marca-icone"><i class="bi bi-bank2"></i></div>
+				<div class="painel-marca-texto">
+					<h1>Painel de Acompanhamento — Judi</h1>
+					<small>Processos monitorados, alertas e movimentações em tempo real</small>
+				</div>
+			</div>
+			<div class="painel-relogio">
+				<div class="data" id="painelData">—</div>
+				<div class="hora" id="painelHora">--:--</div>
+			</div>
+		</div>
+
+		<!-- KPIs -->
+		<div class="kpis">
+			<div class="kpi" style="--cor:#0d6efd;">
+				<div class="kpi-icone"><i class="bi bi-briefcase-fill"></i></div>
+				<div>
+					<div class="kpi-valor" id="kpiProcessosAtivos">—</div>
+					<div class="kpi-label">Processos Ativos</div>
+				</div>
+			</div>
+			<div class="kpi" style="--cor:#fab219;">
+				<div class="kpi-icone"><i class="bi bi-bell-fill"></i></div>
+				<div>
+					<div class="kpi-valor" id="kpiAlertasNaoLidos">—</div>
+					<div class="kpi-label">Alertas Não Lidos</div>
+				</div>
+			</div>
+			<div class="kpi" style="--cor:#dc3545;">
+				<div class="kpi-icone"><i class="bi bi-exclamation-triangle-fill"></i></div>
+				<div>
+					<div class="kpi-valor" id="kpiErrosConsulta">—</div>
+					<div class="kpi-label">Erros de Consulta DataJud</div>
+				</div>
+			</div>
+			<div class="kpi" style="--cor:#198754;">
+				<div class="kpi-icone"><i class="bi bi-clock-history"></i></div>
+				<div>
+					<div class="kpi-valor" id="kpiMovimentacoes7Dias">—</div>
+					<div class="kpi-label">Movimentações (7 dias)</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- LISTAS -->
+		<div class="paineis">
+			<div class="painel-bloco">
+				<h2><i class="bi bi-activity"></i> Últimas Movimentações</h2>
+				<div class="painel-lista" id="listaMovimentacoes">
+					<div class="vazio">Carregando...</div>
+				</div>
+			</div>
+			<div class="painel-bloco">
+				<h2><i class="bi bi-bell"></i> Alertas Recentes</h2>
+				<div class="painel-lista" id="listaAlertas">
+					<div class="vazio">Carregando...</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="painel-rodape">Atualizado automaticamente a cada 30 segundos · última atualização: <span id="ultimaAtualizacao">—</span></div>
+
+	</div>
+
+	<script>
+		const INTERVALO_ATUALIZACAO_MS = 30000;
+
+		function tempoRelativo(dataStr) {
+			if (!dataStr) return '—';
+			const p = dataStr.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+			if (!p) return dataStr;
+			const d = new Date(p[3], p[2] - 1, p[1], p[4], p[5]);
+			if (isNaN(d.getTime())) return dataStr;
+			const diff = Math.floor((Date.now() - d.getTime()) / 1000);
+			if (diff < 60) return 'agora';
+			if (diff < 3600) return 'há ' + Math.floor(diff / 60) + ' min';
+			if (diff < 86400) return 'há ' + Math.floor(diff / 3600) + 'h';
+			if (diff < 172800) return 'há 1 dia';
+			return 'há ' + Math.floor(diff / 86400) + ' dias';
+		}
+
+		function escapeHtml(str) {
+			return String(str == null ? '' : str)
+				.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+		}
+
+		function renderMovimentacoes(lista) {
+			const el = document.getElementById('listaMovimentacoes');
+			if (!lista || !lista.length) {
+				el.innerHTML = '<div class="vazio"><i class="bi bi-inbox"></i><br>Nenhuma movimentação registrada ainda</div>';
+				return;
+			}
+			el.innerHTML = lista.map(m => `
+				<div class="item-linha">
+					<div>
+						<div class="titulo">${escapeHtml(m.nomeCliente || 'Cliente não informado')}</div>
+						<div class="sub"><span class="numero">${escapeHtml(m.numeroProcesso)}</span> — ${escapeHtml(m.descricao || 'Movimentação registrada')}</div>
+					</div>
+					<div class="quando">${tempoRelativo(m.dataMovimentacao)}</div>
+				</div>
+			`).join('');
+		}
+
+		function renderAlertas(lista) {
+			const el = document.getElementById('listaAlertas');
+			if (!lista || !lista.length) {
+				el.innerHTML = '<div class="vazio"><i class="bi bi-check-circle"></i><br>Nenhum alerta pendente</div>';
+				return;
+			}
+			el.innerHTML = lista.map(a => `
+				<div class="item-linha">
+					<span class="badge-sev ${escapeHtml(a.severidade)}">${escapeHtml(a.severidade)}</span>
+					<div>
+						<div class="titulo">${escapeHtml(a.nomeCliente || a.numeroProcesso)}</div>
+						<div class="sub">${escapeHtml(a.mensagem)}</div>
+					</div>
+					<div class="quando">${tempoRelativo(a.dataGeracao)}</div>
+				</div>
+			`).join('');
+		}
+
+		async function carregarPainel() {
+			try {
+				const response = await fetch('/judi/dashboard/painel', { cache: 'no-store' });
+
+				if (response.status === 401) {
+					window.location.href = '/judi/login';
+					return;
+				}
+				if (!response.ok) throw new Error('HTTP ' + response.status);
+
+				const data = await response.json();
+				document.getElementById('kpiProcessosAtivos').textContent = data.resumo.totalProcessosAtivos;
+				document.getElementById('kpiAlertasNaoLidos').textContent = data.resumo.alertasNaoLidos;
+				document.getElementById('kpiErrosConsulta').textContent = data.resumo.processosComErroConsulta;
+				document.getElementById('kpiMovimentacoes7Dias').textContent = data.resumo.movimentacoesUltimos7Dias;
+
+				renderMovimentacoes(data.ultimasMovimentacoes);
+				renderAlertas(data.ultimosAlertas);
+
+				document.getElementById('avisoOffline').style.display = 'none';
+				document.getElementById('ultimaAtualizacao').textContent = new Date().toLocaleTimeString('pt-BR');
+			} catch (e) {
+				console.error('Erro ao carregar painel', e);
+				document.getElementById('avisoOffline').style.display = 'block';
+			}
+		}
+
+		// ===== RELÓGIO =====
+		const MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+		const DIAS = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+
+		function atualizarRelogio() {
+			const now = new Date();
+			document.getElementById('painelData').textContent =
+				DIAS[now.getDay()] + ', ' + now.getDate() + ' de ' + MESES[now.getMonth()] + ' de ' + now.getFullYear();
+			document.getElementById('painelHora').textContent =
+				String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+		}
+
+		atualizarRelogio();
+		setInterval(atualizarRelogio, 1000);
+
+		carregarPainel();
+		setInterval(carregarPainel, INTERVALO_ATUALIZACAO_MS);
+	</script>
+</body>
+</html>

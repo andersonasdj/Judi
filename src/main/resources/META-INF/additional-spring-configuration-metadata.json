@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "datajud.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'datajud.enabled'"
+  },
+  {
+    "name": "datajud.api-key",
+    "type": "java.lang.String",
+    "description": "A description for 'datajud.api-key'"
+  },
+  {
+    "name": "datajud.sync-cron",
+    "type": "java.lang.String",
+    "description": "A description for 'datajud.sync-cron'"
+  },
+  {
+    "name": "datajud.base-url",
+    "type": "java.lang.String",
+    "description": "A description for 'datajud.base-url'"
+  },
+  {
+    "name": "upload.dir",
+    "type": "java.lang.String",
+    "description": "A description for 'upload.dir'"
+  }
+]}

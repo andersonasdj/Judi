@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="assets/img/favicon.ico">
+	<link rel="stylesheet" href="assets/css/defaultStyle.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/css/bootstrap-icons.min.css">
+	<title>Sistech - Criação Login</title>
+</head>
+<body>
+	<div class="container">
+		<br />
+		<h2 id="titulo">Criação do primeiro usuário</h2>
+		<hr class="bg-danger border-2 border-top border-danger">
+		
+		<div id="form-usuario">
+			<label for="nomeFuncionario" class="form-laber">Nome</label>
+			<input type="text" id="nomeFuncionario" class="form-control mt-2" style="width: 400px;" autocomplete="off">
+
+			<label for="username" class="form-laber mt-2">Usuário</label>
+			<input type="text" id="username" class="form-control mt-2" style="width: 400px;" autocomplete="off">
+
+			<label for="password" class="form-laber mt-2">Senha</label>
+			<button onclick="changeviewer()" style="border: none; background: none;">
+				<img src="./assets/img/olho.png" style="height: 15px;">
+			</button>
+			<input type="password" id="password" class="form-control mt-2" minlength="6" maxlength="50"
+				onKeyUp="verificaForcaSenha();" style="width: 400px;" autocomplete="off">
+			<span id="password-status"></span><br />
+
+			<label class="form-label" for="role">Role</label>
+			<select class="form-select" id="role" aria-label="Default select example" style="width: 180px;">
+				<option value="SADMIN">SADMIN</option>
+			</select>
+			</br>
+			<button class="btn btn-success" onclick="salvar()"  >Salvar</button>
+
+		</div>
+		<div id="btnLogar"> </div>
+		<br /><br />
+		<footer class="container-fluid fixed-bottom text-center text-white">
+				<div class="text-center" style="background-color: rgba(0, 0, 0, 0.2);">
+					© 2025 Copyright:
+					<a class="text-white" href="#">TechGold</a>
+				</div>
+		</footer>
+	</div>
+	<script src="assets/js/jquery-3.6.3.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	<script>
+		function verificaForcaSenha() {
+
+			var numeros = /([0-9])/;
+			var alfabeto = /([a-zA-Z])/;
+			var chEspeciais = /([~,!,@,#,$,%,^,&,*,-,_,+,=,?,>,<])/;
+
+			if ($('#password').val().length < 8) {
+				$('#password-status').html("<span style='color:red'>Fraco, insira no mínimo 8 caracteres</span>");
+			} else {
+				if ($('#password').val().match(numeros) && $('#password').val().match(alfabeto) && $('#password').val().match(chEspeciais)) {
+					$('#password-status').html("<span style='color:green'><b>Forte</b></span>");
+				} else {
+					$('#password-status').html("<span style='color:orange'>Médio, insira um caracter especial</span>");
+				}
+			}
+		}
+	</script>
+	<script>
+		function changeviewer() {
+			var tipo = $('#password').attr("type").toString();
+			if (tipo == 'password' && tipo != '') {
+				$('#password').attr("type", 'text');
+			} else {
+				$('#password').attr("type", 'password');
+			}
+		}
+
+		function salvar() {
+			var nomeFuncionario = $('#nomeFuncionario').val();
+			var username = $('#username').val();
+			var password = $('#password').val();
+			var role = $('#role').val();
+
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: "/judi/create",
+				data: JSON.stringify({
+					"nomeFuncionario": nomeFuncionario,
+					"username": username,
+					"password": password,
+					"role": role
+				}),
+				success: function (data) {
+					$('#form-usuario').empty();
+					$('#titulo').empty();
+					$('#titulo').append("<h2>Usuário cadastrado com sucesso!!</h2>");
+					$('#btnLogar').append("<a href='/learn/login'> <button class='btn btn-success'>Login</button></a>");
+					alert("Usuário cadastrado com sucesso!");
+				},
+				error: function (e) { alert(e); }
+			});
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="assets/img/favicon.ico">
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/css/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="assets/css/defaultStyle.css?v=1">
+	<link rel="stylesheet" href="assets/css/dark.css?v=1">
+	<link rel="stylesheet" href="assets/css/navbar.css?v=4">
+	<link rel="stylesheet" href="assets/css/home.css?v=8.1">
+	<title>Judi - Início</title>
+	<style>
+		.card-curso {
+			border: none;
+			border-radius: 14px;
+			background: linear-gradient(180deg, #ffffff, #fafafa);
+			box-shadow: 0 6px 18px rgba(0,0,0,.08);
+			transition: all .25s ease;
+			overflow: hidden;
+		}
+		.card-curso:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,.18); }
+		.card-curso .curso-capa {
+			height: 100px;
+			background: linear-gradient(135deg, #1e3a5f, #1a56c4);
+			display: flex; align-items: center; justify-content: center;
+			color: #fff; font-size: 1.8rem;
+		}
+		.card-curso .curso-capa img { width: 100%; height: 100%; object-fit: cover; }
+		body.dark-mode .card-curso { background: linear-gradient(180deg, #2c3034, #212529); box-shadow: 0 8px 22px rgba(0,0,0,.45); }
+
+		/* ===== Profundidade dos cards da home ===== */
+		.home-page-shell .card {
+			box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 26px rgba(0,0,0,.08);
+			border-radius: 16px;
+		}
+		body.dark-mode .home-page-shell .card {
+			box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px rgba(0,0,0,.4);
+		}
+
+		/* ===== KPIs ===== */
+		.kpi-tile {
+			display: flex; align-items: center; gap: 12px;
+			height: 100%; padding: 14px 16px;
+			background: #f8fafc; border: 1px solid rgba(0,0,0,.06); border-left: 3px solid transparent; border-radius: 14px;
+			box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 4px 10px rgba(0,0,0,.05);
+			transition: transform .15s ease, box-shadow .15s ease;
+		}
+		.kpi-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.1); }
+		body.dark-mode .kpi-tile { background: #1e1e1e; border-color: #333; box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 4px 12px rgba(0,0,0,.3); }
+		.kpi-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+		.kpi-value { font-size: 1.4rem; font-weight: 700; line-height: 1.1; color: #1e293b; }
+		body.dark-mode .kpi-value { color: #f1f5f9; }
+		.kpi-label { font-size: .72rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+
+		/* ===== Lista de certificados recentes ===== */
+		.cert-recente-item { transition: background-color .12s ease; border-radius: 8px; }
+		.cert-recente-item:hover { background: rgba(13,110,253,.07) !important; }
+		body.dark-mode .cert-recente-item:hover { background: rgba(255,255,255,.06) !important; }
+
+		/* ===== Gráfico de adesão às aulas (funil de retenção) ===== */
+		.viz-root {
+			--viz-primary: #0d6efd;
+			--viz-primary-track: #e9eef9;
+			--viz-drop: #d03b3b;
+			--viz-surface: #ffffff;
+			--viz-text-primary: #0b0b0b;
+			--viz-text-secondary: #52514e;
+			--viz-text-muted: #898781;
+		}
+		body.dark-mode .viz-root {
+			--viz-primary: #4d94ff;
+			--viz-primary-track: #24314d;
+			--viz-drop: #ff6b6b;
+			--viz-surface: #2c3034;
+			--viz-text-primary: #ffffff;
+			--viz-text-secondary: #c3c2b7;
+			--viz-text-muted: #9a988f;
+		}
+		.viz-funnel-caption { font-size: .82rem; color: var(--viz-text-secondary); margin-bottom: 18px; }
+		.viz-funnel-caption strong { color: var(--viz-text-primary); font-weight: 600; }
+		.viz-funnel-rows { display: flex; flex-direction: column; gap: 18px; }
+		.viz-funnel-row { display: grid; grid-template-columns: minmax(120px, 220px) 1fr minmax(84px, auto); align-items: center; gap: 14px; }
+		.viz-funnel-label { font-size: .82rem; font-weight: 500; color: var(--viz-text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+		.viz-funnel-track { height: 10px; border-radius: 999px; overflow: hidden; background: var(--viz-primary-track); }
+		.viz-funnel-fill { height: 100%; border-radius: 999px; background: var(--viz-primary); transition: filter .15s; cursor: default; outline: none; }
+		.viz-funnel-fill.is-hovered, .viz-funnel-fill:focus-visible { filter: brightness(1.12); box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); }
+		.viz-funnel-value { text-align: right; }
+		.viz-funnel-count { font-size: .82rem; font-weight: 600; color: var(--viz-text-primary); }
+		.viz-funnel-pct { font-size: .74rem; color: var(--viz-text-muted); margin-left: 4px; }
+		.viz-funnel-drop { font-size: .72rem; color: var(--viz-drop); margin-top: 2px; white-space: nowrap; }
+		.viz-tooltip {
+			position: absolute; transform: translate(-50%, -100%);
+			background: #0b0b0b; color: #fff; font-size: .78rem; font-weight: 600;
+			padding: 6px 10px; border-radius: 8px; pointer-events: none;
+			opacity: 0; visibility: hidden; transition: opacity .12s; white-space: nowrap; z-index: 2000;
+		}
+		.viz-tooltip.is-visible { opacity: 1; visibility: visible; }
+		@media (max-width: 576px) { .viz-funnel-row { grid-template-columns: 90px 1fr 70px; } }
+
+		.viz-select {
+			appearance: none; -webkit-appearance: none; -moz-appearance: none;
+			background-color: var(--viz-surface);
+			background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23898781'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/></svg>");
+			background-repeat: no-repeat;
+			background-position: right 13px center;
+			background-size: 13px;
+			border: 1.5px solid rgba(0,0,0,.1);
+			border-radius: 999px;
+			padding: 6px 34px 6px 16px;
+			font-size: .82rem;
+			font-weight: 500;
+			color: var(--viz-text-primary);
+			cursor: pointer;
+			transition: border-color .15s, box-shadow .15s;
+		}
+		.viz-select:hover { border-color: rgba(13,110,253,.4); }
+		.viz-select:focus { outline: none; border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13,110,253,.14); }
+		body.dark-mode .viz-select {
+			border-color: rgba(255,255,255,.15);
+			background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%239a988f'><path d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/></svg>");
+		}
+	</style>
+</head>
+
+<body>
+	<script>(function(){if(localStorage.getItem('darkMode')==='enabled')document.body.classList.add('dark-mode');document.body.dataset.layout=localStorage.getItem('navLayout')||'top';if(localStorage.getItem('sidebarCollapsed')==='true')document.body.classList.add('sidebar-collapsed');})();</script>
+
+	<!-- SIDEBAR -->
+	<aside id="sidebarNav" class="sistech-sidebar">
+		<div class="sidebar-brand">
+			<div class="sidebar-brand-icon">
+				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
+			</div>
+			<span class="sidebar-brand-text">Dashboard</span>
+		</div>
+		<div class="sidebar-scroll">
+			<a href="/judi/home" class="sidebar-item active">
+				<i class="bi bi-house-fill"></i>
+				<span class="sidebar-item-label">Início</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
+		
+			<div class="sidebar-group" id="sgClientes">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
+					<i class="bi bi-building"></i>
+					<span class="sidebar-group-label">Clientes</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/cliente/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/cliente/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgFuncionarios">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
+					<i class="bi bi-person-badge"></i>
+					<span class="sidebar-group-label">Funcionários</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgProcessos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
+					<i class="bi bi-briefcase"></i>
+					<span class="sidebar-group-label">Processos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/processo/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/processo/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
+				</div>
+			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
+			<div class="sidebar-group" id="sgTarefas">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
+					<i class="bi bi-list-check"></i>
+					<span class="sidebar-group-label">Tarefas</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/tarefa/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
+				</div>
+			</div>
+			<a href="/judi/tarefa/despesas" class="sidebar-item">
+				<i class="bi bi-receipt"></i>
+				<span class="sidebar-item-label">Despesas</span>
+			</a>
+
+		</div>
+		<div class="sidebar-footer">
+			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
+				<i class="bi bi-arrow-bar-left" id="sidebarCollapseIcon"></i>
+			</button>
+		</div>
+	</aside>
+
+	<!-- FLYOUT: submenu ao clicar no ícone com sidebar recolhida -->
+	<div id="sidebarFlyout" class="sidebar-flyout">
+		<div class="sidebar-flyout-title" id="sidebarFlyoutTitle"></div>
+		<div id="sidebarFlyoutItems"></div>
+	</div>
+
+	<!-- OVERLAY MOBILE -->
+	<div id="sidebarOverlay" onclick="closeSidebarMobile()"></div>
+
+	<!-- SLIM TOPBAR (modo sidebar) -->
+	<div id="slimTopbar" class="sistech-slim-topbar">
+		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
+			<i class="bi bi-list"></i>
+		</button>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<div class="ms-auto d-flex align-items-center gap-2">
+			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
+				<i class="bi bi-layout-three-columns"></i>
+			</button>
+			<button class="icon-btn" onclick="toggleDarkMode()" title="Alternar modo escuro">
+				<i class="bi bi-moon"></i>
+			</button>
+			
+			<div class="dropdown">
+				<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<div class="user-avatar" id="userInitialsSlim">?</div>
+					<span class="user-name d-none d-md-inline" id="navNomeSlim">Usuário</span>
+					<i class="bi bi-chevron-down nav-chevron"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end">
+					<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+					<li><hr class="dropdown-divider"></li>		
+					<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<!-- NAVBAR -->
+		<nav class="navbar navbar-expand-lg navbar-modern sticky-top mb-2">
+			<div class="container-fluid px-3">
+
+				<!-- Brand -->
+				<a class="navbar-brand-modern" href="/judi/home">
+					<div class="brand-icon">
+						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
+					</div>
+					<span class="brand-text">Judi</span>
+				</a>
+
+				<!-- Mobile toggle -->
+				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarMain" aria-controls="navbarMain"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<!-- Collapse -->
+				<div class="collapse navbar-collapse" id="navbarMain">
+
+					<!-- Nav items -->
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 align-items-lg-center">
+
+						<li class="nav-item">
+							<a class="nav-link-modern active" href="/judi/home" aria-current="page">
+								<i class="bi bi-house-fill"></i> Início
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
+							</a>
+						</li>
+
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-building"></i> Clientes
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/cliente/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/cliente/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-person-badge"></i> Funcionários
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-briefcase"></i> Processos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/processo/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list-check"></i> Tarefas
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/tarefa/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/tarefa/form"><i class="bi bi-plus-circle me-2 text-success"></i>Nova</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/tarefa/despesas">
+								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+
+					</ul>
+
+					<!-- Direita: ícones + usuário -->
+					<div class="d-flex align-items-center gap-2">
+
+						<!-- Layout toggle -->
+						<button class="layout-toggle-btn" onclick="toggleLayout()" title="Alternar para barra lateral">
+							<i class="bi bi-layout-sidebar"></i>
+						</button>
+
+						<!-- Dark mode -->
+						<button class="icon-btn" onclick="toggleDarkMode()" id="toggleDarkBtn" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+							<i class="bi bi-moon"></i>
+						</button>
+
+
+						<!-- Usuário dropdown -->
+						<div class="dropdown">
+							<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<div class="user-avatar" id="userInitials">?</div>
+								<span class="user-name" id="navNome">Usuário</span>
+								<i class="bi bi-chevron-down nav-chevron"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</nav>
+		<!-- / NAVBAR -->
+		
+		   <div id="homePageShell" class="home-page-shell mb-2">
+		   <div id="homeLoadingOverlay" class="home-loading-overlay">
+				<div class="container-fluid mb-3">
+					<div class="row g-3">
+						<div class="col-12 col-lg-8">
+							<div class="home-skeleton-card" style="height:200px;border-radius:14px;"></div>
+						</div>
+						<div class="col-12 col-lg-4">
+							<div class="home-skeleton-card" style="height:200px;border-radius:14px;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="container-fluid">
+					<div class="row g-3">
+						<div class="col-12 col-lg-6"><div class="home-skeleton-chart"></div></div>
+						<div class="col-12 col-lg-6"><div class="home-skeleton-chart"></div></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="container-fluid mb-3">
+				<div class="row g-3 align-items-stretch">
+				<!-- Card de Boas-Vindas + KPIs -->
+				<div class="col-12 col-lg-12 anim-in">
+					<div class="card shadow-sm border-0 h-100">
+						<div class="card-body">
+							<div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+								<!-- Dados do Funcionário -->
+								<div>
+									<h5 class="mb-1">
+										<span id="saudacao"></span>
+										<strong style="color: #164294;"><span id="nomeFuncionario"></span></strong>
+									</h5>
+									<p class="mb-2 text-muted small"><span id="dataUltimoLogin"></span></p>
+									
+									
+								</div>
+								<!-- Relógio compacto -->
+								<a href="#" class="compact-clock">
+									<span class="compact-clock-label" id="clockLabel">Hoje: — • — —</span>
+									<span class="compact-clock-hora"  id="clockHora">--:--</span>
+								</a>
+							</div>
+
+							<hr class="my-3 opacity-25">
+
+							<div class="row g-3" id="kpiRow">
+								<div class="col-6 col-lg-3">
+									<div class="kpi-tile" style="border-left-color:#0d6efd;">
+										<div class="kpi-icon" style="background:rgba(13,110,253,.12);color:#0d6efd;">
+											<i class="bi bi-briefcase-fill"></i>
+										</div>
+										<div>
+											<div class="kpi-value" id="kpiProcessosAtivos">—</div>
+											<div class="kpi-label">Processos Ativos</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-6 col-lg-3">
+									<a href="/judi/processo/alertas" class="text-decoration-none">
+										<div class="kpi-tile" style="border-left-color:#fab219;">
+											<div class="kpi-icon" style="background:rgba(250,178,25,.14);color:#fab219;">
+												<i class="bi bi-bell-fill"></i>
+											</div>
+											<div>
+												<div class="kpi-value" id="kpiAlertasNaoLidos">—</div>
+												<div class="kpi-label">Alertas Não Lidos</div>
+											</div>
+										</div>
+									</a>
+								</div>
+								<div class="col-6 col-lg-3">
+									<div class="kpi-tile" style="border-left-color:#dc3545;">
+										<div class="kpi-icon" style="background:rgba(220,53,69,.12);color:#dc3545;">
+											<i class="bi bi-exclamation-triangle-fill"></i>
+										</div>
+										<div>
+											<div class="kpi-value" id="kpiErrosConsulta">—</div>
+											<div class="kpi-label">Erros de Consulta DataJud</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-6 col-lg-3">
+									<div class="kpi-tile" style="border-left-color:#198754;">
+										<div class="kpi-icon" style="background:rgba(25,135,84,.12);color:#198754;">
+											<i class="bi bi-clock-history"></i>
+										</div>
+										<div>
+											<div class="kpi-value" id="kpiMovimentacoes7d">—</div>
+											<div class="kpi-label">Movimentações (7 dias)</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			</div><!-- /row g-3 align-items-stretch -->
+		</div><!-- /container-fluid mb-3 -->
+	</div><!-- /homePageShell -->
+	</div><!-- /container-fluid (wrapper do nav) -->
+
+	<br /><br />
+	<footer class="container-fluid fixed-bottom text-center text-white">
+		<div class="text-center" style="background-color: rgba(0, 0, 0, 0.2);">
+			© 2026 Copyright:
+			<a class="text-white" href="#">TechGold</a>
+		</div>
+	</footer>
+
+	<!-- Toast container -->
+	<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999" id="toastContainer"></div>
+
+
+	<!-- ################################################# MODAL FOTO ################################################# -->
+	<div class="modal fade" id="modalFoto" tabindex="-1" aria-labelledby="modalFoto" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="modalLabelColaboradorFoto">Atualização de foto de perfil</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+				</div>
+				<br />
+				<div class="container">
+					<div class="Neon Neon-theme-dragdropbox">
+						<form id="uploadForm" enctype="multipart/form-data">
+
+							<div class="Neon-input-dragDrop">
+								<div class="Neon-input-inner">
+									<div class="Neon-input-icon"><i class="fa fa-file-image-o"></i></div>
+									<span id="inputId"></span>
+									<input type="file" id="file" name="file" class="Neon-input-choose-btn blue"></input>
+								</div>
+								<br />
+								<button type="submit" class="btn btn-secondary btn-sm">Enviar</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- ################################################### MODAL FOTO ################################################# -->
+	<!-- ############################################### MODAL TROCA DE SENHA ########################################### -->
+	<div class="modal fade" id="modalTrocaDeSenha" tabindex="-1" aria-labelledby="modalLabelTrocaDeSenha" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" style="max-width:440px">
+			<div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
+				<button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+				<div class="modal-body text-center p-4 pt-5">
+					<div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;border-radius:50%;background:rgba(250,178,25,.14);">
+						<i class="bi bi-shield-lock-fill" style="font-size:1.8rem;color:#fab219;"></i>
+					</div>
+					<h5 class="fw-bold mb-2" id="modalLabelTrocaDeSenha">Atualize sua senha</h5>
+					<p class="text-muted mb-0" style="font-size:.92rem;">
+						Por segurança, é necessário definir uma nova senha antes de continuar utilizando o sistema.
+					</p>
+				</div>
+				<div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex gap-2">
+					<button type="button" class="btn btn-light flex-shrink-0" data-bs-dismiss="modal">Depois</button>
+					<a href="/learn/funcionario/perfil" class="btn btn-warning fw-semibold flex-grow-1">
+						<i class="bi bi-key-fill me-1"></i>Alterar senha agora
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- ############################################### MODAL TROCA DE SENHA ########################################### -->
+
+	<!-- MODAL: Visualizar certificado -->
+	<div class="modal fade" id="modalCertificadoPdf" tabindex="-1" aria-labelledby="modalCertificadoPdfLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
+				<div class="modal-header" style="background:linear-gradient(135deg,#1e3a5f,#1a56c4);color:#fff;">
+					<h5 class="modal-title mb-0" id="modalCertificadoPdfLabel"><i class="bi bi-file-earmark-pdf me-2"></i>Certificado</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body p-0" style="height:80vh;">
+					<iframe id="iframeCertificadoPdf" src="" style="width:100%;height:100%;border:0;" title="Certificado"></iframe>
+				</div>
+				<div class="modal-footer">
+					<a id="linkBaixarCertificadoPdf" href="#" download class="btn btn-outline-secondary btn-sm">
+						<i class="bi bi-download me-1"></i>Baixar PDF
+					</a>
+					<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script defer src="assets/js/bootstrap.bundle.min.js"></script>
+	<script defer src="assets/js/dark.js"></script>
+	<script defer src="assets/js/navbar.js"></script>
+	<script defer src="assets/js/sidebar.js"></script>
+
+	<script defer>
+		document.addEventListener("DOMContentLoaded", () => {
+		    iniciarSistema();
+		    iniciarRelogio();
+		    iniciarEventos();
+		});
+
+		function showHomeLoading() {
+		    const overlay = document.getElementById("homeLoadingOverlay");
+		    if (!overlay) return;
+		    overlay.style.display = "block";
+			requestAnimationFrame(() => {
+				overlay.style.opacity = "1";
+				overlay.style.pointerEvents = "auto";
+			});
+		}
+
+		function hideHomeLoading() {
+		    const overlay = document.getElementById("homeLoadingOverlay");
+		    if (!overlay) return;
+			overlay.style.opacity = "0";
+			overlay.style.pointerEvents = "none";
+			window.setTimeout(() => {
+				overlay.style.display = "none";
+			}, 240);
+		}
+
+		// ======================================================
+		// INICIALIZAÇÃO
+		// ======================================================
+		async function iniciarSistema() {
+		    showHomeLoading();
+		    try {
+		        await Promise.all([
+		            carregarHome(),
+		            carregarDashboardResumo(),
+		        ]);
+		    } catch (e) {
+		        console.error("Erro ao iniciar sistema", e);
+		    } finally {
+		        hideHomeLoading();
+		    }
+		}
+
+		// ======================================================
+		// KPIs DO DASHBOARD JURÍDICO
+		// ======================================================
+		async function carregarDashboardResumo() {
+		    try {
+		        const response = await fetch("/judi/dashboard/resumo");
+
+		        if (response.status === 401) {
+		            alert('Realize login novamente!');
+		            window.location.href = "/judi/login";
+		            return;
+		        }
+		        if (response.status === 500) {
+		            alert('Erro! Contate o desenvolvedor!');
+		            return;
+		        }
+		        if (!response.ok) return;
+
+		        const data = await response.json();
+		        preencherKpis(data);
+		    } catch (e) {
+		        console.error("Erro ao carregar KPIs do dashboard", e);
+		    }
+		}
+
+		function preencherKpis(data) {
+		    const setText = (id, valor) => {
+		        const el = document.getElementById(id);
+		        if (el) el.textContent = valor;
+		    };
+		    setText("kpiProcessosAtivos", data.totalProcessosAtivos ?? 0);
+		    setText("kpiAlertasNaoLidos", data.alertasNaoLidos ?? 0);
+		    setText("kpiErrosConsulta", data.processosComErroConsulta ?? 0);
+		    setText("kpiMovimentacoes7d", data.movimentacoesUltimos7Dias ?? 0);
+		}
+
+		function iniciarEventos() {
+		    // Upload foto
+		    const uploadForm = document.getElementById("uploadForm");
+	
+		    if(uploadForm){
+		        uploadForm.addEventListener("submit", async (e) => {
+		            e.preventDefault();
+		            const formData = new FormData(uploadForm);
+	
+		            try {
+		                const response = await fetch("/judi/api/file/perfil/upload", {
+		                    method: "POST",
+		                    body: formData
+		                });
+	
+						if (response.ok) {
+						    bootstrap.Modal.getInstance(document.getElementById('modalFoto'))?.hide();
+						    await carregarFoto(_homeData?.id);
+						} else {
+						    alert('Aviso: ' + (await response.text()));
+						}
+	
+		            } catch (e) {
+		                alert("Erro ao enviar arquivo");
+		            }
+		        });
+		    }
+
+		}
+
+		// ======================================================
+		// HOME
+		// ======================================================
+		async function carregarHome() {
+	
+		    try {
+		        const response = await fetch("/judi/funcionarios/home");
+	
+		        if(response.status === 401){
+		            alert("Realize login novamente!");
+		            window.location.href = "/judi/login";
+		            return;
+		        }
+		        const data = await response.json();
+	
+		        preencherHome(data);
+		        carregarFoto(data.id);
+	
+		    } catch (e) {
+		        console.error("Erro ao carregar home", e);
+		    }
+		}
+
+		// ======================================================
+		// PREENCHIMENTO HOME
+		// ======================================================
+		function formatarNumero2(valor) {
+		    return String(valor).padStart(2, '0');
+		}
+
+		function gerarSaudacao() {
+		    const hora = new Date().getHours();
+		    if (hora < 12) return 'Bom dia, ';
+		    if (hora < 18) return 'Boa tarde, ';
+		    return 'Boa noite, ';
+		}	
+
+		function preencherHome(data){
+		    _homeData = data;
+		    document.getElementById("saudacao").textContent = gerarSaudacao();
+		    document.getElementById("nomeFuncionario").textContent = data.nomeFuncionario; 
+		    document.getElementById("dataUltimoLogin").textContent = "Último login: " + data.dataUltimoLogin;
+
+		    if (window.navbarInit) window.navbarInit(data.nomeFuncionario);
+		    inserirInputId(data.id);
+	
+		    if(data.trocaSenha){
+		        const modal = new bootstrap.Modal(
+		            document.getElementById("modalTrocaDeSenha")
+		        );
+		        modal.show();
+		    }
+		}
+
+		function inserirInputId(id){
+		    const inputId = document.getElementById("inputId");
+		    inputId.innerHTML = `
+		        <input type="hidden" id="id" name="id" value="${id}">
+		    `;
+		}
+
+		// ======================================================
+		// TOAST
+		// ======================================================
+		function mostrarToast(mensagem, tipo) {
+		    const cfg = {
+		        warning: { bg:'#fff7ed', border:'#fed7aa', color:'#ea580c', icon:'bi-exclamation-triangle-fill' },
+		        success: { bg:'#f0fdf4', border:'#bbf7d0', color:'#16a34a', icon:'bi-check-circle-fill'        },
+		        danger:  { bg:'#fef2f2', border:'#fecaca', color:'#dc2626', icon:'bi-x-circle-fill'            }
+		    };
+		    const c = cfg[tipo] || cfg.warning;
+		    const id = 'toast_' + Date.now();
+		    const el = document.createElement('div');
+		    el.id = id;
+		    el.className = 'toast show mb-2';
+		    el.setAttribute('role','alert');
+		    el.style.cssText = `background:${c.bg};border:1.5px solid ${c.border};border-radius:12px;min-width:280px;max-width:340px;box-shadow:0 4px 16px rgba(0,0,0,.1);`;
+		    el.innerHTML = `
+		        <div class="d-flex align-items-start gap-2 p-3" style="color:${c.color}">
+		            <i class="bi ${c.icon} fs-5 flex-shrink-0 mt-1"></i>
+		            <span class="me-auto" style="font-size:.87rem;line-height:1.45;">${mensagem}</span>
+		            <button class="btn-close ms-1 mt-1" style="font-size:.65rem;opacity:.5;" onclick="this.closest('.toast').remove()"></button>
+		        </div>
+		    `;
+		    document.getElementById('toastContainer').appendChild(el);
+		    setTimeout(() => { if(el.parentNode) el.remove(); }, 5000);
+		}
+
+		// ======================================================
+		// FOTO PERFIL
+		// ======================================================
+		async function carregarFoto(id){
+		    if(!id) return;
+
+		    try {
+		        const response = await fetch("/judi/api/file/perfil/" + id + "/thumb", { cache: 'no-store' });
+		        if(!response.ok) return;
+		        const blob = await response.blob();
+		        if(blob.type.startsWith("image/")){
+		            const blobUrl = URL.createObjectURL(blob);
+		            const avatarImg = `<img src="${blobUrl}" alt="">`;
+		            ['userInitials', 'userInitialsSlim'].forEach(elId => {
+		                const el = document.getElementById(elId);
+		                if (el) el.innerHTML = avatarImg;
+		            });
+		            setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+		        }
+		    } catch(e){ /* erro de rede */ }
+		}
+		// ======================================================
+
+		function tempoRelativo(dataStr) {
+		    if (!dataStr) return '—';
+		    const p = dataStr.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+		    if (!p) return dataStr;
+		    const d = new Date(p[3], p[2]-1, p[1], p[4], p[5]);
+		    if (isNaN(d.getTime())) return dataStr;
+		    const diff = Math.floor((Date.now() - d.getTime()) / 1000);
+		    if (diff < 60)     return 'agora';
+		    if (diff < 3600)   return 'há ' + Math.floor(diff / 60) + ' min';
+		    if (diff < 86400)  return 'há ' + Math.floor(diff / 3600) + 'h';
+		    if (diff < 172800) return 'há 1 dia';
+		    return 'há ' + Math.floor(diff / 86400) + ' dias';
+		}
+	
+		// ======================================================
+		// RELÓGIO OTIMIZADO
+		// ======================================================
+		const _MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+		const _DIAS  = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+		let _elLabel = null, _elHora = null;
+
+		function iniciarRelogio(){
+		    _elLabel = document.getElementById("clockLabel");
+		    _elHora  = document.getElementById("clockHora");
+		    atualizarRelogio();
+		    setInterval(atualizarRelogio, 1000);
+		}
+
+		function atualizarRelogio(){
+		    const now = new Date();
+		    const dia = _DIAS[now.getDay()];
+		    const dd  = String(now.getDate()).padStart(2, "0");
+		    const mes = _MESES[now.getMonth()];
+		    const hh  = String(now.getHours()).padStart(2, "0");
+		    const mm  = String(now.getMinutes()).padStart(2, "0");
+		    if (_elLabel) _elLabel.textContent = `Hoje: ${dia} • ${dd} ${mes}`;
+		    if (_elHora)  _elHora.textContent  = `${hh}:${mm}`;
+		}
+
+		// iniciarLayout() e demais funções de sidebar estão em assets/js/sidebar.js
+		function escapeHtml(str) {
+			return String(str)
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&#039;");
+		}
+	</script>
+</body>
+</html>

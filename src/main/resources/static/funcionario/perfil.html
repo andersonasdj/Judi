@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="../assets/img/favicon.ico">
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="../assets/css/password-generator.css?v=1" media="print" onload="this.media='all'">
+	<link rel="stylesheet" href="../assets/css/defaultStyle.css?v=1.1">
+	<link rel="stylesheet" href="../assets/css/dark.css?v=1.1">
+	<link rel="stylesheet" href="../assets/css/navbar.css?v=1.1">
+	<link rel="stylesheet" href="../assets/css/home.css?v=8.1">
+	<title>SisTech — Perfil</title>
+	<style>
+		body { background: #f4f6f9; }
+
+		/* ── Avatar ── */
+		.avatar-xl {
+			width: 96px; height: 96px; border-radius: 50%;
+			display: flex; align-items: center; justify-content: center;
+			font-size: 2.2rem; font-weight: 700; color: #fff;
+			background: linear-gradient(135deg, #0078d4, #005a9e);
+			overflow: hidden; flex-shrink: 0;
+			box-shadow: 0 4px 14px rgba(0,120,212,.35);
+		}
+		.avatar-xl img { width: 100%; height: 100%; object-fit: cover; }
+
+		/* ── Cards ── */
+		.profile-card {
+			border: none; border-radius: 16px;
+			box-shadow: 0 1px 8px rgba(0,0,0,.08);
+		}
+		.info-row { padding: .65rem 0; border-bottom: 1px solid #f1f5f9; }
+		.info-row:last-child { border-bottom: none; }
+		.info-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; font-weight: 600; }
+		.info-value { font-size: .92rem; font-weight: 600; color: #1e293b; }
+
+		/* ── Força da senha ── */
+		.pwd-bar { height: 5px; border-radius: 3px; transition: width .3s, background .3s; }
+
+		/* ── Dark mode ── */
+		body.dark-mode .profile-card { background: #1e2535; }
+		body.dark-mode .info-row { border-bottom-color: #2d3748; }
+		body.dark-mode .info-value { color: #e2e8f0; }
+	</style>
+</head>
+<body>
+<script>(function(){if(localStorage.getItem('darkMode')==='enabled')document.body.classList.add('dark-mode');document.body.dataset.layout=localStorage.getItem('navLayout')||'top';if(localStorage.getItem('sidebarCollapsed')==='true')document.body.classList.add('sidebar-collapsed');})();</script>
+
+	<!-- SIDEBAR -->
+	<aside id="sidebarNav" class="sistech-sidebar">
+		<div class="sidebar-brand">
+			<div class="sidebar-brand-icon">
+				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
+			</div>
+			<span class="sidebar-brand-text">Dashboard</span>
+		</div>
+		<div class="sidebar-scroll">
+			<a href="/learn/home" class="sidebar-item active">
+				<i class="bi bi-house-fill"></i>
+				<span class="sidebar-item-label">Início</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
+		
+			<div class="sidebar-group" id="sgClientes">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
+					<i class="bi bi-building"></i>
+					<span class="sidebar-group-label">Clientes</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/learn/cliente/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/learn/cliente/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+					<a href="/learn/cliente/colaborador" class="sidebar-subitem"><i class="bi bi-people text-secondary"></i>Colaboradores</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgFuncionarios">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
+					<i class="bi bi-person-badge"></i>
+					<span class="sidebar-group-label">Funcionários</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/learn/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/learn/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgProcessos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
+					<i class="bi bi-briefcase"></i>
+					<span class="sidebar-group-label">Processos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/processo/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/processo/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
+				</div>
+			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
+			<div class="sidebar-group" id="sgTarefas">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
+					<i class="bi bi-list-check"></i>
+					<span class="sidebar-group-label">Tarefas</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/tarefa/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
+				</div>
+			</div>
+			<a href="/judi/tarefa/despesas" class="sidebar-item">
+				<i class="bi bi-receipt"></i>
+				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<div class="sidebar-group" id="sgCursos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCursos')">
+					<i class="bi bi-mortarboard"></i>
+					<span class="sidebar-group-label">Cursos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/learn/curso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/learn/curso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+					<a href="/learn/curso/certificado" class="sidebar-subitem"><i class="bi bi-patch-check text-warning"></i>Modelo de Certificado</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCertificados">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCertificados')">
+					<i class="bi bi-award"></i>
+					<span class="sidebar-group-label">Certificados</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/learn/curso/certificados" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Emitidos</a>
+				</div>
+			</div>
+
+		</div>
+		<div class="sidebar-footer">
+			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
+				<i class="bi bi-arrow-bar-left" id="sidebarCollapseIcon"></i>
+			</button>
+		</div>
+	</aside>
+
+	<!-- FLYOUT: submenu ao clicar no ícone com sidebar recolhida -->
+	<div id="sidebarFlyout" class="sidebar-flyout">
+		<div class="sidebar-flyout-title" id="sidebarFlyoutTitle"></div>
+		<div id="sidebarFlyoutItems"></div>
+	</div>
+
+	<!-- OVERLAY MOBILE -->
+	<div id="sidebarOverlay" onclick="closeSidebarMobile()"></div>
+
+	<!-- SLIM TOPBAR (modo sidebar) -->
+	<div id="slimTopbar" class="sistech-slim-topbar">
+		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
+			<i class="bi bi-list"></i>
+		</button>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">SisTech</span>
+		<div class="ms-auto d-flex align-items-center gap-2">
+			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
+				<i class="bi bi-layout-three-columns"></i>
+			</button>
+			<button class="icon-btn" onclick="toggleDarkMode()" title="Alternar modo escuro">
+				<i class="bi bi-moon"></i>
+			</button>
+			
+			<div class="dropdown">
+				<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<div class="user-avatar" id="userInitialsSlim">?</div>
+					<span class="user-name d-none d-md-inline" id="navNomeSlim">Usuário</span>
+					<i class="bi bi-chevron-down nav-chevron"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end">
+					<li><a class="dropdown-item" href="/learn/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+					<li><hr class="dropdown-divider"></li>		
+					<li><a class="dropdown-item" href="/learn/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item text-danger" href="/learn/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<!-- NAVBAR -->
+		<nav class="navbar navbar-expand-lg navbar-modern sticky-top mb-2">
+			<div class="container-fluid px-3">
+
+				<!-- Brand -->
+				<a class="navbar-brand-modern" href="/learn/home">
+					<div class="brand-icon">
+						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
+					</div>
+					<span class="brand-text">Learn</span>
+				</a>
+
+				<!-- Mobile toggle -->
+				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarMain" aria-controls="navbarMain"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<!-- Collapse -->
+				<div class="collapse navbar-collapse" id="navbarMain">
+					<!-- Nav items -->
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 align-items-lg-center">
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/learn/home">
+								<i class="bi bi-house-fill"></i> Início
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
+							</a>
+						</li>
+
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-building"></i> Clientes
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/learn/cliente/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/learn/cliente/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/learn/cliente/colaborador"><i class="bi bi-people me-2 text-secondary"></i>Colaboradores</a></li>
+							</ul>
+						</li>
+
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-person-badge"></i> Funcionários
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/learn/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/learn/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-briefcase"></i> Processos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/processo/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list-check"></i> Tarefas
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/tarefa/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/tarefa/form"><i class="bi bi-plus-circle me-2 text-success"></i>Nova</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/tarefa/despesas">
+								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-mortarboard"></i> Cursos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/learn/curso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/learn/curso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+								<li><a class="dropdown-item" href="/learn/curso/certificado"><i class="bi bi-patch-check me-2 text-warning"></i>Modelo de Certificado</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-award"></i> Certificados
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/learn/curso/certificados"><i class="bi bi-list-ul me-2 text-primary"></i>Emitidos</a></li>
+							</ul>
+						</li>
+					</ul>
+
+					<!-- Direita: ícones + usuário -->
+					<div class="d-flex align-items-center gap-2">
+						<!-- Layout toggle -->
+						<button class="layout-toggle-btn" onclick="toggleLayout()" title="Alternar para barra lateral">
+							<i class="bi bi-layout-sidebar"></i>
+						</button>
+
+						<!-- Dark mode -->
+						<button class="icon-btn" onclick="toggleDarkMode()" id="toggleDarkBtn" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+							<i class="bi bi-moon"></i>
+						</button>
+
+						<!-- Usuário dropdown -->
+						<div class="dropdown">
+							<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<div class="user-avatar" id="userInitials">?</div>
+								<span class="user-name" id="navNome">Usuário</span>
+								<i class="bi bi-chevron-down nav-chevron"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item" href="/learn/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/learn/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item text-danger" href="/learn/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+							</ul>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</nav>
+		<!-- / NAVBAR -->
+
+	<!-- CONTEÚDO -->
+	<div class="container-fluid px-3 py-3" style="max-width: 960px;">
+
+		<!-- Título da página -->
+		<div class="d-flex align-items-center gap-2 mb-4">
+			<i class="bi bi-person-circle fs-4 text-primary"></i>
+			<div>
+				<h5 class="mb-0 fw-bold">Meu Perfil</h5>
+				<small class="text-muted">Informações da sua conta</small>
+			</div>
+		</div>
+
+		<div class="row g-3 align-items-start">
+
+			<!-- Card: Avatar + ações -->
+			<div class="col-12 col-md-4">
+				<div class="profile-card card text-center p-4">
+					<!-- Avatar -->
+					<div class="d-flex justify-content-center mb-3">
+						<div class="avatar-xl" id="avatarPerfil">?</div>
+					</div>
+					<h5 class="fw-bold mb-0" id="nomePerfil">—</h5>
+					<p class="text-muted small mb-3" id="usernamePerfil">—</p>
+
+					<div class="d-grid gap-2">
+						<button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalFoto">
+							<i class="bi bi-camera me-1"></i>Trocar foto
+						</button>
+						<button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#senhaModal">
+							<i class="bi bi-key me-1"></i>Alterar senha
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Card: Informações -->
+			<div class="col-12 col-md-8">
+				<div class="profile-card card p-4">
+					<h6 class="fw-semibold mb-3 text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;">
+						<i class="bi bi-info-circle me-1"></i>Dados da conta
+					</h6>
+
+					<div class="info-row d-flex align-items-center justify-content-between py-2">
+						<span class="info-label">ID</span>
+						<span class="info-value" id="idPerfil">—</span>
+					</div>
+					<div class="info-row d-flex align-items-center justify-content-between py-2">
+						<span class="info-label">Nome completo</span>
+						<span class="info-value" id="nomeInfo">—</span>
+					</div>
+					<div class="info-row d-flex align-items-center justify-content-between py-2">
+						<span class="info-label">Username</span>
+						<span class="info-value font-monospace" id="usernameInfo">—</span>
+					</div>
+					<div class="info-row d-flex align-items-center justify-content-between py-2">
+						<span class="info-label">E-mail</span>
+						<span class="info-value" id="emailInfo">—</span>
+					</div>
+					<div class="info-row d-flex align-items-center justify-content-between py-2">
+						<span class="info-label">Última atualização</span>
+						<span class="info-value" id="dataAtualizacaoInfo">—</span>
+					</div>
+					<div class="info-row d-flex align-items-center justify-content-between py-2">
+						<span class="info-label">Último login</span>
+						<span class="info-value" id="ultimoLoginInfo">—</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ── MODAL: Alterar senha ── -->
+<div class="modal fade" id="senhaModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content border-0 shadow">
+			<div class="modal-header border-0 pb-0">
+				<h5 class="modal-title fw-bold"><i class="bi bi-key me-2 text-primary"></i>Alterar senha</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body pt-2">
+				<input type="hidden" id="idmodalsenha">
+				<div class="mb-3">
+					<label class="form-label small fw-semibold">Nova senha <span class="text-danger">*</span></label>
+					<div class="input-group">
+						<input type="password" id="idpasswordmodal" class="form-control" minlength="8" maxlength="50"
+							placeholder="Mínimo 8 caracteres" oninput="avaliarSenha(this.value)">
+						<button class="btn btn-outline-secondary" type="button" onclick="alternarVisibilidadeSenha()">
+							<i class="bi bi-eye" id="iconOlho"></i>
+						</button>
+					</div>
+					<!-- Barra de força -->
+					<div class="mt-2">
+						<div class="d-flex gap-1 mb-1">
+							<div class="pwd-bar flex-grow-1" id="bar1" style="background:#e5e7eb;"></div>
+							<div class="pwd-bar flex-grow-1" id="bar2" style="background:#e5e7eb;"></div>
+							<div class="pwd-bar flex-grow-1" id="bar3" style="background:#e5e7eb;"></div>
+						</div>
+						<small id="password-status" class="text-muted"></small>
+					</div>
+				</div>
+				<div id="senhaFeedback" class="d-none"></div>
+			</div>
+			<div class="modal-footer border-0 pt-0">
+				<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+				<button id="btnSave" type="button" class="btn btn-primary btn-sm" onclick="salvarSenha()">
+					<i class="bi bi-check-circle me-1"></i>Salvar
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ── MODAL: Trocar foto ── -->
+<div class="modal fade" id="modalFoto" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered modal-sm">
+		<div class="modal-content border-0 shadow">
+			<div class="modal-header border-0 pb-0">
+				<h5 class="modal-title fw-bold"><i class="bi bi-camera me-2 text-primary"></i>Trocar foto</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<form id="uploadForm" enctype="multipart/form-data">
+					<input type="hidden" id="uploadId" name="id">
+					<div class="mb-3">
+						<label class="form-label small fw-semibold">Selecione uma imagem</label>
+						<input type="file" class="form-control form-control-sm" id="arquivoFoto" name="file" accept="image/*" required>
+						<div class="form-text">JPG, PNG ou WEBP. Máx. 5 MB.</div>
+					</div>
+					<div id="fotoFeedback" class="d-none"></div>
+				</form>
+			</div>
+			<div class="modal-footer border-0 pt-0">
+				<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary btn-sm" onclick="enviarFoto()">
+					<i class="bi bi-upload me-1"></i>Enviar
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ── MODAL: Password Generator ── -->
+<div class="modal fade" id="modalPasswordGenerator" tabindex="-1">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="container-password">
+				<div class="result">
+					<div class="result__info right">click para copiar</div>
+					<div class="result__info left">copiado</div>
+					<div class="result__viewbox" id="result" style="color:aliceblue;"></div>
+					<a id="copy-btn" style="--x:0;--y:0"><i class="far fa-copy"></i></a>
+				</div>
+				<div class="length range__slider" data-min="4" data-max="32">
+					<div class="length__title field-title" data-length="0">Tamanho:</div>
+					<input id="slider" type="range" min="4" max="32" value="16">
+				</div>
+				<div class="settings">
+					<span class="settings__title field-title">configurações</span>
+					<div class="setting"><input type="checkbox" id="uppercase" checked><label for="uppercase">Incluir Maiúsculo</label></div>
+					<div class="setting"><input type="checkbox" id="lowercase" checked><label for="lowercase">Incluir Minúsculo</label></div>
+					<div class="setting"><input type="checkbox" id="number" checked><label for="number">Incluir Número</label></div>
+					<div class="setting"><input type="checkbox" id="symbol"><label for="symbol">Incluir Símbolo</label></div>
+				</div>
+				<button class="btn generate" id="generate">Gerar Senha</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script defer src="../assets/js/bootstrap.bundle.min.js"></script>
+<script defer src="../assets/js/password-generator.js"></script>
+<script defer src="../assets/js/dark.js"></script>
+<script defer src="../assets/js/navbar.js?v=1.0"></script>
+<script defer src="../assets/js/sidebar.js?v=1.0"></script>
+<script>
+	let _userId = null;
+
+	// ── Carrega dados do perfil ────────────────────────────────────────────────
+	document.addEventListener('DOMContentLoaded', async () => {
+		try {
+			const r = await fetch('/learn/funcionarios/perfil');
+			if (r.status === 401) { window.location.href = '/learn/login'; return; }
+			const d = await r.json();
+			_userId = d.id;
+
+			// Preenche cards
+			document.getElementById('idPerfil').textContent         = d.id ?? '—';
+			document.getElementById('nomePerfil').textContent        = d.nomeFuncionario ?? '—';
+			document.getElementById('usernamePerfil').textContent    = '@' + (d.username ?? '');
+			document.getElementById('nomeInfo').textContent          = d.nomeFuncionario ?? '—';
+			document.getElementById('usernameInfo').textContent      = d.username ?? '—';
+			document.getElementById('emailInfo').textContent         = d.email ?? '—';
+			document.getElementById('dataAtualizacaoInfo').textContent = d.dataAtualizacao ?? '—';
+			document.getElementById('ultimoLoginInfo').textContent   = d.dataUltimoLogin ?? '—';
+			document.getElementById('idmodalsenha').value            = d.id;
+			document.getElementById('uploadId').value                = d.id;
+
+			// Avatar: iniciais
+			const iniciais = (d.nomeFuncionario || '?').split(' ')
+				.slice(0, 2).map(p => p[0]).join('').toUpperCase();
+			document.getElementById('avatarPerfil').textContent = iniciais;
+
+			// Tenta carregar foto
+			carregarFotoPerfil(d.id);
+		} catch (e) {
+			console.error('Erro ao carregar perfil', e);
+		}
+	});
+
+	async function carregarFotoPerfil(id) {
+		try {
+			const r = await fetch('/learn/api/file/perfil/' + id + '/thumb', { cache: 'no-store' });
+			if (!r.ok) return;
+			const blob = await r.blob();
+			if (!blob.type.startsWith('image/')) return;
+			const url = URL.createObjectURL(blob);
+			const img = document.createElement('img');
+			img.src = url;
+			img.alt = 'Foto de perfil';
+			const el = document.getElementById('avatarPerfil');
+			el.textContent = '';
+			el.appendChild(img);
+			setTimeout(() => URL.revokeObjectURL(url), 60000);
+		} catch (_) {}
+	}
+
+	// ── Senha ─────────────────────────────────────────────────────────────────
+	function avaliarSenha(val) {
+		const [b1, b2, b3] = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3')];
+		const status = document.getElementById('password-status');
+		const temNum  = /[0-9]/.test(val);
+		const temLetra = /[a-zA-Z]/.test(val);
+		const temEsp   = /[~!@#$%^&*\-_+=?><]/.test(val);
+		const len = val.length;
+
+		b1.style.background = b2.style.background = b3.style.background = '#e5e7eb';
+		if (len < 8) {
+			b1.style.background = '#ef4444';
+			status.textContent = 'Fraca — mínimo 8 caracteres';
+			status.className = 'small text-danger';
+		} else if (temNum && temLetra && temEsp) {
+			b1.style.background = b2.style.background = b3.style.background = '#16a34a';
+			status.textContent = 'Forte';
+			status.className = 'small text-success fw-semibold';
+		} else if (temNum && temLetra) {
+			b1.style.background = b2.style.background = '#f59e0b';
+			status.textContent = 'Média — adicione caractere especial';
+			status.className = 'small text-warning';
+		} else {
+			b1.style.background = '#ef4444';
+			status.textContent = 'Fraca — misture letras e números';
+			status.className = 'small text-danger';
+		}
+	}
+
+	function alternarVisibilidadeSenha() {
+		const input = document.getElementById('idpasswordmodal');
+		const icon  = document.getElementById('iconOlho');
+		const visivel = input.type === 'text';
+		input.type = visivel ? 'password' : 'text';
+		icon.className = visivel ? 'bi bi-eye' : 'bi bi-eye-slash';
+	}
+
+	async function salvarSenha() {
+		const id     = document.getElementById('idmodalsenha').value;
+		const senha  = document.getElementById('idpasswordmodal').value;
+		const fb     = document.getElementById('senhaFeedback');
+		const btn    = document.getElementById('btnSave');
+
+		if (senha.length < 8) {
+			mostrarFeedback(fb, 'danger', 'A senha precisa ter no mínimo 8 caracteres.');
+			return;
+		}
+
+		btn.disabled = true;
+		try {
+			const r = await fetch('/learn/funcionarios/senha/pessoal', {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ id, password: senha })
+			});
+			if (r.ok) {
+				mostrarFeedback(fb, 'success', '<i class="bi bi-check-circle me-1"></i>Senha atualizada com sucesso!');
+				document.getElementById('idpasswordmodal').value = '';
+				document.getElementById('password-status').textContent = '';
+				['bar1','bar2','bar3'].forEach(id => document.getElementById(id).style.background = '#e5e7eb');
+			} else {
+				mostrarFeedback(fb, 'danger', 'Não foi possível atualizar a senha.');
+				btn.disabled = false;
+			}
+		} catch (e) {
+			mostrarFeedback(fb, 'danger', 'Erro de comunicação. Tente novamente.');
+			btn.disabled = false;
+		}
+	}
+
+	// Reseta o modal ao abrir
+	document.getElementById('senhaModal').addEventListener('show.bs.modal', () => {
+		document.getElementById('idpasswordmodal').value = '';
+		document.getElementById('password-status').textContent = '';
+		['bar1','bar2','bar3'].forEach(id => document.getElementById(id).style.background = '#e5e7eb');
+		document.getElementById('senhaFeedback').className = 'd-none';
+		document.getElementById('btnSave').disabled = false;
+	});
+
+	// ── Foto ──────────────────────────────────────────────────────────────────
+	async function enviarFoto() {
+		const arquivo = document.getElementById('arquivoFoto').files[0];
+		const fb = document.getElementById('fotoFeedback');
+		if (!arquivo) { mostrarFeedback(fb, 'warning', 'Selecione um arquivo.'); return; }
+		if (arquivo.size > 5 * 1024 * 1024) { mostrarFeedback(fb, 'danger', 'Arquivo muito grande (máx. 5 MB).'); return; }
+
+		// Usa o mesmo FormData que a home.html — campo "file" + submit do formulário
+		const form = new FormData(document.getElementById('uploadForm'));
+
+		try {
+			const r = await fetch('/learn/api/file/perfil/upload', { method: 'POST', body: form });
+			if (r.ok) {
+				bootstrap.Modal.getInstance(document.getElementById('modalFoto'))?.hide();
+				await carregarFotoPerfil(_userId);  // recarrega sem cache
+				document.getElementById('arquivoFoto').value = '';
+			} else {
+				mostrarFeedback(fb, 'danger', 'Aviso: ' + (await r.text()));
+			}
+		} catch (e) {
+			mostrarFeedback(fb, 'danger', 'Erro de comunicação.');
+		}
+	}
+
+	// ── Utilitário ────────────────────────────────────────────────────────────
+	function mostrarFeedback(el, tipo, html) {
+		el.className = `alert alert-${tipo} small py-2 px-3 mt-2`;
+		el.innerHTML = html;
+	}
+</script>
+</body>
+</html>

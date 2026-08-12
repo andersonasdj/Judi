@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Judi - Login</title>
+    <link rel="shortcut icon" href="assets/img/favicon.ico">
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css">
+    <!-- style login -->
+    <link rel="stylesheet" href="assets/css/login/style-login.css">
+</head>
+<body>
+<div class="auth-shell">
+
+    <!-- ===================================================== -->
+    <!-- PAINEL DE MARCA -->
+    <!-- ===================================================== -->
+    <aside class="brand-panel">
+        <div class="brand-panel-bg" aria-hidden="true"></div>
+
+        <div class="brand-panel-content">
+            <div class="po-logo">
+                <span class="po-logo-word">Judi</span>
+                <div class="po-logo-sub"><span class="po-logo-rule"></span>Gestão Jurídica</div>
+            </div>
+
+            <h1 class="brand-headline">Acompanhamento automatizado de processos jurídicos.</h1>
+            <p class="brand-subheadline">
+                O Judi monitora seus processos judiciais automaticamente — acompanhe
+                movimentações, prazos e alertas do DataJud em um só lugar.
+            </p>
+
+            <ul class="brand-features">
+                <li><i class="bi bi-briefcase"></i> Monitoramento automático de processos</li>
+                <li><i class="bi bi-bell"></i> Alertas de movimentações e prazos em tempo real</li>
+                <li><i class="bi bi-patch-check"></i> Integração direta com o DataJud (CNJ)</li>
+            </ul>
+        </div>
+
+        <!-- Mockups flutuantes (decorativo) -->
+        <div class="floating-cards" aria-hidden="true">
+            <div class="floating-card card-1">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <div class="floating-card-text">
+                    <span class="floating-card-title">Nova movimentação</span>
+                    <span class="floating-card-subtitle">Processo 0001234-56.2024.8.26.0100</span>
+                </div>
+            </div>
+            <div class="floating-card card-2">
+                <i class="bi bi-bell-fill"></i>
+                <div class="floating-card-text">
+                    <span class="floating-card-title">Alerta de prazo</span>
+                    <span class="floating-card-subtitle">Vence em 3 dias</span>
+                </div>
+            </div>
+            <div class="floating-card card-3">
+                <div class="mini-progress"><div class="mini-progress-bar"></div></div>
+                <span class="mini-progress-label">Sincronizado com o DataJud</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===================================================== -->
+    <!-- PAINEL DE LOGIN -->
+    <!-- ===================================================== -->
+    <main class="form-panel">
+        <div class="form-panel-inner">
+
+            <div class="form-brand-mobile">
+                <div class="po-logo po-logo--sm">
+                    <span class="po-logo-word">Judi</span>
+                    <div class="po-logo-sub"><span class="po-logo-rule"></span>Gestão Jurídica</div>
+                </div>
+            </div>
+
+            <h2 class="form-title">Bem-vindo de volta</h2>
+            <p class="form-subtitle">Entre com sua conta para continuar.</p>
+
+            <div class="alert-message alert-message-error" id="loginErrorMessage">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>Usuário ou senha inválidos. Tente novamente.</span>
+            </div>
+            <div class="alert-message alert-message-success" id="logoutMessage">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Você saiu com segurança.</span>
+            </div>
+
+            <!-- FORM -->
+            <form method="POST" action="/judi/login" id="loginForm">
+                <!-- Usuário -->
+                <div class="mb-3">
+                    <label for="username" class="form-label">Usuário</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-person input-icon"></i>
+                        <input type="text" class="form-control" id="username" name="username"
+                            placeholder="Digite seu usuário" autocomplete="username" autofocus required>
+                    </div>
+                </div>
+                <!-- Senha -->
+                <div class="mb-4">
+                    <label for="password" class="form-label">Senha</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-lock input-icon"></i>
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="Digite sua senha" autocomplete="current-password" required>
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Mostrar senha">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- BOTÃO -->
+                <button type="submit" class="btn-login" id="loginBtn">
+                    Entrar <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+            </form>
+
+            <!-- FOOTER -->
+            <div class="forgot-password">
+                <a href="mailto:suporte@judi.com.br">
+                    Esqueceu sua senha?
+                </a>
+            </div>
+            <div class="copyright">
+                © 2026 Copyright: TechGold
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ===================================================== -->
+<!-- SCRIPTS -->
+<!-- ===================================================== -->
+<script defer src="assets/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Mostrar senha
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    togglePassword.addEventListener("click", () => {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type =
+            isPassword
+                ? "text"
+                : "password";
+
+        togglePassword.innerHTML =
+            isPassword
+                ? '<i class="bi bi-eye-slash"></i>'
+                : '<i class="bi bi-eye"></i>';
+    });
+
+    // Loading login
+    document.getElementById("loginForm").addEventListener("submit", () => {
+            const btn = document.getElementById("loginBtn");
+            btn.disabled = true;
+            btn.innerHTML = `
+                <span
+                    class="spinner-border spinner-border-sm me-2">
+                </span>
+                Entrando...
+            `;
+        });
+
+    // Mensagens vindas do Spring Security (redirects para /login?error ou /login?logout)
+    const paramsBusca = new URLSearchParams(window.location.search);
+    if (paramsBusca.has('error')) {
+        document.getElementById('loginErrorMessage').classList.add('is-visible');
+    }
+    if (paramsBusca.has('logout')) {
+        document.getElementById('logoutMessage').classList.add('is-visible');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/css/styleBusca.css">
+	<link rel="stylesheet" href="../assets/css/password-generator.css">
+	<link rel="stylesheet" href="../assets/css/StyleClientesFuncionarios.css">
+	<link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="../assets/css/dark.css">
+	<link rel="stylesheet" href="../assets/css/navbar.css">
+	<title>SisTech - Clientes</title>
+	<style>
+		/* cards — border sutil em modo claro */
+		.filtro-sidebar,
+		.tabela-card {
+			border: 1px solid rgba(0,0,0,.1) !important;
+			box-shadow: 0 3px 12px rgba(0,0,0,.09) !important;
+			border-radius: 16px !important;
+			overflow: hidden;
+		}
+
+		/* cabeçalho da tabela */
+		.tabela-card .table-responsive {
+			border-radius: 10px;
+			overflow: hidden;
+			border: 1px solid rgba(0,0,0,.06);
+		}
+		body.dark-mode .tabela-card .table-responsive { border-color: rgba(255,255,255,.08); }
+		.tabela-clientes-clean thead {
+			background: linear-gradient(135deg, #1e3a5f, #1a56c4);
+		}
+		.tabela-clientes-clean thead th {
+			background: transparent;
+			color: #fff;
+			font-weight: 600;
+			font-size: .76rem;
+			text-transform: uppercase;
+			letter-spacing: .06em;
+			border: none !important;
+			padding: 12px 16px;
+		}
+
+		/* botões de filtro rápido arredondados */
+		.btn-filtro-rapido { border-radius: 20px !important; font-size: .82rem; font-weight: 500; }
+
+		/* dark mode */
+		body.dark-mode table   { background-color: transparent; color: #f1f5f9; }
+		body.dark-mode th,
+		body.dark-mode td      { background-color: transparent; color: #f1f5f9; border-color: #2a2d31; }
+		body.dark-mode .table-primary { background-color: #0d6efd; color: #fff; }
+		.card { border: 1px solid rgba(0,0,0,.15) !important; box-shadow: 0 3px 12px rgba(0,0,0,.13) !important; }
+				body.dark-mode .card { border-color: rgba(255,255,255,.15) !important; box-shadow: 0 3px 14px rgba(0,0,0,.6) !important; }
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		 <script>(function(){if(localStorage.getItem('darkMode')==='enabled')document.body.classList.add('dark-mode');document.body.dataset.layout=localStorage.getItem('navLayout')||'top';if(localStorage.getItem('sidebarCollapsed')==='true')document.body.classList.add('sidebar-collapsed');})();</script>
+
+	<!-- SIDEBAR -->
+	<aside id="sidebarNav" class="sistech-sidebar">
+		<div class="sidebar-brand">
+			<div class="sidebar-brand-icon">
+				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
+			</div>
+			<span class="sidebar-brand-text">Dashboard</span>
+		</div>
+		<div class="sidebar-scroll">
+			<a href="/judi/home" class="sidebar-item active">
+				<i class="bi bi-house-fill"></i>
+				<span class="sidebar-item-label">Início</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
+		
+			<div class="sidebar-group" id="sgClientes">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
+					<i class="bi bi-building"></i>
+					<span class="sidebar-group-label">Clientes</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/cliente/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/cliente/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgFuncionarios">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
+					<i class="bi bi-person-badge"></i>
+					<span class="sidebar-group-label">Funcionários</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgProcessos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
+					<i class="bi bi-briefcase"></i>
+					<span class="sidebar-group-label">Processos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/processo/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/processo/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
+				</div>
+			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
+			<div class="sidebar-group" id="sgTarefas">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
+					<i class="bi bi-list-check"></i>
+					<span class="sidebar-group-label">Tarefas</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/tarefa/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
+				</div>
+			</div>
+			<a href="/judi/tarefa/despesas" class="sidebar-item">
+				<i class="bi bi-receipt"></i>
+				<span class="sidebar-item-label">Despesas</span>
+			</a>
+		</div>
+		<div class="sidebar-footer">
+			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
+				<i class="bi bi-arrow-bar-left" id="sidebarCollapseIcon"></i>
+			</button>
+		</div>
+	</aside>
+
+	<!-- FLYOUT: submenu ao clicar no ícone com sidebar recolhida -->
+	<div id="sidebarFlyout" class="sidebar-flyout">
+		<div class="sidebar-flyout-title" id="sidebarFlyoutTitle"></div>
+		<div id="sidebarFlyoutItems"></div>
+	</div>
+
+	<!-- OVERLAY MOBILE -->
+	<div id="sidebarOverlay" onclick="closeSidebarMobile()"></div>
+
+	<!-- SLIM TOPBAR (modo sidebar) -->
+	<div id="slimTopbar" class="sistech-slim-topbar">
+		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
+			<i class="bi bi-list"></i>
+		</button>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<div class="ms-auto d-flex align-items-center gap-2">
+			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
+				<i class="bi bi-layout-three-columns"></i>
+			</button>
+			<button class="icon-btn" onclick="toggleDarkMode()" title="Alternar modo escuro">
+				<i class="bi bi-moon"></i>
+			</button>
+			
+			<div class="dropdown">
+				<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<div class="user-avatar" id="userInitialsSlim">?</div>
+					<span class="user-name d-none d-md-inline" id="navNomeSlim">Usuário</span>
+					<i class="bi bi-chevron-down nav-chevron"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end">
+					<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+					<li><hr class="dropdown-divider"></li>		
+					<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<!-- NAVBAR -->
+		<nav class="navbar navbar-expand-lg navbar-modern sticky-top mb-2">
+			<div class="container-fluid px-3">
+				<!-- Brand -->
+				<a class="navbar-brand-modern" href="/judi/home">
+					<div class="brand-icon">
+						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
+					</div>
+					<span class="brand-text">Judi</span>
+				</a>
+				<!-- Mobile toggle -->
+				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarMain" aria-controls="navbarMain"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<!-- Collapse -->
+				<div class="collapse navbar-collapse" id="navbarMain">
+					<!-- Nav items -->
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 align-items-lg-center">
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/home">
+								<i class="bi bi-house-fill"></i> Início
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-building"></i> Clientes
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/cliente/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/cliente/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>			
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-person-badge"></i> Funcionários
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-briefcase"></i> Processos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/processo/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list-check"></i> Tarefas
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/tarefa/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/tarefa/form"><i class="bi bi-plus-circle me-2 text-success"></i>Nova</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/tarefa/despesas">
+								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+					</ul>
+
+					<!-- Direita: ícones + usuário -->
+					<div class="d-flex align-items-center gap-2">
+						<!-- Layout toggle -->
+						<button class="layout-toggle-btn" onclick="toggleLayout()" title="Alternar para barra lateral">
+							<i class="bi bi-layout-sidebar"></i>
+						</button>
+						<!-- Dark mode -->
+						<button class="icon-btn" onclick="toggleDarkMode()" id="toggleDarkBtn" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+							<i class="bi bi-moon"></i>
+						</button>
+						<!-- Usuário dropdown -->
+						<div class="dropdown">
+							<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<div class="user-avatar" id="userInitials">?</div>
+								<span class="user-name" id="navNome">Usuário</span>
+								<i class="bi bi-chevron-down nav-chevron"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<!-- / NAVBAR -->
+		
+		<div class="row g-4 mt-2 px-1">
+		    <!-- SIDEBAR -->
+		    <div class="col-lg-3">
+		        <div class="card shadow-sm border-0 filtro-sidebar">
+		            <div class="card-body">
+		                <div class="d-flex justify-content-between align-items-center mb-3">
+		                    <div>
+		                        <h5 class="mb-0"><i class="bi bi-buildings"></i> Clientes </h5>
+		                        <small class="text-muted"><span id="contador">0</span> registros</small>
+							</div>
+		                    <a href="/judi/cliente/form" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>
+		                </div>
+
+		                <hr class="border-0 border-top border-1 opacity-25 my-3">
+
+		                <!-- BUSCA -->
+		                <label class="form-label fw-semibold"> Busca </label>
+		                <div class="input-group mb-3">
+		                    <span class="input-group-text">
+		                        <i class="bi bi-search"></i>
+		                    </span>
+		                    <input class="form-control" type="search" placeholder="Cliente..." id="palavraChave" onkeypress="if(event.key==='Enter'){ event.preventDefault(); buscaPorPalavra(); }">
+		                </div>
+		                <button class="btn btn-success w-100 mb-4" onclick="buscaPorPalavra()"><i class="bi bi-search"></i> Buscar</button>
+
+		                <!-- BAIRRO -->
+		                <label class="form-label fw-semibold"> Bairro </label>
+		                <select class="form-select mb-4" id="bairro" name="bairro">
+		                    <option value="">Todos</option>
+		                </select>
+
+		                <hr class="border-0 border-top border-1 opacity-25 my-3">
+		                <div class="small text-muted">
+		                    <span id="qtdFiltrados"></span>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+
+		    <!-- TABELA -->
+		    <div class="col-lg-9">
+		        <div class="card shadow-sm border-0 tabela-card">
+		            <div class="card-body">
+		                <div class="table-responsive">
+		                    <table  class="table tabela-clientes-clean align-middle results"  id="tabela-clientes">
+		                        <thead>
+		                            <tr>
+		                                <th class="th-cliente">Cliente</th>
+		                                <th width="140" class="th-cliente">Status</th>
+		                                <th width="180" class="text-end th-cliente">Ações</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody id="corpoClientes">
+		                            <tr></tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+
+		                <nav class="mt-4">
+		                    <ul id="paginas" class="pagination justify-content-center">
+		                    </ul>
+		                </nav>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+			</div>
+	<br /><br />
+	<footer class="container-fluid fixed-bottom text-center text-white">
+			<div class="text-center" style="background-color: rgba(0, 0, 0, 0.2);">
+				© 2026 Copyright:
+				<a class="text-white" href="#">TechGold</a>
+			</div>
+	</footer>
+
+		<!-- ########################################## MODAL EDIÇÃO CLIENTE ################################################ -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Edição Cliente</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-8">
+								<label class="form-label" for="nomemodal"><b>Nome</b></label>
+								<input type="text" id="nomemodal" class="form-control"><br />
+							</div>
+							<div class="col-md-4 ms-auto">
+								<label class="form-label" for="idmodal">ID</label>
+								<input type="text" id="idmodal" class="form-control" readonly>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<label class="form-label" for="usuariomodal"><b>Usuario</b></label>
+								<input type="text" id="usuariomodal" class="form-control"><br />
+							</div>
+							<div class="col-md-6 ms-auto">
+								<label class="form-label" for="senhamodal"><b>Senha</b></label>
+								<div class="input-group">
+									<input type="password" id="senhamodal" class="form-control" autocomplete="new-password">
+									<button type="button" class="btn btn-outline-primary" onclick="abrirGeradorSenha()" title="Gerar senha aleatória">
+										<i class="bi bi-key-fill"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<label class="form-label" for="telefonemodal"><b>Telefone</b></label>
+								<input type="tel" maxlength="15" onkeyup="handlePhone(event)" id="telefonemodal" class="form-control">
+							</div>
+							<div class="col-md-6 ms-auto">
+								<label class="form-label" for="cnpjmodal"><b>CNPJ</b></label>
+								<input type="text" id="cnpjmodal" class="form-control"><br />
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="form-label" for="enderecomodal"><b>Endereço</b></label>
+								<input type="text" id="enderecomodal" class="form-control"><br />
+							</div>
+						</div>					
+						<div class="row">
+							<div class="col-md-6">
+								<label class="form-label mt-1" for="bairroModal"><b>Bairro</b></label>
+								<input type="text" id="bairroModal" class="form-control"><br />
+							</div>
+							<div class="col-md-6">
+								<label class="form-label mt-1" for="ativoModal"><b>Ativo</b></label>
+								<select class="form-select" id="ativoModal"> </select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="form-label mt-1" for="ultimologinModal"><b>Ultimo Login</b></label>
+								<input type="text" id="ultimologinModal" class="form-control" readonly><br />
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+							<button type="button" class="btn btn-primary" onclick="atualiza()">Salvar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ########################################## MODAL EDIÇÃO CLIENTE ################################################ -->
+		<!-- ####################################### MODAL LISTA DE COLABORADORES ########################################### -->
+		<div class="modal fade" id="modalColaborador" tabindex="-1" aria-labelledby="modalLabelColaborador"
+			aria-hidden="true">
+			<div class="modal-dialog modal-xl modal-dialog-scrollable">
+				<div class="modal-content border-0 rounded-3 overflow-hidden shadow-lg">
+					<div class="modal-header" style="background:linear-gradient(135deg,#1e3a5f,#1a56c4);color:#fff;">
+						<div class="d-flex align-items-center gap-2">
+							<i class="bi bi-people-fill fs-4"></i>
+							<div>
+								<h1 class="modal-title fs-5 mb-0" id="modalLabelColaborador">Colaboradores</h1>
+								<small class="opacity-75"><span id="qtdColaboradores">0</span> cadastrado(s)</small>
+							</div>
+						</div>
+						<input type="text" hidden id="idColaboradoCliente" name="idColaboradoCliente">
+						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"> </button>
+					</div>
+					<div class="modal-body">
+						<div class="d-flex flex-wrap gap-2 mb-3">
+							<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addColaboradorModal" onclick=novoColaborador()>
+								<i class="bi bi-plus-circle me-1"></i> Novo
+							</button>
+							<button class="btn btn-outline-success btn-sm" onclick="exportarColaboradoresCSV()" title="Exportar Nome e E-mail para CSV">
+								<i class="bi bi-filetype-csv me-1"></i> CSV
+							</button>
+							<button class="btn btn-outline-secondary btn-sm" onclick="generatePDF()" title="Gerar PDF">
+								<i class="bi bi-printer me-1"></i> PDF
+							</button>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-hover align-middle table-action mb-0" id="tabela-colaboradores">
+								<thead>
+									<tr>
+										<th data-field="id" style="width:50px">#</th>
+										<th data-field="nome">Nome</th>
+										<th data-field="celular">Celular</th>
+										<th data-field="email">E-mail</th>
+										<th data-field="acao" class="text-end" style="width:100px">Ação</th>
+									</tr>
+								</thead>
+								<tbody id="tbColaboradoresCorpo">
+									<tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-person-x fs-4 d-block mb-1 opacity-50"></i>Nenhum colaborador cadastrado</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ####################################### MODAL LISTA DE COLABORADORES ########################################### -->
+		<!-- ####################################### MODAL ADICIONA COLABORADOR ############################################# -->
+		<div class="modal fade" id="addColaboradorModal" tabindex="-1" aria-labelledby="addColaboradorModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="addColaboradorModalLabel">Adição de Colaborador</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+					</div>
+					<div class="modal-body">
+						<label class="form-label mt-2" for="idAddModal">Id Cliente</label>
+						<input type="text" id="idAddModal" class="form-control" readonly>
+						<label class="form-label mt-2" for="nomeAddmodal">Nome</label>
+						<input type="text" id="nomeAddmodal" class="form-control">
+						<label class="form-label mt-2" for="usernameAddmodal">Usuário</label>
+						<input type="text" id="usernameAddmodal" class="form-control">
+						<label class="form-label mt-2" for="passwordAddmodal">Senha</label>
+						<input type="text" id="passwordAddmodal" class="form-control">
+						<label class="form-label mt-2" for="celularAddmodal">Celular</label>
+						<input type="tel" maxlength="15" onkeyup="handlePhone(event)" id="celularAddmodal" class="form-control">
+						<label class="form-label mt-2" for="emailAddmodal">Email</label>
+						<input type="text" id="emailAddmodal" class="form-control">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+						<button type="button" class="btn btn-primary" onclick="salvarColaborador()">Salvar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ####################################### MODAL ADICIONA COLABORADOR ############################################# -->
+		<!-- ###################################### MODAL EDIÇÃO DE COLABORADOR ############################################# -->
+		<div class="modal fade" id="editarColaboradorModal" tabindex="-1" aria-labelledby="editarColaboradorModal"
+			aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="editarColaboradorModal">Edição de Colaborador</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-8">
+								<label class="form-label mt-2" for="nomeEdicaoModal"><b>Nome</b></label>
+								<input type="text" id="nomeEdicaoModal" class="form-control"><br />
+							</div>						
+							<div class="col-md-4 ms-auto">
+								<label class="form-label mt-2" for="idEdicaoModal">ID</label>
+								<input type="text" id="idEdicaoModal" class="form-control" readonly>
+								</di>
+							</div>
+						</div>						
+						<div class="row">
+							<div class="col-md-6">
+								<label class="form-label mt-2" for="usernameEdicaoModal"><b>Usuário</b></label>
+								<input type="text" id="usernameEdicaoModal" class="form-control"><br />
+							</div>
+							<div class="col-md-6 ms-auto">
+								<label class="form-label mt-2" for="passwordEdicaoModal"><b>Senha</b></label>
+								<input type="password" id="passwordEdicaoModal" class="form-control"><br />
+							</div>
+						</div>						
+						<div class="row">
+							<div class="col-md-6">
+								<label class="form-label mt-2" for="celularEdicaoModal"><b>Celular</b></label>
+								<input type="tel" maxlength="17" onkeyup="handlePhone(event)" id="celularEdicaoModal" class="form-control"><br />
+							</div>
+							<div class="col-md-6 ms-auto">
+								<label class="form-label mt-2" for="statusColaboradorModal"><b>Status</b></label>
+								<select class="form-select" id="statusColaboradorModal" aria-label="Default select example"> </select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 ms-auto">
+								<label class="form-label mt-2" for="emailEdicaoModal"><b>Email</b></label>
+								<input type="text" id="emailEdicaoModal" class="form-control"><br />
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalColaborador">Fechar</button>
+						<button type="button" class="btn btn-primary" onclick="atualizarColaborador()">Salvar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ###################################### MODAL EDIÇÃO DE COLABORADOR ############################################# -->
+		<!-- ############################################ MODAL PASSWORD GENERATOR ########################################## -->
+		<div class="modal fade" id="modalPasswordGenerator" tabindex="-1" aria-labelledby="modalPasswordGenerator"
+			aria-hidden="true">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="container-password">
+						<div class="result">
+							<div class="result__info right">click para copiar</div>
+							<div class="result__info left">copiado</div>
+							<div class="result__viewbox" id="result" style="color: aliceblue; "></div>
+							<a id="copy-btn" style="--x: 0; --y: 0"><i class="far fa-copy"></i></a>
+						</div>
+						<div class="length range__slider" data-min="4" data-max="32">
+							<div class="length__title field-title" data-length='0'>Tamanho:</div>
+							<input id="slider" type="range" min="4" max="32" value="16" />
+						</div>
+						<div class="settings">
+							<span class="settings__title field-title">configurações</span>
+							<div class="setting">
+								<input type="checkbox" id="uppercase" checked />
+								<label for="uppercase">Incluir Maiúsculo</label>
+							</div>
+							<div class="setting">
+								<input type="checkbox" id="lowercase" checked />
+								<label for="lowercase">Incluir Minúsculo</label>
+							</div>
+							<div class="setting">
+								<input type="checkbox" id="number" checked />
+								<label for="number">Incluir Número</label>
+							</div>
+							<div class="setting">
+								<input type="checkbox" id="symbol" />
+								<label for="symbol">Incluir Símbolo</label>
+							</div>
+						</div>
+						<button class="btn generate" id="generate">Gerar Senha</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ############################################ MODAL PASSWORD GENERATOR ########################################## -->
+	</div>
+	<script src="../assets/js/jquery-3.6.3.js"></script>
+	<script src="../assets/js/popper.min.js"></script>
+	<script src="../assets/js/bootstrap.min.js"></script>
+	<script src="../assets/js/password-generator.js"></script>
+	<script src="../assets/js/jspdf.min.js"></script>
+	<script src="../assets/js/jspdf.plugin.autotable.js"></script>
+	<script src="../assets/js/dark.js"></script>
+	<script src="../assets/js/navbar.js"></script>
+	<script src="../assets/js/sidebar.js"></script>
+	<script>
+
+		function abrirGeradorSenha(){
+			const modal = $('#modalPasswordGenerator');
+			if (!modal.length) return;
+			modal.modal('show');
+			setTimeout(function() {
+				$('#generate').trigger('click');
+			}, 150);
+		}
+
+		function buscaPorPalavra(){
+		
+			$('#corpoClientes').empty();
+			$('#paginas').empty();
+			$('#contador').text("");
+			$('#qtdFiltrados').text("");			
+			let palavra = document.getElementById('palavraChave').value;
+			
+			if(palavra != ''){
+				$.ajax({
+					type: "GET",
+					contentType: "application/json",
+					url: "/judi/clientes/nome/"+palavra,
+					success: function (data) {
+						$('#contador').text(data.totalElements);
+						$('#qtdFiltrados').text(data.totalElements);
+
+						if (!data.content || data.content.length === 0) {
+							$('#corpoClientes').html('<tr><td colspan="3" class="text-center text-muted py-4"><i class="bi bi-search"></i> Nenhum cliente encontrado</td></tr>');
+							return;
+						}
+
+						data.content.map(i => {
+							var status;
+							if(i.ativo == true){
+								status = '<span class="badge bg-success">Ativado</span>';
+							}else{
+								status = '<span class="badge bg-danger">Desativado</span>';
+							}
+							
+							var itens =
+							'<tr id=linha' + i.id + '>'
+							+ `<td>
+								    <div class="cliente-info">
+								        <div class="cliente-nome">
+								            ${i.nomeCliente}
+								        </div>
+								    </div>
+								</td>`
+							+ '<td>' + status + '</td>'
+							+ `
+							<td class="acoes-cliente">
+							    <div class="acoes-wrapper">
+							    <button
+							        class="btn-action btn btn-primary"
+							        data-bs-toggle="modal"
+							        data-bs-target="#exampleModal"
+							        onclick="editar(${i.id})">
+							        <i class="bi bi-pencil-square"></i>
+							    </button>
+							    <button
+							        class="btn-action btn btn-secondary"
+							        data-bs-toggle="modal"
+							        data-bs-target="#modalColaborador"
+							        onclick="editarColaboradores(${i.id})">
+							        <i class="bi bi-people"></i>
+							    </button>
+							    <button
+									class="btn-action btn btn-outline-secondary"
+									title="Gerenciar logo"
+									onclick="abrirModalLogo(${i.id}, '${i.nomeCliente}')">
+									<i class="bi bi-image"></i>
+								</button>
+								<button
+							        class="btn-action btn btn-danger"
+							        onclick="excluir(${i.id})">
+							        <i class="bi bi-trash"></i>
+							    </button>
+								</div>
+							</td>`
+							+ '</tr>'
+						$('#corpoClientes').append(itens);
+						});
+					},
+					statusCode: {
+					    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+						401: function() { 
+							alert('Realize login novamente!'); 
+							window.location.href = "/judi/login"; 
+						}
+					}
+				});
+			}else{
+				listarTodos();
+			}
+		}
+		
+		listarTodos();
+		
+		$(document).ready(function () {
+			var divQtdItens = $("#bairro");
+			divQtdItens.on("change", function () {
+				$('#corpoClientes').empty();
+				$('#paginas').empty();
+				if($('#bairro').val() == ""){
+					listarTodos();
+				}else{
+					listarPorBairro($('#bairro').val());
+				}
+			});
+		});
+		
+		function filtros(){
+			$("#opcoesFiltro").stop().slideToggle(800);
+		}
+		
+		function listarTodos(){
+			$.ajax({
+			type: "GET",
+			contentType: "application/json",
+			url: "/judi/clientes",
+			success: function (data) {
+				$('#qtdFiltrados').text(data.totalElements);
+				$('#contador').text(data.totalElements);
+
+				if (!data.content || data.content.length === 0) {
+					$('#corpoClientes').html('<tr><td colspan="3" class="text-center text-muted py-4"><i class="bi bi-buildings"></i> Nenhum cliente cadastrado</td></tr>');
+					return;
+				}
+
+				if(data.totalPages > 1){
+					for(var i=0; i < data.totalPages ; i++ ){
+							$('#paginas').append('<li class="page-item" id=numPag'+ i+'"><a id=numPag'+ i+' class="page-link" onclick="paginacao('+ i +')">'+ (i + 1) +'</a></li>');
+					}
+					$("#numPag0").attr("style","color:red");
+				}
+
+				data.content.map(i => {
+					var status;
+					if(i.ativo == true){
+						status = '<span class="badge bg-success">Ativado</span>';
+					}else{
+						status = '<span class="badge bg-danger">Desativado</span>';
+					}
+					
+					var itens =
+					'<tr id=linha' + i.id + '>'
+						+ `<td>
+						    <div class="cliente-info">
+						        <div class="cliente-nome">
+						            ${i.nomeCliente}
+						        </div>
+						    </div>
+						</td>`
+					+ '<td>' + status + '</t}>'
+					+ `
+					<td class="acoes-cliente">
+					    <div class="acoes-wrapper">
+					    <button
+					        class="btn-action btn btn-primary"
+					        data-bs-toggle="modal"
+					        data-bs-target="#exampleModal"
+					        onclick="editar(${i.id})">
+					        <i class="bi bi-pencil-square"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-secondary"
+					        data-bs-toggle="modal"
+					        data-bs-target="#modalColaborador"
+					        onclick="editarColaboradores(${i.id})">
+					        <i class="bi bi-people"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-outline-secondary"
+					        title="Gerenciar logo"
+					        onclick="abrirModalLogo(${i.id}, '${i.nomeCliente}')">
+					        <i class="bi bi-image"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-danger"
+					        onclick="excluir(${i.id})">
+					        <i class="bi bi-trash"></i>
+					    </button>
+						</div>
+					</td>`
+					+ '</tr>'
+				$('#corpoClientes').append(itens);
+				});
+			},
+			statusCode: {
+				    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+				    401: function() {
+						alert('Realize login novamente!');
+						window.location.href = "/judi/login";
+					}
+			}
+			});
+		}
+
+		$.ajax({
+			type: "GET",
+			contentType: "application/json",
+			url: "/judi/clientes/bairros",
+			success: function (data) {
+				for (var i = 0; i < data.length; i++) {
+					$('#bairro').append('<option value="' + data[i] + '">' + data[i] + '</option>');
+				}
+			},
+			statusCode: {
+				    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+					401: function() { 
+						alert('Realize login novamente!'); 
+						window.location.href = "/judi/login"; 
+					}
+			}
+		});
+		
+		const handlePhone = (event) => {
+		  let input = event.target
+		  input.value = phoneMask(input.value)
+		}
+		
+		const phoneMask = (value) => {
+		  if (!value) return ""
+		  value = value.replace(/\D/g,'')
+		  value = value.replace(/(\d{2})(\d)/,"($1) $2")
+		  value = value.replace(/(\d)(\d{4})$/,"$1-$2")
+		  return value
+		}
+		
+	</script>
+	
+	<script>
+		function listarPorBairro(bairro){
+			$('#qtdFiltrados').text("");
+			$('#contador').empty();
+			$('#palavraChave').val("");
+			$.ajax({
+			type: "GET",
+			contentType: "application/json",
+			url: "/judi/clientes/filtro/"+bairro,
+			success: function (data) {
+				$('#qtdFiltrados').text(data.length);
+				if (!data || data.length === 0) {
+					$('#corpoClientes').html('<tr><td colspan="3" class="text-center text-muted py-4"><i class="bi bi-geo-alt"></i> Nenhum cliente neste bairro</td></tr>');
+					return;
+				}
+				data.map(i => {
+					var status;
+					if(i.ativo == true){
+						status = '<span class="badge bg-success">Ativado</span>';
+					}else{
+						status = '<span class="badge bg-danger">Desativado</span>';
+					}
+					
+					var itens =
+					'<tr id=linha' + i.id + '>'
+						+ `<td>
+						    <div class="cliente-info">
+						        <div class="cliente-nome">
+						            ${i.nomeCliente}
+						        </div>
+						    </div>
+						</td>`
+					+ '<td>' + status + '</t}>'
+					+ `
+					<td class="acoes-cliente">
+					    <div class="acoes-wrapper">
+					    <button
+					        class="btn-action btn btn-primary"
+					        data-bs-toggle="modal"
+					        data-bs-target="#exampleModal"
+					        onclick="editar(${i.id})">
+					        <i class="bi bi-pencil-square"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-secondary"
+					        data-bs-toggle="modal"
+					        data-bs-target="#modalColaborador"
+					        onclick="editarColaboradores(${i.id})">
+					        <i class="bi bi-people"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-outline-secondary"
+					        title="Gerenciar logo"
+					        onclick="abrirModalLogo(${i.id}, '${i.nomeCliente}')">
+					        <i class="bi bi-image"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-danger"
+					        onclick="excluir(${i.id})">
+					        <i class="bi bi-trash"></i>
+					    </button>
+						</div>
+					</td>`
+					+ '</tr>'
+				$('#corpoClientes').append(itens);
+				});
+			},
+			statusCode: {
+				    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+					401: function() { 
+						alert('Realize login novamente!'); 
+						window.location.href = "/judi/login"; 
+					}
+			}
+		});			
+	}
+		
+		function paginacao(num){
+			$.ajax({
+			type: "GET",
+			contentType: "application/json",
+			url: "/judi/clientes?page="+num,
+			success: function (data) {
+				$('#corpoClientes').empty();
+				$('#paginas').empty();
+				
+				for(var i=0; i < data.totalPages ; i++ ){
+					$('#paginas').append('<li class="page-item"><a id=numPag'+ i+' class="page-link" onclick="paginacao('+ i +')">'+ (i + 1) +'</a></li>');
+				}
+				$("#numPag"+num).attr("style","color:red");
+
+				data.content.map(i => {
+					var status;
+					if(i.ativo == true){ status = "<FONT COLOR='#008000'>Ativado</FONT>"; }
+					else{ status = "<FONT COLOR='#ff0000'>Desativado</FONT>"; }
+
+					var itens =
+					'<tr id=linha' + i.id + '>'
+						+ `<td>
+						    <div class="cliente-info">
+						        <div class="cliente-nome">
+						            ${i.nomeCliente}
+						        </div>
+						    </div>
+						</td>`
+					+ '<td>' + status + '</t>'
+					+ '<td>'
+					+ `
+					<td class="acoes-cliente">
+					    <div class="acoes-wrapper">
+					    <button
+					        class="btn-action btn btn-primary"
+					        data-bs-toggle="modal"
+					        data-bs-target="#exampleModal"
+					        onclick="editar(${i.id})">
+					        <i class="bi bi-pencil-square"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-secondary"
+					        data-bs-toggle="modal"
+					        data-bs-target="#modalColaborador"
+					        onclick="editarColaboradores(${i.id})">
+					        <i class="bi bi-people"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-outline-secondary"
+					        title="Gerenciar logo"
+					        onclick="abrirModalLogo(${i.id}, '${i.nomeCliente}')">
+					        <i class="bi bi-image"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-danger"
+					        onclick="excluir(${i.id})">
+					        <i class="bi bi-trash"></i>
+					    </button>
+						</div>
+					</td>`
+					+ '</td>'
+					+ '</tr>'
+				$('#corpoClientes').append(itens);
+				});
+				},
+				statusCode: {
+					    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+						401: function() { 
+							alert('Realize login novamente!'); 
+							window.location.href = "/judi/login"; 
+						}
+				}
+			});
+		}
+		
+		function excluir(id) {
+			if (confirm("Tem certeza que deseja excluir o cliente de ID: " + id + " ?") == true) {
+				var t = "#linhaModalColaborador" + id;
+				var remove = $(t).closest('tr');
+				$.ajax({
+					type: "DELETE",
+					contentType: "application/json",
+					url: "/judi/clientes/delete/" + id,
+					success: function () {
+						if (confirm("Tem certeza que deseja excluir?") == true) {
+							remove.fadeOut(1500, function () {
+								remove.remove();
+							});
+						}
+					},
+					error: function (e) { alert("Erro: Esse cliente possui solicitações cadastradas!"); }
+				});
+			}
+		}
+		
+		function exportarColaboradoresCSV() {
+			if (!_colaboradoresAtuais || _colaboradoresAtuais.length === 0) {
+				alert('Nenhum colaborador para exportar.');
+				return;
+			}
+
+			var linhas = ['Nome,E-mail'];
+			_colaboradoresAtuais.forEach(function(c) {
+				var nome = (c.nomeColaborador || '').replace(/"/g, '""');
+				var email = (c.email || '').replace(/"/g, '""');
+				linhas.push('"' + nome + '","' + email + '"');
+			});
+
+			var csvContent = '﻿' + linhas.join('\r\n');
+			var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+			var url = URL.createObjectURL(blob);
+			var link = document.createElement('a');
+			link.setAttribute('href', url);
+			link.setAttribute('download', 'colaboradores.csv');
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+		}
+
+		function excluirColaborador(id) {
+			if (confirm("Tem certeza que deseja excluir o colaborador de ID: " + id + " ?") == true) {
+				var t = "#linhaModalColaborador" + id;
+				var remove = $(t).closest('tr');
+				$.ajax({
+					type: "DELETE",
+					contentType: "application/json",
+					url: "/judi/colaborador/delete/" + id,
+					success: function () {
+						if (confirm("Tem certeza que deseja excluir?") == true) {
+							remove.fadeOut(1000, function () {
+								remove.remove();
+							});
+						}
+					},
+					error: function (e) { alert("Erro ao tentar excluir o colaborador!"); }
+				});
+			}
+		}
+	</script>
+	<script>
+		function editar(id) {
+			$.ajax({
+				type: "GET",
+				contentType: "application/json",
+				url: "/judi/clientes/edit/" + id,
+				success: function (data) {
+					$('#idmodal').val("");
+					$('#nomemodal').val("");
+					$('#enderecomodal').val("");
+					$('#ativoModal').empty();
+					$('#bairroModal').val("");
+					$('#ultimologinModal').val("");
+					$('#usernamemodal').val("");
+					$('#passwordmodal').val("");
+
+					$('#idmodal').val(data.id);
+					$('#nomemodal').val(data.nomeCliente);
+					$('#enderecomodal').val(data.endereco);
+					$('#telefonemodal').val(data.telefone);
+					$('#usuariomodal').val(data.username);
+					$('#senhamodal').val(data.password);
+					$('#cnpjmodal').val(data.cnpj);
+					$('#bairroModal').val(data.bairro);
+					$('#ultimologinModal').val(data.dataUltimoLogin);
+					$('#usernamemodal').val(data.username);
+					$('#passwordmodal').val(data.password);
+									
+					if (data.ativo == true) {
+						$('#ativoModal').append("<option value=" + data.ativo + "> Ativado </option>");
+						$('#ativoModal').append("<option value=false>Desativado</option>");
+					} else {
+						$('#ativoModal').append("<option value=" + data.ativo + "> Desativado</option>");
+						$('#ativoModal').append("<option value=true>Ativado</option>");
+					}
+					
+				},
+				statusCode: {
+					    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+						401: function() { 
+							alert('Realize login novamente!'); 
+							window.location.href = "/judi/login"; 
+						},
+					    405: function() { alert('Você não possui permissão de edição!'); }
+				}
+			});
+		}
+
+		var _colaboradoresAtuais = [];
+
+		function editarColaboradores(id) {
+			$.ajax({
+				type: "GET",
+				contentType: "application/json",
+				url: "/judi/colaborador/list/" + id,
+				success: function (data) {
+					_colaboradoresAtuais = data;
+					$('#tbColaboradoresCorpo').empty();
+					$('#idColaboradoCliente').empty();
+					$('#idColaboradoCliente').val(id);
+					$('#qtdColaboradores').text(data.length);
+
+					if (!data.length) {
+						$('#tbColaboradoresCorpo').html('<tr><td colspan="5" class="text-center text-muted py-4"><i class="bi bi-person-x fs-4 d-block mb-1 opacity-50"></i>Nenhum colaborador cadastrado</td></tr>');
+						return;
+					}
+
+					var itens = data.map(i => {
+						var emailHtml = i.email ? '<a class="color-lnk" href="mailto:' + i.email + '">' + i.email + '</a>' : '<span class="text-muted">—</span>';
+						var statusBadge = i.ativo === false
+							? ' <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle">Desativado</span>'
+							: ' <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle">Ativado</span>';
+
+						return '<tr id=linhaModalColaborador' + i.id + '>'
+						+ '<td class="text-muted">' + i.id + '</td>'
+						+ '<td><i class="bi bi-person-circle me-1 text-secondary"></i>' + i.nomeColaborador + statusBadge + '</td>'
+						+ '<td><i class="bi bi-whatsapp wpp-color"></i> &nbsp; <a class="color-lnk" href="https://wa.me/55' + i.celular.replace(/[^0-9]/g, '')+'" target="_blank">' + i.celular + '</a></td>'
+						+ '<td>' + emailHtml + '</td>'
+						+ '<td class="text-end">'
+						+ ' <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editarColaboradorModal" onclick=editarColaborador(' + i.id + ') title="Editar"><i class="bi bi-pencil-square"></i></button>'
+						+ ' <button class="btn btn-outline-danger btn-sm" onclick=excluirColaborador(' + i.id + ') title="Excluir"><i class="bi bi-trash"></i></button>'
+						+ '</td>'
+						+ '</tr>';
+					});
+					$('#tabela-colaboradores').append(itens);
+				},
+				statusCode: {
+					    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+						401: function() { 
+							alert('Realize login novamente!'); 
+							window.location.href = "/judi/login"; 
+						}
+				}
+			});
+		}
+		
+		function editarColaborador(id){
+			$.ajax({
+				type: "GET",
+				contentType: "application/json",
+				url: "/judi/colaborador/edit/" + id,
+				success: function (data) {
+					$('#idEdicaoModal').val("");
+					$('#nomeEdicaoModal').val("");
+					$('#celularEdicaoModal').val("");
+					$('#emailEdicaoModal').val("");
+					$('#statusColaboradorModal').empty();
+
+					$('#usernameEdicaoModal').val("");
+					$('#passwordEdicaoModal').val("");
+
+					$('#idEdicaoModal').val(data.id);
+					$('#nomeEdicaoModal').val(data.nomeColaborador);
+					$('#celularEdicaoModal').val(data.celular);
+					$('#emailEdicaoModal').val(data.email);
+
+					$('#usernameEdicaoModal').val(data.username);
+
+					if (data.ativo === false) {
+						$('#statusColaboradorModal').append("<option value=false>Desativado</option>");
+						$('#statusColaboradorModal').append("<option value=true>Ativado</option>");
+					} else {
+						$('#statusColaboradorModal').append("<option value=true>Ativado</option>");
+						$('#statusColaboradorModal').append("<option value=false>Desativado</option>");
+					}
+				},
+				statusCode: {
+					    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+						401: function() { 
+							alert('Realize login novamente!'); 
+							window.location.href = "/judi/login"; 
+						}
+				}
+			});
+		}		
+		
+		function atualizarColaborador(){
+			var id = $('#idEdicaoModal').val(),
+				nomeColaborador = $('#nomeEdicaoModal').val(),
+				celular = $('#celularEdicaoModal').val(),
+				email = $('#emailEdicaoModal').val(),
+				ativo = $('#statusColaboradorModal').val(),
+				idCliente = $('#idColaboradoCliente').val(),
+				username = $('#usernameEdicaoModal').val(),
+				password = $('#passwordEdicaoModal').val();
+
+			$.ajax({
+				type: "PUT",
+				contentType: "application/json",
+				url: "/judi/colaborador/edit",
+				data: JSON.stringify({
+					"id": id,
+					"nomeColaborador": nomeColaborador,
+					"celular": celular,
+					"email": email,
+					"ativo": ativo,
+					"idCliente": idCliente,
+					"username": username,
+					"password": password
+				}),
+				success: function (data) {
+					alert(data);
+				},
+				statusCode: {
+					500: function() { alert('Erro! Contate o desenvolvedor!'); },
+					401: function() { 
+						alert('Realize login novamente!'); 
+						window.location.href = "/judi/login"; 
+					}
+				}
+			});
+		}
+
+		function novoColaborador() {
+			var id = $('#idColaboradoCliente').val();
+			$('#idAddModal').val("");
+			$('#nomeAddmodal').val("");
+			$('#celularAddmodal').val("");
+			$('#idAddModal').val(id);
+		}
+
+		function salvarColaborador() {
+
+			var clienteId = $('#idAddModal').val(),
+		 		nomeAddmodal = $('#nomeAddmodal').val(),
+				celularAddmodal = $('#celularAddmodal').val(),
+				email = $('#emailAddmodal').val();			
+				username = $('#usernameAddmodal').val(),
+				password = $('#passwordAddmodal').val(),
+
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: "/judi/colaborador",
+				data: JSON.stringify(
+					{
+						"clienteId": clienteId,
+						"nomeColaborador": nomeAddmodal,
+						"celular": celularAddmodal,
+						"email": email,
+						"username": username,
+						"password": password					
+					}
+				),
+				success: function (data) {
+					$('#nomeAddmodal').val("");
+					$('#celularAddmodal').val("");
+					$('#emailAddmodal').val("");
+					$('#usernameAddmodal').val("");
+					$('#passwordAddmodal').val("");
+					alert(data);
+				},
+				statusCode: {
+					    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+						401: function() { 
+							alert('Realize login novamente!'); 
+							window.location.href = "/judi/login"; 
+						}
+				}
+			});
+		}
+
+		function atualiza() {
+			var id = $('#idmodal').val(),
+				nomeCliente = $('#nomemodal').val(),
+				username = $('#usuariomodal').val(),
+				password = $('#senhamodal').val(),
+				telefone = $('#telefonemodal').val(),
+				cnpj = $('#cnpjmodal').val(),
+				endereco = $('#enderecomodal').val(),
+				ativo = $('#ativoModal').val(),
+				bairro = $('#bairroModal').val();
+
+			$.ajax({
+				type: "PUT",
+				contentType: "application/json",
+				url: "/judi/clientes",
+				data: JSON.stringify({
+					"id": id,
+					"nomeCliente": nomeCliente,
+					"username": username,
+					"password": password,
+					"telefone": telefone,
+					"cnpj": cnpj,
+					"endereco": endereco,
+					"ativo": ativo,
+					"bairro": bairro
+				}),
+				success: function (data) {
+
+					var status;
+					if(data.ativo == true){
+						status = '<span class="badge bg-success">Ativado</span>';
+					}else{
+						status = '<span class="badge bg-danger">Desativado</span>';
+					}
+
+					var itens =
+						'<tr id=linha' + data.id + '>'
+							+ `<td>
+							    <div class="cliente-info">
+							        <div class="cliente-nome">
+							            ${data.nomeCliente}
+							        </div>
+							    </div>
+							</td>`
+						+ '<td>' + status + '</td>'
+						+ `
+						<td class="acoes-cliente">
+						    <div class="acoes-wrapper">
+						    <button
+						        class="btn-action btn btn-primary"
+						        data-bs-toggle="modal"
+						        data-bs-target="#exampleModal"
+						        onclick="editar(${data.id})">
+						        <i class="bi bi-pencil-square"></i>
+						    </button>
+						    <button
+						        class="btn-action btn btn-secondary"
+						        data-bs-toggle="modal"
+						        data-bs-target="#modalColaborador"
+						        onclick="editarColaboradores(${data.id})">
+						        <i class="bi bi-people"></i>
+						    </button>
+						    <button
+						        class="btn-action btn btn-outline-secondary"
+						        title="Gerenciar logo"
+						        onclick="abrirModalLogo(${data.id}, '${data.nomeCliente}')">
+						        <i class="bi bi-image"></i>
+						    </button>
+						    <button
+						        class="btn-action btn btn-danger"
+						        onclick="excluir(${data.id})">
+						        <i class="bi bi-trash"></i>
+						    </button>
+							</div>
+						</td>`
+						+ '</tr>';
+					$('#linha' + data.id).remove();
+					$('#corpoClientes').append(itens);
+					alert("atualizado com sucesso");
+				},
+				statusCode: {
+					500: function() { alert('Erro! Contate o desenvolvedor!'); },
+					401: function() { 
+						alert('Realize login novamente!'); 
+						window.location.href = "/judi/login"; 
+					}
+				}
+			});
+		}
+	</script>
+	<script>
+		$(document).ready(function() {
+		  $(".search").keyup(function () {
+		    var searchTerm = $(".search").val();
+		    var listItem = $('.results tbody').children('tr');
+		    var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+		    
+		  $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
+		        return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+		    }
+		  });
+		    
+		  $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function(e){
+		    $(this).attr('visible','false');
+		  });
+		
+		  $(".results tbody tr:containsi('" + searchSplit + "')").each(function(e){
+		    $(this).attr('visible','true');
+		  });
+		
+		  var jobCount = $('.results tbody tr[visible="true"]').length;
+		    $('.counter').text(jobCount + ' item');
+		
+		  if(jobCount == '0') {$('.no-result').show();}
+		    else {$('.no-result').hide();}
+				  });
+		});
+		
+		function generatePDF() {
+		  var doc = new jsPDF('l', 'pt');
+		  var elem = document.getElementById('tabela-colaboradores');
+		  var data = doc.autoTableHtmlToJson(elem);
+		  doc.autoTable(data.columns, data.rows, {
+		    margin: {left: 35},
+		    theme: 'grid',
+		    tableWidth: 'auto',
+		    fontSize: 7,
+		    overflow: 'linebreak',
+		    }
+		  );
+		  doc.save('Colaboradores.pdf');
+		}
+	</script>
+	<script>
+	  function abrirInfraCliente(clienteId) {
+	    window.location.href = `/judi/cliente/infra?id=${clienteId}`;
+	  }
+	</script>
+
+<!-- Modal: Logo do cliente -->
+<div class="modal fade" id="modalLogo" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:460px">
+    <div class="modal-content border-0 rounded-3 overflow-hidden shadow-lg">
+      <div class="modal-header" style="background:linear-gradient(135deg,#1e3a5f,#1a56c4);color:#fff;padding:.85rem 1.25rem;">
+        <div>
+          <div class="fw-bold" id="modalLogoTitulo">Logo do cliente</div>
+          <small class="opacity-75">JPEG ou PNG — transparência preservada</small>
+        </div>
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <!-- Preview logo atual -->
+        <div class="text-center mb-3">
+          <img id="logoPreview" src="" alt="Logo"
+               style="max-height:120px;max-width:100%;object-fit:contain;border:1px solid #dee2e6;border-radius:6px;padding:8px;background:#fff;"
+               onerror="this.style.display='none';document.getElementById('logoSemImagem').style.display='flex'">
+          <div id="logoSemImagem"
+               style="height:120px;border:2px dashed #dee2e6;border-radius:6px;display:none;align-items:center;justify-content:center;color:#adb5bd;flex-direction:column;gap:4px;">
+            <i class="bi bi-image fs-2"></i>
+            <small>Nenhuma logo cadastrada</small>
+          </div>
+        </div>
+        <!-- Upload -->
+        <label class="form-label small fw-semibold text-muted text-uppercase">
+          <i class="bi bi-upload me-1"></i>Enviar nova logo
+        </label>
+        <input type="file" id="logoFile" class="form-control form-control-sm" accept="image/jpeg,image/png"
+               onchange="previewLogo(this)">
+        <small class="text-muted mt-1 d-block">A logo anterior será substituída.</small>
+      </div>
+      <div class="modal-footer bg-light border-top py-2 px-4">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="salvarLogo()" id="btnSalvarLogo">
+          <i class="bi bi-save2 me-1"></i>Salvar Logo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var _logoClienteId = null;
+
+function abrirModalLogo(id, nome) {
+  _logoClienteId = id;
+  document.getElementById('modalLogoTitulo').textContent = 'Logo — ' + nome;
+  document.getElementById('logoFile').value = '';
+
+  var img = document.getElementById('logoPreview');
+  var sem = document.getElementById('logoSemImagem');
+  img.style.display = 'block';
+  sem.style.display = 'none';
+
+  // Carregar logo atual com cache-bust
+  img.src = '/learn/api/file/cliente/' + id + '/logo?t=' + Date.now();
+  new bootstrap.Modal(document.getElementById('modalLogo')).show();
+}
+
+function previewLogo(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = document.getElementById('logoPreview');
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById('logoSemImagem').style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function salvarLogo() {
+  var input = document.getElementById('logoFile');
+  if (!input.files || !input.files[0]) {
+    alert('Selecione um arquivo para enviar.');
+    return;
+  }
+  var btn = document.getElementById('btnSalvarLogo');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Salvando...';
+
+  var formData = new FormData();
+  formData.append('file', input.files[0]);
+
+  fetch('/learn/api/file/cliente/' + _logoClienteId + '/logo', {
+    method: 'POST',
+    body: formData
+  })
+  .then(function(r) { return r.text(); })
+  .then(function(msg) {
+    alert(msg);
+    bootstrap.Modal.getInstance(document.getElementById('modalLogo')).hide();
+  })
+  .catch(function(e) { alert('Erro: ' + e.message); })
+  .finally(function() {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-save2 me-1"></i>Salvar Logo';
+  });
+}
+</script>
+
+</body>
+</html>

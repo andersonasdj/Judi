@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Judi - Verificação 2FA</title>
+    <link rel="shortcut icon" href="assets/img/favicon.ico">
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css">
+    <!-- style login -->
+    <link rel="stylesheet" href="assets/css/login/style-login.css">
+    <style>
+        /* #resposta é preenchido só via JS (erro vindo da query string) —
+           mantém a mesma cara do alert-message-error do login, sem depender
+           de uma classe is-visible que o script de verificação não usa. */
+        #resposta:empty { display: none; }
+        #resposta:not(:empty) {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: .88rem;
+            font-weight: 600;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            margin-bottom: 20px;
+        }
+        body.dark-mode #resposta:not(:empty),
+        .form-panel #resposta:not(:empty) { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+    </style>
+</head>
+<body>
+<div class="auth-shell">
+
+    <!-- ===================================================== -->
+    <!-- PAINEL DE MARCA -->
+    <!-- ===================================================== -->
+    <aside class="brand-panel">
+        <div class="brand-panel-bg" aria-hidden="true"></div>
+
+        <div class="brand-panel-content">
+            <div class="po-logo">
+                <span class="po-logo-word">Judi</span>
+                <div class="po-logo-sub"><span class="po-logo-rule"></span>Gestão Jurídica</div>
+            </div>
+
+            <h1 class="brand-headline">Acompanhamento automatizado de processos jurídicos.</h1>
+            <p class="brand-subheadline">
+                O Judi monitora seus processos judiciais automaticamente — acompanhe
+                movimentações, prazos e alertas do DataJud em um só lugar.
+            </p>
+
+            <ul class="brand-features">
+                <li><i class="bi bi-briefcase"></i> Monitoramento automático de processos</li>
+                <li><i class="bi bi-bell"></i> Alertas de movimentações e prazos em tempo real</li>
+                <li><i class="bi bi-patch-check"></i> Integração direta com o DataJud (CNJ)</li>
+            </ul>
+        </div>
+
+        <!-- Mockups flutuantes (decorativo) -->
+        <div class="floating-cards" aria-hidden="true">
+            <div class="floating-card card-1">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <div class="floating-card-text">
+                    <span class="floating-card-title">Nova movimentação</span>
+                    <span class="floating-card-subtitle">Processo 0001234-56.2024.8.26.0100</span>
+                </div>
+            </div>
+            <div class="floating-card card-2">
+                <i class="bi bi-bell-fill"></i>
+                <div class="floating-card-text">
+                    <span class="floating-card-title">Alerta de prazo</span>
+                    <span class="floating-card-subtitle">Vence em 3 dias</span>
+                </div>
+            </div>
+            <div class="floating-card card-3">
+                <div class="mini-progress"><div class="mini-progress-bar"></div></div>
+                <span class="mini-progress-label">Sincronizado com o DataJud</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===================================================== -->
+    <!-- PAINEL DE VERIFICAÇÃO 2FA -->
+    <!-- ===================================================== -->
+    <main class="form-panel">
+        <div class="form-panel-inner">
+
+            <div class="form-brand-mobile">
+                <div class="po-logo po-logo--sm">
+                    <span class="po-logo-word">Judi</span>
+                    <div class="po-logo-sub"><span class="po-logo-rule"></span>Gestão Jurídica</div>
+                </div>
+            </div>
+
+            <h2 class="form-title">Verificação em duas etapas</h2>
+            <p class="form-subtitle">
+                Digite o código de autenticação enviado para seu e-mail corporativo.
+            </p>
+
+            <!-- ERRO -->
+            <div id="resposta"></div>
+
+            <!-- FORM -->
+            <form method="POST" action="/judi/verify-2fa" id="form2fa">
+                <div class="mb-4">
+                    <label for="codigo" class="form-label">Código de verificação</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-shield-lock input-icon"></i>
+                        <input type="text" class="form-control" id="codigo"
+                            name="codigo" placeholder="000000" autocomplete="one-time-code"
+                            inputmode="numeric" maxlength="6" required>
+                    </div>
+                </div>
+                <!-- BOTÃO -->
+                <button type="submit" class="btn-login" id="btnVerificar">
+                    Verificar código <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+            </form>
+
+            <!-- FOOTER -->
+            <div class="forgot-password">
+                <i class="bi bi-shield-check me-1"></i>
+                Protegido por autenticação em dois fatores
+            </div>
+            <div class="copyright">
+                © 2026 Copyright: TechGold
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ===================================================== -->
+<!-- SCRIPT -->
+<!-- ===================================================== -->
+<script defer src="assets/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Apenas números
+    const codigoInput = document.getElementById("codigo");
+
+    codigoInput.addEventListener("input", () => {
+        codigoInput.value = codigoInput.value.replace(/\D/g, "").slice(0, 6);
+    });
+
+    // Loading botão
+    document.getElementById("form2fa").addEventListener("submit", () => {
+
+            const btn = document.getElementById("btnVerificar");
+            btn.disabled = true;
+
+            btn.innerHTML = `
+                <span
+                    class="spinner-border spinner-border-sm me-2">
+                </span>
+                Verificando...
+            `;
+        });
+
+    // Erro URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+
+    if(error){
+        document.getElementById("resposta").textContent = error;
+    }
+    // Autofocus
+    codigoInput.focus();
+</script>
+</body>
+</html>

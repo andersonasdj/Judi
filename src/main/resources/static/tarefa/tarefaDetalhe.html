@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="../assets/css/defaultStyle.css">
+	<link rel="stylesheet" href="../assets/css/dark.css">
+	<link rel="stylesheet" href="../assets/css/navbar.css">
+	<title>Judi - Detalhe da Tarefa</title>
+	<style>
+		.card { border: 1px solid rgba(0,0,0,.1) !important; box-shadow: 0 3px 12px rgba(0,0,0,.09) !important; border-radius: 16px !important; }
+		body.dark-mode .card { border-color: rgba(255,255,255,.15) !important; box-shadow: 0 3px 14px rgba(0,0,0,.6) !important; }
+		.card-body { padding: 1.75rem !important; }
+		.card-body h6 { font-size: 1rem; margin-bottom: 1.1rem !important; }
+
+		.dado-label { font-size: .76rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+		.dado-label i { margin-right: 4px; color: #6b7280; }
+		.dado-valor { font-size: 1.02rem; color: #1e293b; font-weight: 500; }
+		body.dark-mode .dado-valor { color: #f1f5f9; }
+		.row.g-3 > [class^="col-"] { margin-bottom: .4rem; }
+
+		.form-label i { margin-right: 4px; color: #6b7280; }
+		body.dark-mode .form-label i { color: #9ca3af; }
+
+		.numero-processo { font-family: 'Courier New', monospace; font-weight: 600; font-size: .95rem; }
+
+		.timer-box { border-radius: 12px; padding: 20px; background: #f8fafc; font-size: 1rem; }
+		body.dark-mode .timer-box { background: #1e1e1e; }
+		.timer-box.em-andamento-mim { background: #e7f6ec; }
+		body.dark-mode .timer-box.em-andamento-mim { background: #113322; }
+		.timer-box.em-andamento-outro { background: #fff8e6; }
+		body.dark-mode .timer-box.em-andamento-outro { background: #332b11; }
+
+		.linha-aberta td { background: rgba(13,110,253,.07) !important; font-weight: 600; }
+		body.dark-mode .linha-aberta td { background: rgba(13,110,253,.16) !important; }
+
+		#corpoTimesheets td, #corpoTimesheets th,
+		#corpoDespesas td, #corpoDespesas th { font-size: .92rem; padding-top: .65rem; padding-bottom: .65rem; }
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		 <script>(function(){if(localStorage.getItem('darkMode')==='enabled')document.body.classList.add('dark-mode');document.body.dataset.layout=localStorage.getItem('navLayout')||'top';if(localStorage.getItem('sidebarCollapsed')==='true')document.body.classList.add('sidebar-collapsed');})();</script>
+
+	<!-- SIDEBAR -->
+	<aside id="sidebarNav" class="sistech-sidebar">
+		<div class="sidebar-brand">
+			<div class="sidebar-brand-icon">
+				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
+			</div>
+			<span class="sidebar-brand-text">Dashboard</span>
+		</div>
+		<div class="sidebar-scroll">
+			<a href="/judi/home" class="sidebar-item">
+				<i class="bi bi-house-fill"></i>
+				<span class="sidebar-item-label">Início</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
+
+			<div class="sidebar-group" id="sgClientes">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
+					<i class="bi bi-building"></i>
+					<span class="sidebar-group-label">Clientes</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/cliente/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/cliente/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgFuncionarios">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
+					<i class="bi bi-person-badge"></i>
+					<span class="sidebar-group-label">Funcionários</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgProcessos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
+					<i class="bi bi-briefcase"></i>
+					<span class="sidebar-group-label">Processos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/processo/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/processo/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
+				</div>
+			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
+			<div class="sidebar-group" id="sgTarefas">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
+					<i class="bi bi-list-check"></i>
+					<span class="sidebar-group-label">Tarefas</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/tarefa/list" class="sidebar-subitem active"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
+				</div>
+			</div>
+			<a href="/judi/tarefa/despesas" class="sidebar-item">
+				<i class="bi bi-receipt"></i>
+				<span class="sidebar-item-label">Despesas</span>
+			</a>
+		</div>
+		<div class="sidebar-footer">
+			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
+				<i class="bi bi-arrow-bar-left" id="sidebarCollapseIcon"></i>
+			</button>
+		</div>
+	</aside>
+
+	<!-- FLYOUT: submenu ao clicar no ícone com sidebar recolhida -->
+	<div id="sidebarFlyout" class="sidebar-flyout">
+		<div class="sidebar-flyout-title" id="sidebarFlyoutTitle"></div>
+		<div id="sidebarFlyoutItems"></div>
+	</div>
+
+	<!-- OVERLAY MOBILE -->
+	<div id="sidebarOverlay" onclick="closeSidebarMobile()"></div>
+
+	<!-- SLIM TOPBAR (modo sidebar) -->
+	<div id="slimTopbar" class="sistech-slim-topbar">
+		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
+			<i class="bi bi-list"></i>
+		</button>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<div class="ms-auto d-flex align-items-center gap-2">
+			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
+				<i class="bi bi-layout-three-columns"></i>
+			</button>
+			<button class="icon-btn" onclick="toggleDarkMode()" title="Alternar modo escuro">
+				<i class="bi bi-moon"></i>
+			</button>
+
+			<div class="dropdown">
+				<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<div class="user-avatar" id="userInitialsSlim">?</div>
+					<span class="user-name d-none d-md-inline" id="navNomeSlim">Usuário</span>
+					<i class="bi bi-chevron-down nav-chevron"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end">
+					<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<!-- NAVBAR -->
+		<nav class="navbar navbar-expand-lg navbar-modern sticky-top mb-2">
+			<div class="container-fluid px-3">
+				<!-- Brand -->
+				<a class="navbar-brand-modern" href="/judi/home">
+					<div class="brand-icon">
+						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
+					</div>
+					<span class="brand-text">Judi</span>
+				</a>
+				<!-- Mobile toggle -->
+				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarMain" aria-controls="navbarMain"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<!-- Collapse -->
+				<div class="collapse navbar-collapse" id="navbarMain">
+					<!-- Nav items -->
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 align-items-lg-center">
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/home">
+								<i class="bi bi-house-fill"></i> Início
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-building"></i> Clientes
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/cliente/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/cliente/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-person-badge"></i> Funcionários
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-briefcase"></i> Processos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/processo/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list-check"></i> Tarefas
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/tarefa/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/tarefa/form"><i class="bi bi-plus-circle me-2 text-success"></i>Nova</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/tarefa/despesas">
+								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+					</ul>
+
+					<!-- Direita: ícones + usuário -->
+					<div class="d-flex align-items-center gap-2">
+						<!-- Layout toggle -->
+						<button class="layout-toggle-btn" onclick="toggleLayout()" title="Alternar para barra lateral">
+							<i class="bi bi-layout-sidebar"></i>
+						</button>
+						<!-- Dark mode -->
+						<button class="icon-btn" onclick="toggleDarkMode()" id="toggleDarkBtn" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+							<i class="bi bi-moon"></i>
+						</button>
+						<!-- Usuário dropdown -->
+						<div class="dropdown">
+							<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<div class="user-avatar" id="userInitials">?</div>
+								<span class="user-name" id="navNome">Usuário</span>
+								<i class="bi bi-chevron-down nav-chevron"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<!-- / NAVBAR -->
+
+		<div class="container-fluid mt-2 px-1" style="max-width:1680px;">
+
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<div>
+					<h4 class="fw-bold mb-0" id="tituloTarefa">—</h4>
+					<small class="text-muted" id="subtituloTarefa"></small>
+				</div>
+				<div class="d-flex gap-2">
+					<div id="controleStatusArea"></div>
+					<a href="/judi/tarefa/list" class="btn btn-secondary btn-sm">
+						<i class="bi bi-arrow-left"></i> Voltar
+					</a>
+				</div>
+			</div>
+
+			<div id="avisoTarefaFinalizada" class="alert alert-secondary d-flex align-items-center gap-2 py-2" style="display:none;">
+				<i class="bi bi-lock-fill"></i>
+				<span id="avisoTarefaFinalizadaTexto"></span>
+			</div>
+
+			<div class="row g-4">
+				<!-- DADOS DA TAREFA -->
+				<div class="col-lg-4">
+					<div class="card shadow-sm border-0 mb-4">
+						<div class="card-body">
+							<h6 class="mb-3"><i class="bi bi-file-earmark-text"></i> Dados da Tarefa</h6>
+							<div class="row g-3">
+								<div class="col-6"><div class="dado-label"><i class="bi bi-flag"></i> Status</div><div class="dado-valor" id="dStatus">—</div></div>
+								<div class="col-6"><div class="dado-label"><i class="bi bi-calendar3"></i> Cadastrada em</div><div class="dado-valor" id="dDataCadastro">—</div></div>
+								<div class="col-12"><div class="dado-label"><i class="bi bi-building"></i> Cliente</div><div class="dado-valor" id="dCliente">—</div></div>
+								<div class="col-12"><div class="dado-label"><i class="bi bi-briefcase"></i> Processo</div><div class="dado-valor" id="dProcesso">—</div></div>
+								<div class="col-12"><div class="dado-label"><i class="bi bi-person-check"></i> Responsável Atual</div><div class="dado-valor" id="dResponsavel">—</div></div>
+								<div class="col-12"><div class="dado-label"><i class="bi bi-card-text"></i> Descrição</div><div class="dado-valor" id="dDescricao">—</div></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- TIMER -->
+					<div class="card shadow-sm border-0 mb-4">
+						<div class="card-body">
+							<h6 class="mb-3"><i class="bi bi-stopwatch"></i> Controle de Trabalho</h6>
+							<div id="timerBox" class="timer-box">
+								<div class="text-muted small">Carregando...</div>
+							</div>
+							<div id="avisoOutroTimer" class="alert alert-warning small mt-3 mb-0" style="display:none;"></div>
+						</div>
+					</div>
+				</div>
+
+				<!-- TIMESHEETS + DESPESAS -->
+				<div class="col-lg-8">
+					<div class="card shadow-sm border-0 mb-4">
+						<div class="card-body">
+							<h6 class="mb-3"><i class="bi bi-calendar-plus"></i> Lançamento manual de horas</h6>
+							<div class="row g-2 align-items-end">
+								<div class="col-md-4">
+									<label class="form-label small"><i class="bi bi-calendar-event"></i> Início</label>
+									<input type="datetime-local" id="manInicio" class="form-control form-control-sm">
+								</div>
+								<div class="col-md-4">
+									<label class="form-label small"><i class="bi bi-calendar-check"></i> Fim</label>
+									<input type="datetime-local" id="manFim" class="form-control form-control-sm">
+								</div>
+								<div class="col-md-4">
+									<label class="form-label small"><i class="bi bi-chat-left-text"></i> Observações</label>
+									<input type="text" id="manObs" class="form-control form-control-sm">
+								</div>
+								<div class="col-md-2">
+									<button class="btn btn-success btn-sm w-100" id="btnRegistrarManual" onclick="registrarManual()">
+										<i class="bi bi-plus-circle"></i> Registrar
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="card shadow-sm border-0 mb-4">
+						<div class="card-body">
+							<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+								<h6 class="mb-0"><i class="bi bi-clock-history"></i> Histórico de Timesheets</h6>
+								<span class="badge bg-primary" id="totalTempoTarefa">
+									<i class="bi bi-hourglass-split"></i> Total: <span id="totalTempoValor">0min</span>
+								</span>
+							</div>
+							<div class="table-responsive">
+								<table class="table align-middle table-sm">
+									<thead>
+										<tr>
+											<th>Funcionário</th>
+											<th>Início</th>
+											<th>Fim</th>
+											<th>Duração</th>
+											<th>Origem</th>
+											<th>Observações</th>
+											<th class="text-end">Ações</th>
+										</tr>
+									</thead>
+									<tbody id="corpoTimesheets">
+										<tr><td colspan="7" class="text-center text-muted py-3">Carregando...</td></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="card shadow-sm border-0 mb-4">
+						<div class="card-body">
+							<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+								<h6 class="mb-0"><i class="bi bi-receipt"></i> Despesas de Reembolso</h6>
+								<div class="d-flex gap-2 flex-wrap">
+									<span class="badge bg-secondary"><i class="bi bi-wallet2"></i> Total: <span id="totalDespesaValor">R$ 0,00</span></span>
+									<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Pendente: <span id="totalDespesaPendente">R$ 0,00</span></span>
+									<span class="badge bg-success"><i class="bi bi-check-circle"></i> Reembolsado: <span id="totalDespesaReembolsada">R$ 0,00</span></span>
+								</div>
+							</div>
+							<div class="row g-2 align-items-end mb-3">
+								<div class="col-md-5">
+									<label class="form-label small"><i class="bi bi-tag"></i> Descrição</label>
+									<input type="text" id="despDescricao" class="form-control form-control-sm">
+								</div>
+								<div class="col-md-3">
+									<label class="form-label small"><i class="bi bi-cash-coin"></i> Valor (R$)</label>
+									<input type="number" step="0.01" min="0" id="despValor" class="form-control form-control-sm">
+								</div>
+								<div class="col-md-2">
+									<label class="form-label small"><i class="bi bi-calendar3"></i> Data</label>
+									<input type="date" id="despData" class="form-control form-control-sm">
+								</div>
+								<div class="col-md-2">
+									<button class="btn btn-success btn-sm w-100" id="btnRegistrarDespesa" onclick="registrarDespesa()">
+										<i class="bi bi-plus-circle"></i> Registrar
+									</button>
+								</div>
+							</div>
+							<div class="table-responsive">
+								<table class="table align-middle table-sm">
+									<thead>
+										<tr>
+											<th>Descrição</th>
+											<th>Valor</th>
+											<th>Data</th>
+											<th>Funcionário</th>
+											<th>Status</th>
+											<th class="text-end">Ações</th>
+										</tr>
+									</thead>
+									<tbody id="corpoDespesas">
+										<tr><td colspan="6" class="text-center text-muted py-3">Carregando...</td></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br /><br />
+	<footer class="container-fluid fixed-bottom text-center text-white">
+			<div class="text-center" style="background-color: rgba(0, 0, 0, 0.2);">
+				© 2026 Copyright:
+				<a class="text-white" href="#">TechGold</a>
+			</div>
+	</footer>
+	</div>
+
+	<!-- MODAL EDIÇÃO DE TIMESHEET -->
+	<div class="modal fade" id="modalEditarTimesheet" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title mb-0"><i class="bi bi-pencil-square"></i> Editar Lançamento</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" id="editTimesheetId">
+					<div class="mb-3">
+						<label class="form-label small"><i class="bi bi-calendar-event"></i> Início</label>
+						<input type="datetime-local" id="editInicio" class="form-control form-control-sm">
+					</div>
+					<div class="mb-3" id="editFimWrapper">
+						<label class="form-label small"><i class="bi bi-calendar-check"></i> Fim</label>
+						<input type="datetime-local" id="editFim" class="form-control form-control-sm">
+					</div>
+					<div class="mb-3 small text-muted" id="editAbertoAviso" style="display:none;">
+						<i class="bi bi-hourglass-split"></i> Este timesheet ainda está em andamento — o horário de fim só é definido ao finalizar o trabalho.
+					</div>
+					<div class="mb-1">
+						<label class="form-label small"><i class="bi bi-chat-left-text"></i> Observações</label>
+						<input type="text" id="editObs" class="form-control form-control-sm">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-primary btn-sm" onclick="salvarEdicaoTimesheet()">Salvar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="../assets/js/jquery-3.6.3.js"></script>
+	<script src="../assets/js/bootstrap.bundle.min.js"></script>
+	<script src="../assets/js/dark.js"></script>
+	<script src="../assets/js/navbar.js"></script>
+	<script src="../assets/js/sidebar.js"></script>
+	<script>
+		var _tarefaId = new URLSearchParams(window.location.search).get('id');
+		var _isAdmin = false;
+		var _meuId = null;
+		var _abertoGlobal = null;
+		var _tarefaData = null;
+
+		if (!_tarefaId) {
+			alert('Tarefa não informada.');
+			window.location.href = '/judi/tarefa/list';
+		}
+
+		function escapeHtml(str) {
+			return String(str == null ? '' : str)
+				.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+		}
+
+		function badgeStatus(status) {
+			var cfg = {
+				ABERTA:        { cor: 'secondary', label: 'Aberta' },
+				EM_ANDAMENTO:  { cor: 'primary',   label: 'Em andamento' },
+				CONCLUIDA:     { cor: 'success',   label: 'Concluída' },
+				CANCELADA:     { cor: 'dark',      label: 'Cancelada' }
+			};
+			var c = cfg[status] || { cor: 'secondary', label: status || '—' };
+			return '<span class="badge bg-' + c.cor + '">' + c.label + '</span>';
+		}
+
+		function badgeOrigem(origem) {
+			return origem === 'MANUAL'
+				? '<span class="badge bg-secondary-subtle text-secondary border">Manual</span>'
+				: '<span class="badge bg-primary-subtle text-primary border">Timer</span>';
+		}
+
+		function formatDuracao(min) {
+			if (min == null) return '—';
+			var h = Math.floor(min / 60);
+			var m = min % 60;
+			return (h > 0 ? h + 'h ' : '') + m + 'min';
+		}
+
+		function tratarErroPadrao(xhr) {
+			if (xhr.status === 401) {
+				alert('Realize login novamente!');
+				window.location.href = "/judi/login";
+				return;
+			}
+			if (xhr.status === 403) {
+				alert('Você não possui permissão');
+				return;
+			}
+			var msg = xhr.responseText;
+			alert(msg || 'Erro! Contate o desenvolvedor!');
+		}
+
+		// ########################################
+		// CARREGAMENTO INICIAL
+		// ########################################
+		function init() {
+			$.when(carregarIsAdmin(), carregarPerfil()).always(function () {
+				carregarDetalhe();
+				carregarAbertoGlobal();
+			});
+		}
+
+		function carregarIsAdmin() {
+			return $.ajax({
+				type: "GET",
+				url: "/judi/funcionarios/isAdmin",
+				success: function (data) { _isAdmin = data === true; }
+			});
+		}
+
+		function carregarPerfil() {
+			return $.ajax({
+				type: "GET",
+				url: "/judi/funcionarios/perfil",
+				success: function (data) { _meuId = data ? data.id : null; }
+			});
+		}
+
+		function carregarAbertoGlobal() {
+			// Endpoint pode devolver corpo vazio quando não há timesheet aberto;
+			// usa fetch + texto bruto para evitar erro de parse do jQuery em corpo vazio.
+			fetch('/judi/timesheets/aberto')
+				.then(function (r) {
+					if (r.status === 401) {
+						alert('Realize login novamente!');
+						window.location.href = "/judi/login";
+						return null;
+					}
+					if (!r.ok) return null;
+					return r.text();
+				})
+				.then(function (text) {
+					_abertoGlobal = (text && text.trim()) ? JSON.parse(text) : null;
+					renderAvisoOutroTimer();
+				})
+				.catch(function () { _abertoGlobal = null; });
+		}
+
+		function carregarDetalhe() {
+			$.ajax({
+				type: "GET",
+				contentType: "application/json",
+				url: "/judi/tarefas/" + _tarefaId,
+				success: function (data) {
+					preencherDetalhe(data);
+				},
+				statusCode: {
+					404: function() { alert('Tarefa não encontrada.'); window.location.href = '/judi/tarefa/list'; },
+					500: function() { alert('Erro! Contate o desenvolvedor!'); },
+					401: function() {
+						alert('Realize login novamente!');
+						window.location.href = "/judi/login";
+					}
+				}
+			});
+		}
+
+		function preencherDetalhe(data) {
+			_tarefaData = data;
+
+			document.getElementById('tituloTarefa').textContent = data.titulo || '—';
+			document.getElementById('subtituloTarefa').innerHTML = data.nomeCliente
+				? '<i class="bi bi-building"></i> ' + escapeHtml(data.nomeCliente)
+				: '';
+
+			$('#dStatus').html(badgeStatus(data.status));
+			$('#dDataCadastro').text(data.dataCadastro || '—');
+			$('#dCliente').text(data.nomeCliente || '—');
+
+			if (data.processoId) {
+				$('#dProcesso').html('<a href="/judi/processo/detalhe?id=' + data.processoId + '"><span class="numero-processo">' + escapeHtml(data.numeroProcesso || ('#' + data.processoId)) + '</span></a>');
+			} else {
+				$('#dProcesso').text('—');
+			}
+
+			$('#dResponsavel').text(data.nomeFuncionarioResponsavel || '—');
+			$('#dDescricao').text(data.descricao || '—');
+
+			renderControleStatus(data.status);
+			renderAvisoFinalizada(data.status);
+			atualizarFormulariosBloqueio(data.status);
+			renderTimerBox(data.timesheets || []);
+			renderHistorico(data.timesheets || []);
+			renderDespesas(data.despesas || []);
+			renderAvisoOutroTimer();
+		}
+
+		// ########################################
+		// TAREFA FINALIZADA (CONCLUIDA/CANCELADA)
+		// ########################################
+		function tarefaFinalizada(status) {
+			return status === 'CONCLUIDA' || status === 'CANCELADA';
+		}
+
+		function renderAvisoFinalizada(status) {
+			var el = $('#avisoTarefaFinalizada');
+			if (!tarefaFinalizada(status)) { el.hide(); return; }
+			var rotulo = status === 'CONCLUIDA' ? 'concluída' : 'cancelada';
+			$('#avisoTarefaFinalizadaTexto').text(
+				'Esta tarefa está ' + rotulo + ' — não aceita mais lançamentos de horas ou despesas.' +
+				(_isAdmin ? ' Use "Reabrir Tarefa" para voltar a trabalhar nela.' : '')
+			);
+			el.show();
+		}
+
+		function renderControleStatus(status) {
+			var el = $('#controleStatusArea');
+
+			if (!tarefaFinalizada(status)) {
+				el.html(
+					'<div class="dropdown">' +
+						'<button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+							'<i class="bi bi-arrow-repeat"></i> Alterar status' +
+						'</button>' +
+						'<ul class="dropdown-menu dropdown-menu-end">' +
+							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'ABERTA\');return false;"><i class="bi bi-circle text-secondary me-2"></i>Aberta</a></li>' +
+							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'EM_ANDAMENTO\');return false;"><i class="bi bi-play-circle text-primary me-2"></i>Em andamento</a></li>' +
+							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'CONCLUIDA\');return false;"><i class="bi bi-check-circle text-success me-2"></i>Concluir</a></li>' +
+							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'CANCELADA\');return false;"><i class="bi bi-x-circle text-dark me-2"></i>Cancelar</a></li>' +
+						'</ul>' +
+					'</div>'
+				);
+				return;
+			}
+
+			if (_isAdmin) {
+				el.html('<button class="btn btn-outline-warning btn-sm" onclick="reabrirTarefa()"><i class="bi bi-unlock-fill"></i> Reabrir Tarefa</button>');
+			} else {
+				el.html('<button class="btn btn-outline-secondary btn-sm" disabled title="Apenas administradores podem reabrir"><i class="bi bi-lock-fill"></i> Tarefa Travada</button>');
+			}
+		}
+
+		function reabrirTarefa() {
+			mudarStatus('ABERTA');
+		}
+
+		function atualizarFormulariosBloqueio(status) {
+			var bloqueado = tarefaFinalizada(status);
+			['manInicio', 'manFim', 'manObs', 'btnRegistrarManual', 'despDescricao', 'despValor', 'despData', 'btnRegistrarDespesa']
+				.forEach(function (id) {
+					var el = document.getElementById(id);
+					if (el) el.disabled = bloqueado;
+				});
+		}
+
+		// ########################################
+		// TIMER
+		// ########################################
+		function renderTimerBox(timesheets) {
+			var box = $('#timerBox');
+			var aberto = timesheets.find(function (t) { return t.dataFim == null; });
+
+			if (!aberto) {
+				box.removeClass('em-andamento-mim em-andamento-outro');
+
+				if (_tarefaData && tarefaFinalizada(_tarefaData.status)) {
+					box.html('<div class="text-muted"><i class="bi bi-lock-fill"></i> Tarefa ' +
+						(_tarefaData.status === 'CONCLUIDA' ? 'concluída' : 'cancelada') + ' — sem novos lançamentos.</div>');
+					return;
+				}
+
+				box.html(
+					'<div class="mb-2"><i class="bi bi-pause-circle text-muted"></i> Nenhum trabalho em andamento nesta tarefa.</div>' +
+					'<label class="form-label small mb-1"><i class="bi bi-chat-left-text"></i> Observação (opcional)</label>' +
+					'<input type="text" id="iniciarObs" class="form-control form-control-sm mb-2" placeholder="O que você vai fazer...">' +
+					'<button class="btn btn-primary btn-sm" onclick="iniciarTrabalho()"><i class="bi bi-play-fill"></i> Iniciar Trabalho</button>'
+				);
+				return;
+			}
+
+			if (_meuId != null && aberto.funcionarioId === _meuId) {
+				box.removeClass('em-andamento-outro').addClass('em-andamento-mim');
+				box.html(
+					'<div class="mb-2"><i class="bi bi-play-circle-fill text-success"></i> Você está trabalhando nesta tarefa desde <strong>' + escapeHtml(aberto.dataInicio) + '</strong>.</div>' +
+					'<button class="btn btn-danger btn-sm" onclick="finalizarTrabalho(' + aberto.id + ')"><i class="bi bi-stop-fill"></i> Finalizar meu trabalho</button>'
+				);
+			} else {
+				box.removeClass('em-andamento-mim').addClass('em-andamento-outro');
+				box.html(
+					'<div><i class="bi bi-exclamation-triangle text-warning"></i> Em andamento por <strong>' + escapeHtml(aberto.nomeFuncionario) + '</strong> desde ' + escapeHtml(aberto.dataInicio) + '.</div>'
+				);
+			}
+		}
+
+		function renderAvisoOutroTimer() {
+			var el = $('#avisoOutroTimer');
+			if (_abertoGlobal && String(_abertoGlobal.tarefaId) !== String(_tarefaId)) {
+				el.text('Atenção: você já possui um trabalho em andamento em outra tarefa (iniciado em ' + (_abertoGlobal.dataInicio || '—') + ').').show();
+			} else {
+				el.hide();
+			}
+		}
+
+		function iniciarTrabalho() {
+			var obsEl = document.getElementById('iniciarObs');
+			var obs = obsEl ? obsEl.value.trim() : '';
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: "/judi/timesheets/iniciar/" + _tarefaId,
+				data: JSON.stringify({ observacoes: obs || null }),
+				success: function () {
+					carregarDetalhe();
+					carregarAbertoGlobal();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		function finalizarTrabalho(id) {
+			$.ajax({
+				type: "PUT",
+				url: "/judi/timesheets/" + id + "/finalizar",
+				success: function () {
+					carregarDetalhe();
+					carregarAbertoGlobal();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		// ########################################
+		// STATUS
+		// ########################################
+		function mudarStatus(status) {
+			$.ajax({
+				type: "PUT",
+				url: "/judi/tarefas/" + _tarefaId + "/status/" + status,
+				success: function () {
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		// ########################################
+		// HISTÓRICO DE TIMESHEETS
+		// ########################################
+		var _timesheetsAtuais = [];
+
+		function renderHistorico(lista) {
+			_timesheetsAtuais = lista;
+			atualizarTotalTempo(lista);
+
+			var el = $('#corpoTimesheets');
+			el.empty();
+			if (!lista.length) {
+				el.html('<tr><td colspan="7" class="text-center text-muted py-3">Nenhum lançamento registrado.</td></tr>');
+				return;
+			}
+			var bloqueado = _tarefaData && tarefaFinalizada(_tarefaData.status);
+			lista.forEach(function (t) {
+				var aberto = t.dataFim == null;
+				var linha = $('<tr' + (aberto ? ' class="linha-aberta"' : '') + '></tr>');
+				var acoes = bloqueado ? '<span class="text-muted small"><i class="bi bi-lock-fill"></i></span>' :
+					'<button class="btn btn-outline-secondary btn-sm me-1" title="Editar" onclick="abrirEdicaoTimesheet(' + t.id + ')"><i class="bi bi-pencil"></i></button>' +
+					'<button class="btn btn-outline-danger btn-sm" title="Excluir" onclick="excluirTimesheet(' + t.id + ')"><i class="bi bi-trash"></i></button>';
+				linha.html(
+					'<td>' + escapeHtml(t.nomeFuncionario || '—') + '</td>' +
+					'<td>' + (t.dataInicio || '—') + '</td>' +
+					'<td>' + (aberto ? '<span class="text-primary"><i class="bi bi-hourglass-split"></i> Em andamento</span>' : (t.dataFim || '—')) + '</td>' +
+					'<td>' + formatDuracao(t.duracaoMinutos) + '</td>' +
+					'<td>' + badgeOrigem(t.origem) + '</td>' +
+					'<td class="small text-muted">' + escapeHtml(t.observacoes || '—') + '</td>' +
+					'<td class="text-end text-nowrap">' + acoes + '</td>'
+				);
+				el.append(linha);
+			});
+		}
+
+		function atualizarTotalTempo(lista) {
+			var totalMinutos = 0;
+			var temAberto = false;
+			lista.forEach(function (t) {
+				if (t.duracaoMinutos != null) {
+					totalMinutos += t.duracaoMinutos;
+				} else {
+					temAberto = true;
+				}
+			});
+			var texto = formatDuracao(totalMinutos);
+			if (temAberto) texto += ' (+ em andamento)';
+			document.getElementById('totalTempoValor').textContent = texto;
+		}
+
+		// ########################################
+		// EDITAR / EXCLUIR TIMESHEET
+		// ########################################
+		var _modalEditarTimesheet;
+
+		function paraInputDatetime(dataBr) {
+			if (!dataBr) return '';
+			var p = dataBr.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+			if (!p) return '';
+			return p[3] + '-' + p[2] + '-' + p[1] + 'T' + p[4] + ':' + p[5];
+		}
+
+		function abrirEdicaoTimesheet(id) {
+			var t = _timesheetsAtuais.find(function (x) { return x.id === id; });
+			if (!t) return;
+
+			var aberto = t.dataFim == null;
+
+			document.getElementById('editTimesheetId').value = t.id;
+			document.getElementById('editInicio').value = paraInputDatetime(t.dataInicio);
+			document.getElementById('editFim').value = aberto ? '' : paraInputDatetime(t.dataFim);
+			document.getElementById('editObs').value = t.observacoes || '';
+			document.getElementById('editFimWrapper').style.display = aberto ? 'none' : '';
+			document.getElementById('editAbertoAviso').style.display = aberto ? '' : 'none';
+
+			if (!_modalEditarTimesheet) {
+				_modalEditarTimesheet = new bootstrap.Modal(document.getElementById('modalEditarTimesheet'));
+			}
+			_modalEditarTimesheet.show();
+		}
+
+		function salvarEdicaoTimesheet() {
+			var id = document.getElementById('editTimesheetId').value;
+			var inicio = document.getElementById('editInicio').value;
+			var fimEl = document.getElementById('editFim');
+			var fimVisivel = document.getElementById('editFimWrapper').style.display !== 'none';
+			var obs = document.getElementById('editObs').value.trim();
+
+			if (!inicio) { alert('Informe a data/hora de início.'); return; }
+			if (fimVisivel && !fimEl.value) { alert('Informe a data/hora de fim.'); return; }
+
+			var payload = {
+				dataInicio: inicio.length === 16 ? inicio + ':00' : inicio,
+				dataFim: fimVisivel ? (fimEl.value.length === 16 ? fimEl.value + ':00' : fimEl.value) : null,
+				observacoes: obs
+			};
+
+			$.ajax({
+				type: "PUT",
+				contentType: "application/json",
+				url: "/judi/timesheets/" + id,
+				data: JSON.stringify(payload),
+				success: function () {
+					_modalEditarTimesheet.hide();
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		function excluirTimesheet(id) {
+			if (!confirm('Tem certeza que deseja excluir este lançamento de horas?')) return;
+			$.ajax({
+				type: "DELETE",
+				url: "/judi/timesheets/" + id,
+				success: function () {
+					carregarDetalhe();
+					carregarAbertoGlobal();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		function registrarManual() {
+			var inicio = document.getElementById('manInicio').value;
+			var fim = document.getElementById('manFim').value;
+			var obs = document.getElementById('manObs').value.trim();
+
+			if (!inicio || !fim) {
+				alert('Informe a data/hora de início e fim.');
+				return;
+			}
+
+			var payload = {
+				tarefaId: Number(_tarefaId),
+				dataInicio: inicio.length === 16 ? inicio + ':00' : inicio,
+				dataFim: fim.length === 16 ? fim + ':00' : fim,
+				observacoes: obs
+			};
+
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: "/judi/timesheets/manual",
+				data: JSON.stringify(payload),
+				success: function () {
+					document.getElementById('manInicio').value = '';
+					document.getElementById('manFim').value = '';
+					document.getElementById('manObs').value = '';
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		// ########################################
+		// DESPESAS
+		// ########################################
+		function formatarMoeda(valor) {
+			return 'R$ ' + Number(valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+		}
+
+		function atualizarTotalDespesas(lista) {
+			var total = 0, pendente = 0, reembolsada = 0;
+			lista.forEach(function (d) {
+				var valor = Number(d.valor || 0);
+				total += valor;
+				if (d.reembolsada) reembolsada += valor; else pendente += valor;
+			});
+			document.getElementById('totalDespesaValor').textContent = formatarMoeda(total);
+			document.getElementById('totalDespesaPendente').textContent = formatarMoeda(pendente);
+			document.getElementById('totalDespesaReembolsada').textContent = formatarMoeda(reembolsada);
+		}
+
+		function renderDespesas(lista) {
+			atualizarTotalDespesas(lista);
+
+			var el = $('#corpoDespesas');
+			el.empty();
+			if (!lista.length) {
+				el.html('<tr><td colspan="6" class="text-center text-muted py-3">Nenhuma despesa registrada.</td></tr>');
+				return;
+			}
+			lista.forEach(function (d) {
+				var statusBadge = d.reembolsada
+					? '<span class="badge bg-success">Reembolsada</span>'
+					: '<span class="badge bg-warning text-dark">Pendente</span>';
+				var acoes = (!d.reembolsada && _isAdmin)
+					? '<button class="btn btn-outline-success btn-sm" title="Marcar reembolsada" onclick="reembolsarDespesa(' + d.id + ')"><i class="bi bi-check2-circle"></i></button>'
+					: '';
+				var linha = $('<tr></tr>');
+				linha.html(
+					'<td>' + escapeHtml(d.descricao || '—') + '</td>' +
+					'<td>' + formatarMoeda(d.valor) + '</td>' +
+					'<td>' + (d.data || '—') + '</td>' +
+					'<td>' + escapeHtml(d.nomeFuncionario || '—') + '</td>' +
+					'<td>' + statusBadge + '</td>' +
+					'<td class="text-end">' + acoes + '</td>'
+				);
+				el.append(linha);
+			});
+		}
+
+		function registrarDespesa() {
+			var descricao = document.getElementById('despDescricao').value.trim();
+			var valor = document.getElementById('despValor').value;
+			var data = document.getElementById('despData').value;
+
+			if (!descricao) { alert('Informe a descrição da despesa.'); return; }
+			if (!valor) { alert('Informe o valor da despesa.'); return; }
+			if (!data) { alert('Informe a data da despesa.'); return; }
+
+			var payload = {
+				tarefaId: Number(_tarefaId),
+				descricao: descricao,
+				valor: Number(valor),
+				data: data
+			};
+
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: "/judi/despesas",
+				data: JSON.stringify(payload),
+				success: function () {
+					document.getElementById('despDescricao').value = '';
+					document.getElementById('despValor').value = '';
+					document.getElementById('despData').value = '';
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		function reembolsarDespesa(id) {
+			$.ajax({
+				type: "PUT",
+				url: "/judi/despesas/" + id + "/reembolsar",
+				success: function () {
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
+			});
+		}
+
+		init();
+	</script>
+</body>
+</html>

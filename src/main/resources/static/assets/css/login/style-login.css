@@ -1,0 +1,484 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    color:#0f172a;
+    background:#ffffff;
+}
+
+/* ===================================================== */
+/* PALETA PROVIDERONE (alinhada ao modelo de certificado) */
+/* ===================================================== */
+
+:root{
+    --po-navy:#17224f;
+    --po-navy-dark:#0d1638;
+    --po-navy-soft:#2a3a7a;
+    --po-blue:#3b62b0;
+    --po-blue-light:#8fabe8;
+    --po-ink:#14151a;
+    --po-gray:#6b7280;
+}
+
+/* ===================================================== */
+/* SHELL (split screen) */
+/* ===================================================== */
+
+.auth-shell{
+    display:flex;
+    min-height:100vh;
+}
+
+/* ===================================================== */
+/* PAINEL DE MARCA (esquerda) */
+/* ===================================================== */
+
+.brand-panel{
+    position:relative;
+    flex:1 1 54%;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    padding:56px 64px;
+}
+
+.brand-panel-bg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    background:linear-gradient(160deg, var(--po-navy-dark), var(--po-navy) 55%, var(--po-navy-soft));
+}
+
+/* Círculo de destaque, eco do círculo azul do certificado */
+.brand-panel::before{
+    content:"";
+    position:absolute;
+    z-index:1;
+    top:11%;
+    right:26%;
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:var(--po-blue);
+    box-shadow:0 10px 24px rgba(59,98,176,0.35);
+}
+
+.brand-panel-content{
+    position:relative;
+    z-index:1;
+    max-width:520px;
+    color:#ffffff;
+}
+
+.po-logo{
+    margin-bottom:56px;
+}
+
+.po-logo-word{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:1.55rem;
+    font-weight:600;
+    color:var(--po-ink);
+    letter-spacing:.2px;
+}
+
+.po-logo-accent{
+    position:relative;
+    color:var(--po-navy);
+    font-weight:700;
+}
+
+.po-logo-accent sup{
+    font-size:.5em;
+    font-weight:700;
+    color:var(--po-blue);
+    margin-left:-2px;
+}
+
+.po-logo-sub{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:4px;
+    font-size:.72rem;
+    font-weight:600;
+    letter-spacing:2.5px;
+    color:var(--po-gray);
+    text-transform:uppercase;
+}
+
+.po-logo-rule{
+    width:26px;
+    height:1px;
+    background:var(--po-gray);
+    display:inline-block;
+}
+
+.po-logo--sm .po-logo-word{ font-size:1.2rem; }
+
+/* Variante clara do logo, sobre o painel navy */
+.brand-panel-content .po-logo-word{ color:#ffffff; }
+.brand-panel-content .po-logo-accent,
+.brand-panel-content .po-logo-accent sup{ color:var(--po-blue-light); }
+.brand-panel-content .po-logo-sub{ color:rgba(255,255,255,0.68); }
+.brand-panel-content .po-logo-rule{ background:rgba(255,255,255,0.4); }
+
+.brand-headline{
+    font-size:2.35rem;
+    font-weight:800;
+    line-height:1.25;
+    margin-bottom:20px;
+    letter-spacing:-.5px;
+    color:#ffffff;
+}
+
+.brand-subheadline{
+    font-size:1.02rem;
+    line-height:1.65;
+    color:rgba(255,255,255,0.82);
+    margin-bottom:36px;
+    max-width:440px;
+}
+
+.brand-features{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.brand-features li{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:.98rem;
+    font-weight:500;
+    color:#ffffff;
+}
+
+.brand-features i{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    flex-shrink:0;
+    border-radius:10px;
+    background:rgba(255,255,255,0.14);
+    color:#ffffff;
+    font-size:1rem;
+}
+
+/* ===================================================== */
+/* CARDS FLUTUANTES (decorativo) */
+/* ===================================================== */
+
+.floating-cards{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+}
+
+.floating-card{
+    position:absolute;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#ffffff;
+    border:1px solid rgba(23,34,79,0.08);
+    border-radius:14px;
+    padding:12px 16px;
+    color:var(--po-navy);
+    box-shadow:0 14px 30px rgba(23,34,79,0.16);
+    animation:floatCard 6s ease-in-out infinite;
+}
+
+.floating-card i{ font-size:1.6rem; color:var(--po-blue); }
+
+.floating-card-text{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.floating-card-title{
+    font-size:.82rem;
+    font-weight:700;
+    color:var(--po-ink);
+    white-space:nowrap;
+}
+
+.floating-card-subtitle{
+    font-size:.72rem;
+    color:var(--po-gray);
+    white-space:nowrap;
+}
+
+.card-1{
+    top:14%;
+    right:9%;
+    animation-delay:0s;
+}
+
+.card-2{
+    top:38%;
+    right:2%;
+    animation-delay:1.2s;
+}
+
+.card-3{
+    bottom:16%;
+    right:12%;
+    flex-direction:column;
+    align-items:flex-start;
+    min-width:150px;
+    animation-delay:2.4s;
+}
+
+.mini-progress{
+    width:100%;
+    height:6px;
+    border-radius:3px;
+    background:rgba(23,34,79,0.1);
+    overflow:hidden;
+    margin-bottom:8px;
+}
+
+.mini-progress-bar{
+    width:78%;
+    height:100%;
+    border-radius:3px;
+    background:var(--po-blue);
+}
+
+.mini-progress-label{
+    font-size:.78rem;
+    font-weight:600;
+    color:var(--po-navy);
+}
+
+@keyframes floatCard{
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-12px); }
+}
+
+/* ===================================================== */
+/* PAINEL DE LOGIN (direita) */
+/* ===================================================== */
+
+.form-panel{
+    flex:1 1 46%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 24px;
+    background:#ffffff;
+}
+
+.form-panel-inner{
+    width:100%;
+    max-width:400px;
+    animation:fadeIn .5s ease;
+}
+
+@keyframes fadeIn{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
+.form-brand-mobile{
+    display:none;
+    margin-bottom:32px;
+}
+
+.form-title{
+    font-size:1.7rem;
+    font-weight:700;
+    color:#0f172a;
+    margin-bottom:6px;
+    letter-spacing:-.3px;
+}
+
+.form-subtitle{
+    font-size:.95rem;
+    color:#64748b;
+    margin-bottom:28px;
+}
+
+/* ===================================================== */
+/* MENSAGENS (?error / ?logout) */
+/* ===================================================== */
+
+.alert-message{
+    display:none;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    border-radius:12px;
+    font-size:.88rem;
+    font-weight:600;
+    margin-bottom:20px;
+}
+
+.alert-message.is-visible{
+    display:flex;
+}
+
+.alert-message-error{
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    color:#b91c1c;
+}
+
+.alert-message-success{
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    color:#15803d;
+}
+
+/* ===================================================== */
+/* FORM */
+/* ===================================================== */
+
+.form-label{
+    color:#334155;
+    font-size:.86rem;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+.input-wrapper{
+    position:relative;
+}
+
+.input-icon{
+    position:absolute;
+    top:50%;
+    left:16px;
+    transform:translateY(-50%);
+    color:#94a3b8;
+    z-index:10;
+}
+
+.form-control{
+    height:52px;
+    border:1.5px solid #e2e8f0;
+    border-radius:12px;
+    background:#f8fafc;
+    color:#0f172a;
+    padding-left:46px;
+    transition:.2s;
+}
+
+.form-control::placeholder{
+    color:#94a3b8;
+}
+
+.form-control:focus{
+    background:#ffffff;
+    border-color:var(--po-blue);
+    color:#0f172a;
+    box-shadow:0 0 0 3px rgba(59,98,176,0.15);
+}
+
+.toggle-password{
+    position:absolute;
+    top:50%;
+    right:14px;
+    transform:translateY(-50%);
+    border:none;
+    background:none;
+    color:#94a3b8;
+    cursor:pointer;
+    z-index:10;
+}
+
+.toggle-password:hover{ color:#475569; }
+
+/* ===================================================== */
+/* BOTÃO */
+/* ===================================================== */
+
+.btn-login{
+    width:100%;
+    height:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg, var(--po-navy), var(--po-blue));
+    color:#ffffff;
+    font-size:16px;
+    font-weight:600;
+    transition:.25s;
+}
+
+.btn-login:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 24px rgba(59,98,176,0.32);
+}
+
+.btn-login:disabled{
+    opacity:.8;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* ===================================================== */
+/* FOOTER */
+/* ===================================================== */
+
+.forgot-password{
+    text-align:center;
+    margin-top:22px;
+}
+
+.forgot-password a{
+    color:var(--po-blue);
+    text-decoration:none;
+    font-size:.88rem;
+    font-weight:600;
+}
+
+.forgot-password a:hover{
+    text-decoration:underline;
+}
+
+.copyright{
+    text-align:center;
+    margin-top:26px;
+    color:#94a3b8;
+    font-size:.78rem;
+}
+
+/* ===================================================== */
+/* RESPONSIVO */
+/* ===================================================== */
+
+@media(max-width:991px){
+    .brand-panel{ display:none; }
+    .form-panel{ flex:1 1 100%; }
+    .form-brand-mobile{ display:flex; }
+}
+
+@media(max-width:576px){
+    .form-title{ font-size:1.45rem; }
+}
