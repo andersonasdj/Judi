@@ -32,6 +32,10 @@ public class AlertaProcessoService {
 		return repository.findByProcessoIdOrderByDataGeracaoDesc(processoId, page).map(DtoAlerta::new);
 	}
 
+	public Page<DtoAlerta> buscarPorPalavra(Pageable page, String conteudo) {
+		return repository.buscarPorPalavra(page, conteudo).map(DtoAlerta::new);
+	}
+
 	public long contarNaoLidos() {
 		return repository.countByLidoFalse();
 	}

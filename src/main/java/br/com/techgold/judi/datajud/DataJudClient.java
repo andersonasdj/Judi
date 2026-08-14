@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import br.com.techgold.judi.services.ConfiguracaoDataJudService;
+
 /**
  * Cliente HTTP para a API Pública do DataJud (CNJ).
  *
@@ -28,11 +30,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class DataJudClient {
 
 	private final DataJudProperties properties;
+	private final ConfiguracaoDataJudService configuracaoService;
 	private final ObjectMapper objectMapper;
 	private final RestClient restClient;
 
-	DataJudClient(DataJudProperties properties, ObjectMapper objectMapper) {
+	DataJudClient(DataJudProperties properties, ConfiguracaoDataJudService configuracaoService, ObjectMapper objectMapper) {
 		this.properties = properties;
+		this.configuracaoService = configuracaoService;
 		this.objectMapper = objectMapper;
 		this.restClient = RestClient.builder().build();
 	}
@@ -53,7 +57,7 @@ public class DataJudClient {
 		try {
 			resposta = restClient.post()
 					.uri(url)
-					.header("Authorization", "APIKey " + properties.getApiKey())
+					.header("Authorization", "APIKey " + configuracaoService.getApiKeyDescriptografada())
 					.header("Content-Type", "application/json")
 					.body(corpo.toString())
 					.retrieve()

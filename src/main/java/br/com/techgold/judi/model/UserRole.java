@@ -5,7 +5,8 @@ public enum UserRole {
 	ADMIN("admin"),
 	EDITOR("editor"),
 	USER("user"),
-	SADMIN("sadmin");
+	SADMIN("sadmin"),
+	FINANCEIRO("financeiro");
 	
 	private String role;
 	

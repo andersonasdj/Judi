@@ -85,6 +85,17 @@
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
 			<div class="sidebar-group" id="sgProcessos">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
 					<i class="bi bi-briefcase"></i>
@@ -115,6 +126,10 @@
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
 			</a>
 
 		</div>
@@ -221,6 +236,15 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-briefcase"></i> Processos
 							</a>
 							<ul class="dropdown-menu">
@@ -246,6 +270,11 @@
 						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
 							</a>
 						</li>
 					</ul>
@@ -360,6 +389,11 @@
 		            <label class="form-label"><b>Função</b></label>
 		            <select id="role" class="form-select"></select>
 		        </div>
+		        <div class="col-md-6">
+		            <label class="form-label"><b>Valor/Hora padrão (R$)</b></label>
+		            <input type="number" id="valorHora" class="form-control" min="0.01" step="0.01" placeholder="Ex: 150.00">
+		            <small class="text-muted">Usado no cálculo dos honorários pelo timesheet quando o cliente não tiver um valor personalizado para este funcionário.</small>
+		        </div>
 		    </div>
 
 		    <div class="mt-4">
@@ -467,6 +501,7 @@
 
 				   // Campos administrativos
 				   preencherRoles(data.role);
+				   $('#valorHora').val(data.valorHora != null ? data.valorHora : '');
 		        },
 		        error: function () {
 		            alert("Acesso não autorizado.");
@@ -481,7 +516,7 @@
 		}
 
 		function preencherRoles(roleAtual) {
-		    const roles = ['ADMIN', 'EDITOR', 'USER', 'SADMIN'];
+		    const roles = ['ADMIN', 'EDITOR', 'USER', 'SADMIN', 'FINANCEIRO'];
 
 		    roles.forEach(r => {
 		        $('#role').append(
@@ -491,19 +526,26 @@
 		}
 
 		function salvar() {
+		    var valorHora = $('#valorHora').val();
+		    if (!valorHora || Number(valorHora) <= 0) {
+		        alert("Informe o valor/hora padrão do funcionário.");
+		        return;
+		    }
+
 		    $.ajax({
 		        type: "PUT",
 		        contentType: "application/json",
 		        url: "/judi/funcionarios/avancado",
 		        data: JSON.stringify({
 		            id: $('#idFuncionario').val(),
-		            role: $('#role').val()
+		            role: $('#role').val(),
+		            valorHora: valorHora
 		        }),
 		        success: function () {
 		            alert("Configurações salvas com sucesso!");
 		        },
 		        error: function () {
-		            alert("Você não tem permissão.");
+		            alert("Você não tem permissão ou os dados informados são inválidos.");
 		        }
 		    });
 		}

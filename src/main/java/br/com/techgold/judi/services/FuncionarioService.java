@@ -180,10 +180,11 @@ public class FuncionarioService {
 	public DtoFuncionarioAdvancedEdit atualizarFuncionarioAdvanced(DtoFuncionarioAdvancedEdit dados) {
 		
 		Funcionario funcionario = repository.getReferenceById(dados.id());
-		
+
 		if(repository.count() > 1) {
 			funcionario.setRole(dados.role());
 		}
+		funcionario.setValorHora(dados.valorHora());
 		funcionario.setDataAtualizacao(LocalDateTime.now().withNano(0));
 		funcionario.setTentativasLogin(0);
 		return new DtoFuncionarioAdvancedEdit(funcionario);

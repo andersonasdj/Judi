@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="shortcut icon" href="assets/img/favicon.ico">
+		<link rel="stylesheet" href="assets/css/index.css">
+		<link rel="stylesheet" href="assets/css/bootstrap-icons.min.css">
+		<link rel="stylesheet" href="assets/css/line-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/style-new.css">
+		<title>Sistech - Dashboard</title>
+	</head>
+	<body>
+		<div id="beepSound">
+			<audio id="beepAudio"><source src="assets/audio/beep1.mp3" type="audio/mpeg"></audio>
+		</div>
+
+		<!-- Dashboard -->
+		<div class="d-flex flex-column flex-lg-row h-lg-full bg-surface-secondary">
+		    <!-- Vertical Navbar -->
+		    <nav class="navbar show navbar-vertical h-lg-screen navbar-expand-lg px-0 py-3 navbar-light bg-white border-bottom border-bottom-lg-0 border-end-lg" id="navbarVertical">
+		        <div class="container-fluid">
+		            <!-- Toggler -->
+		            <button class="navbar-toggler ms-n2" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+		                <span class="navbar-toggler-icon"> </span>
+		            </button>
+		            <!-- Brand -->
+		            <!-- User menu (mobile) -->
+		            <div class="navbar-user d-lg-none">
+		                <!-- Dropdown -->
+		                <div class="dropdown">
+		                    <!-- Toggle -->
+		                    <a href="#" id="sidebarAvatar" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		                        <div class="avatar-parent-child">
+		                            <img alt="Image Placeholder" src="assets/img/login.png" class="avatar avatar- rounded-circle">
+		                            <span class="avatar-child avatar-badge bg-success"> </span>
+		                        </div>
+		                    </a>
+		                    <!-- Menu -->
+		                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="sidebarAvatar"> </div>
+		                </div>
+		            </div>
+		            <!-- Collapse -->
+		            <div class="collapse navbar-collapse" id="sidebarCollapse">
+		                <!-- Navigation -->
+		               
+		                <!-- Divider -->
+		                <hr class="navbar-divider my-5 opacity-20">
+		                <!-- Navigation -->
+		                <ul class="navbar-nav mb-md-4">
+		                    <li>
+		                        <div class="nav-link text-xs font-semibold text-uppercase text-muted ls-wide" href="#">
+		                            Técnicos disponíveis
+		                            <span class="badge bg-soft-primary text-primary rounded-pill d-inline-flex align-items-center ms-4" style="font-size: 14px;" id="qtdDisponiveis"> </span>
+		                        </div>
+		                    </li>
+		                    <div id="funcionariosDisponiveis"> </div>
+		                </ul>
+		                <!-- Push content down -->
+		                <div class="mt-auto"> </div>
+		                <!-- User (md) -->
+		                <ul class="navbar-nav">
+							<li class="nav-item">
+		                        <a class="nav-link" href="#">
+		                            <i class="bi bi-volume-up-fill"></i> Som  
+										<select id="soundItem" style="margin-left: 8px;">
+											<option value="1">1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+											<option value="4">4</option>
+											<option value="5">5</option>
+											<option value="voice">🔊 Voz</option>
+										</select>
+		                        </a>
+		                    </li>
+							<li class="nav-item">
+							    <a class="nav-link" href="#">
+							        <i class="bi bi-mic-fill"></i> Voz  
+							        <select id="voiceSelect" style="margin-left: 8px; max-width: 180px;">
+							            <option value="">Padrão</option>
+							        </select>
+							    </a>
+							</li>
+							<li class="nav-item">
+							    <div class="nav-link" style="display:block">
+							        <i class="bi bi-sliders"></i> Voz (Configuração)
+
+							        <div style="margin-top:8px;font-size:12px">
+							            Volume
+							            <input type="range" id="voiceVolume" min="0" max="1" step="0.1" value="1">
+							        </div>
+
+							        <div style="margin-top:6px;font-size:12px">
+							            Velocidade
+							            <input type="range" id="voiceRate" min="0.5" max="2" step="0.1" value="1.3">
+							        </div>
+
+							        <div style="margin-top:6px;font-size:12px">
+							            Tonalidade
+							            <input type="range" id="voicePitch" min="0" max="2" step="0.1" value="1.0">
+							        </div>
+							    </div>
+							</li>
+
+		                    <li class="nav-item">
+		                        <a class="nav-link" href="#">
+		                            <i class="bi bi-info-circle"> </i> Sobre
+		                        </a>
+		                    </li>
+		                    <li class="nav-item">
+		                        <a class="nav-link" href="/dashboard/logout">
+		                            <i class="bi bi-box-arrow-left"> </i> Logout
+		                        </a>
+		                    </li>
+		                </ul>
+		            </div>
+		        </div>
+		    </nav>
+		    <!-- Main content -->
+		    <div class="h-screen flex-grow-1 overflow-y-lg-auto">
+		        <!-- Header -->
+		        <header class="bg-surface-primary border-bottom pt-6">
+		            <div class="container-fluid">
+		                <div class="mb-npx">
+		                    <div class="row align-items-center">
+		                        <div class="col-sm-12 col-12 mb-4 mb-sm-0">
+		                            <!-- Title -->
+		                            <h1 class="h3 mb-0 ls-tight" style="color: #05419b !important;">Sistech - Dashboard</h1>
+		                            <span id="lastOne" hidden > </span>
+			                            <div class="delModal" style="display:none" id="modal">
+											<div class="card shadow" style="border: 3px solid rgb(143, 240, 164) !important;">
+					                            <div class="card-body">
+															Aberto Por:  <span class="h4 font-bold mb-0" id="abertoPor"> </span>
+					                                <div class="row" >
+														<div class="col-3 col-s-4">
+															<div class="col mt-3">
+						                                        <span class="h4 font-semibold text-muted text-sm d-block mb-2">Atualização</span>
+						                                        <span class="h3 font-bold mb-0" id="funcionarioAtualizacao"> </span>
+						                                    </div>
+														</div>
+														<div class="col-3 col-s-4">
+															<div class="col mt-3">
+						                                		<span class="h4 font-semibold text-muted text-sm d-block mb-2">Cliente</span>
+						                                		<span class="h4 mb-0" id="nomeClienteAtualizacao"> </span>
+						                                	</div>
+														</div>
+														<div class="col-6 col-s-4">
+															<div class="col mt-3">
+					                                        	<span class="h4 font-semibold text-muted text-sm d-block mb-2">Problema</span>
+					                                       		<span class="h4 mb-0" id="descricaoAtualizacao"> </span>
+					                                    	</div>
+														</div>
+					                                </div>
+					                            </div>
+					                        </div>
+										</div>
+		                        </div>
+		                        <!-- Actions -->
+		                        <div class="col-sm-6 col-12 text-sm-end">
+		                            <div class="mx-n1"> </div>
+		                        </div>
+		                    </div>
+		                    <br />
+		                    <!-- Nav -->
+		                </div>
+		            </div>
+		        </header>
+		        <!-- Main -->
+		        <main class="py-6 bg-surface-secondary">
+		            <div class="container-fluid">
+		                <!-- Card stats -->
+		                <div class="row g-6 mb-6">
+		                    <div class="col-xl-3 col-sm-6 col-12">
+		                        <div class="card shadow border-0">
+		                            <div class="card-body">
+		                                <div class="row">
+		                                    <div class="col">
+		                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Solicitações ativas</span>
+		                                        <span class="h3 font-bold mb-0" id="qtdAtivas"> </span>
+		                                    </div>
+		                                    <div class="col-auto">
+		                                        <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle" style="background-color: rgb(7, 0, 132) !important">
+		                                            <i class="bi-card-list"> </i>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                                <div class="row">
+			                                <div class="col-6">
+												<div class="mt-2 mb-0 text-sm">
+			                                    	<span class="badge badge-pill bg-soft-success text-success me-2" id="abertasHoje">
+			                                        
+			                                    	</span>
+			                                    	<span class="text-nowrap text-xs text-muted">Abertas hoje</span>
+			                                	</div>
+			                                </div>
+			                                <div class="col-6">
+												<div class="mt-2 mb-0 text-sm">
+			                                    	<span class="badge badge-pill bg-soft-success text-success me-2" id="finalizadasHoje">
+			                                        
+			                                    	</span>
+			                                    	<span class="text-nowrap text-xs text-muted">Finalizadas hoje</span>
+			                                	</div>
+			                                </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="col-xl-3 col-sm-6 col-12">
+		                        <div class="card shadow border-0">
+		                            <div class="card-body">
+		                                <div class="row">
+		                                    <div class="col">
+		                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Solicitações críticas</span>
+		                                        <span class="h3 font-bold mb-0" id="qtdCriticas"> </span>
+		                                    </div>
+		                                    <div class="col-auto">
+		                                        <div class="icon icon-shape bg-primary text-white text-lg rounded-circle" style="background-color: rgb(243 16 17) !important">
+		                                            <i class="bi bi-exclamation-triangle"> </i>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                                <div class="mt-2 mb-0 text-sm">
+		                                    <span class="badge badge-pill bg-soft-success text-success me-2" id="qtdCriticasHoje"> </span>
+		                                    <span class="text-nowrap text-xs text-muted">Abertas hoje</span>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="col-xl-3 col-sm-6 col-12">
+		                        <div class="card shadow border-0">
+		                            <div class="card-body">
+		                                <div class="row">
+		                                    <div class="col">
+		                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Problemas</span>
+		                                        <span class="h3 font-bold mb-0" id="qtdProblemas"> </span>
+		                                    </div>
+		                                    <div class="col-auto">
+		                                        <div class="icon icon-shape bg-info text-white text-lg rounded-circle" style="background-color: rgb(255 118 0) !important;">
+		                                            <i class="bi bi-question-circle"> </i>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                                <div class="mt-2 mb-0 text-sm">
+		                                    <span class="badge badge-pill bg-soft-success text-success me-2" id="qtdProblemasHoje"> </span>
+		                                    <span class="text-nowrap text-xs text-muted">Abertas hoje</span>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                    <div class="col-xl-3 col-sm-6 col-12">
+		                        <div class="card shadow border-0">
+		                            <div class="card-body">
+		                                <div class="row">
+		                                    <div class="col">
+		                                        <span class="h6 font-semibold text-muted text-sm d-block mb-2">Agendamentos atrasados</span>
+		                                        <span class="h3 font-bold mb-0" id="qtdAtrasados"> </span>
+		                                    </div>
+		                                    <div class="col-auto">
+		                                        <div class="icon icon-shape bg-warning text-white text-lg rounded-circle" style="background-color: rgb(255 213 0) !important;">
+		                                            <i class="bi bi-clock-history"> </i>
+		                                        </div>
+		                                    </div>
+		                                </div>
+		                                <div class="mt-2 mb-0 text-sm">
+		                                    <span class="badge badge-pill bg-soft-success text-success me-2" id="qtdAgendadosHoje"> </span>
+		                                    <span class="text-nowrap text-xs text-muted">Novas hoje</span>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+						
+		                <div class="card shadow border-0 mb-7">
+		                    <div class="card-header">
+		                        <h5 class="mb-0" style="color: darkred;"> <i class="bi bi-exclamation-diamond-fill"></i>&nbsp Solicitações Prioritárias</h5>
+		                    </div>
+		                    <div class="table-responsive">
+		                        <table class="table table-hover table-nowrap">
+		                            <thead class="thead-light">
+		                                <tr>
+		                                    <th scope="col" class="fontth">ID</th>
+		                                    <th scope="col" class="fontth">Cliente</th>
+		                                    <th scope="col" class="fontth">Afetado</th>
+		                                    <th scope="col" class="fontth">Descrição</th>
+		                                    <th scope="col" class="fontth">Classificações</th>
+		                                    <th scope="col" class="fontth">Status</th>
+		                                    <th scope="col" class="fontth">Tecnico</th>
+		                                    <th scope="col" class="fontth">Peso</th>
+		                                </tr>
+		                            </thead>
+		                            <tbody id="conteudoTabela"> </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+						
+						<div class="card shadow border-0 mb-7">
+		                    <div class="card-header">
+		                        <h5 class="mb-0" style="color: green;"><i class="bi bi-arrow-clockwise"></i>&nbsp Ultimas Modificações</h5>
+		                    </div>
+		                    <div class="table-responsive">
+		                        <table class="table table-hover table-nowrap">
+		                            <thead class="thead-light">
+		                                <tr>
+		                                    <th scope="col" class="fontth">ID</th>
+		                                    <th scope="col" class="fontth">Cliente</th>
+		                                    <th scope="col" class="fontth">Afetado</th>
+		                                    <th scope="col" class="fontth">Descrição</th>
+		                                    <th scope="col" class="fontth">Classificações</th>
+		                                    <th scope="col" class="fontth">Status</th>
+		                                    <th scope="col" class="fontth">Tecnico</th>
+		                                    <th scope="col" class="fontth">Peso</th>
+		                                </tr>
+		                            </thead>
+		                            <tbody id="conteudoTabelaUltimas"> </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+		            </div>
+		        </main>
+		    </div>
+		</div>
+	</body>
+	<script src="assets/js/jquery-3.6.3.js"></script>
+	<script>
+		
+		let vozesDisponiveis = [];
+		let voiceConfig = {
+		    volume: 1.0,
+		    rate: 1.3,
+		    pitch: 1.0
+		};
+
+		function carregarConfiguracoesVoz() {
+		    const cfg = localStorage.getItem("voiceConfig");
+		    if (!cfg) return;
+
+		    voiceConfig = JSON.parse(cfg);
+
+		    $('#voiceVolume').val(voiceConfig.volume);
+		    $('#voiceRate').val(voiceConfig.rate);
+		    $('#voicePitch').val(voiceConfig.pitch);
+		}
+
+		carregarConfiguracoesVoz();
+
+
+		function carregarVozes() {
+		    vozesDisponiveis = speechSynthesis.getVoices();
+
+		    if (!vozesDisponiveis.length) {
+		        setTimeout(carregarVozes, 200);
+		        return;
+		    }
+
+		    popularSelectVozes();
+		}
+
+
+		speechSynthesis.onvoiceschanged = carregarVozes;
+		carregarVozes();
+		
+		function popularSelectVozes() {
+		    const select = document.getElementById("voiceSelect");
+		    if (!select || !vozesDisponiveis.length) return;
+
+		    select.innerHTML = '<option value="">Padrão</option>';
+
+		    vozesDisponiveis
+		        .filter(v => v.lang.startsWith('pt'))
+		        .forEach(voz => {
+		            const option = document.createElement("option");
+		            option.value = voz.name;
+		            option.textContent = `${voz.name} (${voz.lang})`;
+		            select.appendChild(option);
+		        });
+
+		    // restaura preferência
+		    const salva = localStorage.getItem("vozPreferida");
+		    if (salva) {
+		        select.value = salva;
+		        nomeVozPreferida = salva;
+		    }
+		}
+
+		
+		function obterVozPtBR() {
+		    return vozesDisponiveis.find(v =>
+		        v.lang === 'pt-BR' && v.name.toLowerCase().includes('google')
+		    ) || vozesDisponiveis.find(v =>
+		        v.lang.startsWith('pt')
+		    ) || null;
+		}
+		
+		let nomeVozPreferida = "Google português do Brasil";
+
+		function obterVozConfigurada() {
+		    return vozesDisponiveis.find(v => v.name === nomeVozPreferida)
+		        || obterVozPtBR();
+		}
+		
+		let audioLiberado = false;
+		let falandoAgora = false;
+		
+		const filaVoz = [];
+
+		function liberarAudio() {
+		    if (audioLiberado) return;
+
+		    const audio = document.getElementById("beepAudio");
+		    if (audio) {
+		        audio.volume = 0;
+		        audio.play().then(() => {
+		            audio.pause();
+		            audio.currentTime = 0;
+		            audio.volume = 1;
+		            audioLiberado = true;
+		            console.log("🔓 Áudio liberado");
+		        }).catch(() => {});
+		    }
+
+		    // libera também o speech
+		    if ('speechSynthesis' in window) {
+		        const u = new SpeechSynthesisUtterance('');
+		        window.speechSynthesis.speak(u);
+		        window.speechSynthesis.cancel();
+		    }
+		}
+		
+		$('#soundItem').on('click', function () {
+		    liberarAudio();
+		});
+		
+		$('#voiceVolume').on('input change', function () {
+		    voiceConfig.volume = parseFloat(this.value);
+		    salvarConfigVoz();
+		});
+
+		$('#voiceRate').on('input change', function () {
+		    voiceConfig.rate = parseFloat(this.value);
+		    salvarConfigVoz();
+		});
+
+		$('#voicePitch').on('input change', function () {
+		    voiceConfig.pitch = parseFloat(this.value);
+		    salvarConfigVoz();
+		});
+
+		function salvarConfigVoz() {
+		    localStorage.setItem("voiceConfig", JSON.stringify(voiceConfig));
+		}
+
+		
+		$('#voiceSelect').on('change', function () {
+		    nomeVozPreferida = this.value || null;
+
+		    if (nomeVozPreferida) {
+		        localStorage.setItem("vozPreferida", nomeVozPreferida);
+		    } else {
+		        localStorage.removeItem("vozPreferida");
+		    }
+		});
+
+
+		$(document).ready(function () {
+			var divSound = $("#soundItem");
+			divSound.on("change", function () {
+				var valSound = divSound.val();
+				alteraBeep();
+			});
+		});
+		
+		/*function alteraBeep(){
+			$('#beepAudio').remove();
+			var som = $('#soundItem').val();
+			$('#beepSound').append('<audio id="beepAudio"><source src="assets/audio/beep'+som+'.mp3" type="audio/mpeg"></audio>');
+		}*/
+		
+		function alteraBeep(){
+		    const som = $('#soundItem').val();
+
+		    if (som === 'voice') return;
+
+		    $('#beepAudio').remove();
+		    $('#beepSound').append(
+		        `<audio id="beepAudio">
+		            <source src="assets/audio/beep${som}.mp3" type="audio/mpeg">
+		         </audio>`
+		    );
+		}
+		
+		dadosDashboard();
+		setInterval(ultimaAtualizacao, 5000);
+		
+		function enfileirarFala(texto) {
+		    filaVoz.push(texto);
+		    processarFila();
+		}
+
+		function processarFila() {
+		    if (falandoAgora) return;
+		    if (filaVoz.length === 0) return;
+
+		    falandoAgora = true;
+
+		    const texto = filaVoz.shift();
+		    const utterance = new SpeechSynthesisUtterance(texto);
+
+		    const vozSelecionada = obterVozConfigurada();
+		    if (vozSelecionada) {
+		        utterance.voice = vozSelecionada;
+		    }
+
+		    utterance.lang = 'pt-BR';
+		    utterance.rate = voiceConfig.rate;
+		    utterance.pitch = voiceConfig.pitch;
+		    utterance.volume = voiceConfig.volume;
+
+		    utterance.onend = () => {
+		        falandoAgora = false;
+		        processarFila();
+		    };
+
+		    utterance.onerror = () => {
+		        falandoAgora = false;
+		        processarFila();
+		    };
+
+		    speechSynthesis.speak(utterance);
+		}
+
+
+		
+		function showModal() {
+			$.ajax({
+			type: "GET",
+			contentType: "application/json",
+			url: "/dashboard/api/solicitacao/lastupdatesolicitacao",
+			success: function (data) {
+				var cor;
+				
+				const prioridadeTexto = {
+				    BAIXA: "baixa",
+				    MEDIA: "média",
+				    ALTA: "alta",
+				    CRITICA: "crítica",
+				    PLANEJADA: "planejada"
+				};
+				
+				if(data.status == "ABERTO"){cor = 'style="color:red"'}
+				if(data.status == "ANDAMENTO"){cor = 'style="color:blue"'}
+				if(data.status == "FINALIZADO"){cor = 'style="color:green"'}
+				if(data.status == "AGENDADO"){cor = 'style="color:orange"'}
+				if(data.status == "PAUSADO"){cor = 'style="color:gray"'}
+				if(data.status == "AGUARDANDO"){cor = 'style="color:gray"'}
+						
+				$('#funcionarioAtualizacao').text("");		
+				$('#funcionarioAtualizacao').append(data.nomeFuncionario + ',<br /> Atualizou a solicitação<br /> para  <span '+ cor+'><b><u>' + data.status +'</u></b></span>');
+				$('#nomeClienteAtualizacao').text("");
+				$('#nomeClienteAtualizacao').append('Id: '+data.id+'<br />Cliente: '+ data.nomeCliente + '<br />Afetado: '+data.afetado);
+				$('#descricaoAtualizacao').text("");
+				$('#descricaoAtualizacao').append('Descrição: '+ data.descricao);
+				$('#abertoPor').text("");
+				$('#abertoPor').append(data.abertoPor);
+				
+				const tipoSom = $('#soundItem').val();
+
+				if (!audioLiberado) return;
+
+				if (tipoSom === 'voice') {
+				    const prioridadeFormatada =
+				        prioridadeTexto[data.prioridade] ?? data.prioridade;
+
+				    const texto = `${data.nomeFuncionario}, status ${data.status} para ${data.nomeCliente}, com prioridade ${prioridadeFormatada}`;
+				    enfileirarFala(texto);
+				} else {
+				    const audio = document.getElementById("beepAudio");
+				    if (audio) audio.play();
+				}
+
+
+				$("#modal").fadeIn(4000);
+				$("#modal").fadeOut(4500);
+			},
+			statusCode: {
+				    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+				    401: function() { alert('Realize login novamente!'); }
+			}
+			});
+		}
+		
+		function ultimaAtualizacao(){
+			let idAtual;
+			
+			$.ajax({
+			type: "GET",
+			contentType: "application/json",
+			url: "/dashboard/api/solicitacao/lastupdateid",
+			success: function (data) {
+				if($('#lastOne').text() != data){
+					$('#lastOne').text(data);
+					showModal();
+					dadosDashboard();
+				}
+			},
+			statusCode: {
+				    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+				    401: function() { alert('Realize login novamente!'); }
+			}
+			});
+		} 
+		
+		function dadosDashboard(){
+			$.ajax({
+			type: "GET",
+			contentType: "application/json",
+			url: "/dashboard/api/solicitacao/dados",
+			success: function (data) {
+				$('#qtdCriticas').text("");
+				$('#qtdAtivas').text("");
+				$('#qtdProblemas').text("");
+				$('#qtdAtrasados').text("");
+				$('#qtdDisponiveis').text("");
+				$('#funcionariosDisponiveis').empty();
+				$('#qtdCriticas').text(data.criticas);
+				$('#qtdAtivas').text(data.ativas);
+				$('#qtdProblemas').text(data.problemas);
+				$('#qtdAtrasados').text(data.atrasados);
+				$('#qtdDisponiveis').text(data.funcionariosDisponiveis.length);
+				
+				data.funcionariosDisponiveis.map(f => {
+					var statusRefeicao, imagemPerfil;
+					if(f.refeicao == true){
+						statusRefeicao = "bg-danger rounded-circle";
+						imagemPerfil = '<img src="assets/img/refeicao.jpg" class="rounded-circle">'
+					}
+					else{
+						statusRefeicao = "bg-success rounded-circle";
+						imagemPerfil = f.inicial;
+					}				
+					var conteudo = 
+							'<li>'
+		                     +'<a href="#" class="nav-link d-flex align-items-center" style="padding: .3rem 1.1rem;">'
+		                     +' <div class="me-4">'
+		                     +'  <div class="position-relative d-inline-block text-white">'
+		                     +'   <span class="avatar bg-soft-warning text-warning rounded-circle">'+imagemPerfil+'</span>'
+		                     +'   <span class="position-absolute bottom-2 end-2 transform translate-x-1/2 translate-y-1/2 border-2 border-solid border-current w-3 h-3 '+statusRefeicao+'"> </span>'
+		                     +'  </div>'
+		                     +' </div>'
+		                     +' <div>'
+		                     +'  <span class="d-block text-sm font-semibold">'
+		                     +'   '+f.nome
+		                     +'  </span>'
+		                     +' </div>'
+		                     +'</a>'
+		                     +'</li>'
+					$('#funcionariosDisponiveis').append(conteudo);
+				});
+				$('#abertasHoje').text("");
+				$('#finalizadasHoje').text("");
+				
+				$('#qtdCriticasHoje').text("");
+				$('#qtdProblemasHoje').text("");
+				$('#qtdAgendadosHoje').text("");
+				$('#conteudoTabela').empty();
+				$('#conteudoTabelaUltimas').empty();
+				
+				if(data.abertasHoje >= 0){ $('#abertasHoje').append('<i class="bi bi-arrow-up me-1"> </i>'+data.abertasHoje); }
+				else{ $('#abertasHoje').append('<i class="bi bi-arrow-down me-1"> </i>'+data.abertasHoje); }
+				
+				if(data.finalizadasHoje >= 0){ $('#finalizadasHoje').append('<i class="bi bi-arrow-up me-1"> </i>'+data.finalizadasHoje); }
+				else{ $('#finalizadasHoje').append('<i class="bi bi-arrow-down me-1"> </i>'+data.finalizadasHoje); }
+				
+				if(data.criticasHoje <= 0){ $('#qtdCriticasHoje').append('<i class="bi bi-arrow-down me-1"> </i>'+data.criticasHoje); }
+				else{ $('#qtdCriticasHoje').append('<i class="bi bi-arrow-up me-1"> </i>'+data.criticasHoje); }
+				
+				if(data.problemasHoje <= 0){ $('#qtdProblemasHoje').append('<i class="bi bi-arrow-down me-1"> </i>'+data.problemasHoje); }
+				else{ $('#qtdProblemasHoje').append('<i class="bi bi-arrow-up me-1"> </i>'+data.problemasHoje); }
+				
+				if(data.agendadosHoje <= 0){ $('#qtdAgendadosHoje').append('<i class="bi bi-arrow-down me-1"> </i>'+data.agendadosHoje); }
+				else{ $('#qtdAgendadosHoje').append('<i class="bi bi-arrow-up me-1"> </i>'+data.agendadosHoje); }
+				
+				var alertaPrioridade, alertaPeso;
+				data.solicitacoes.map(f => {
+					var vip, redFlag;
+					
+					if(f.prioridade == "CRITICA"){ alertaPrioridade ="class='blink' style='color: red; font-weight: bold;'"; }
+					else if(f.prioridade == "ALTA"){ alertaPrioridade ="style='color: orange; font-weight: bold;'"; }
+					else{ alertaPrioridade ="class='' style=''"; }
+					
+					if(f.peso > 7){ alertaPeso = "class='blink' style='color: red; font-weight: bold;'"; }
+					else if(f.peso > 3 && f.peso <= 7 ){ alertaPeso = "style='color: orange; font-weight: bold;'"; }
+					else{ alertaPeso = "style='color: blue; font-weight: bold;'"; }
+					
+					if(f.vip == true){ vip = "<span style='color: RoyalBlue; font-size: 15px'><p><b> VIP </span>" }else{vip =""}
+					
+					if(f.redFlag == true){ 
+						if(f.vip == true){ redFlag = "-<span class='blink' style='color: red; font-size: 15px'><b> REDFLAG</b></p></span>" }
+						else{ redFlag = "<span class='blink' style='color: red; font-size: 15px'><p><b>REDFLAG</b></p></span>" } 
+					} else{redFlag =""}
+					
+					var conteudo = 
+							'<tr>'
+                               +'<td>'+f.id+'</td>'
+                                +'<td style="padding-top: 0.3rem; padding-bottom: 0.3rem;">'+f.nomeCliente+vip+redFlag+'</td>'
+                                +'<td>'+f.afetado+'</td>'
+                                +'<td style="padding-top: 0.3rem; padding-bottom: 0.3rem;">'+f.descricao+'</td>'
+                                +'<td style="padding-top: 0.3rem; padding-bottom: 0.3rem;">'+'Local:'+f.local+'<br />Classificação: '+f.classificacao+'<br /><span '+alertaPrioridade+' > Prioridade: '+f.prioridade+'</td>'
+                                +'<td>'+f.status+'</td>'
+                                +'<td>'+f.nomeFuncionario+'</td>'
+                                +'<td '+alertaPeso+'>'+f.peso+'</td>'
+                            +'</tr>'
+					$('#conteudoTabela').append(conteudo);
+				});
+				
+				
+				data.ultimasSolicitacoes.map(f => {
+					var vip, redFlag;
+					
+					if(f.prioridade == "CRITICA"){ alertaPrioridade ="class='blink' style='color: red; font-weight: bold;'"; }
+					else if(f.prioridade == "ALTA"){ alertaPrioridade ="style='color: orange; font-weight: bold;'"; }
+					else{ alertaPrioridade ="class='' style=''"; }
+					
+					if(f.peso > 7){ alertaPeso = "class='blink' style='color: red; font-weight: bold;'"; }
+					else if(f.peso > 3 && f.peso <= 7 ){ alertaPeso = "style='color: orange; font-weight: bold;'"; }
+					else{ alertaPeso = "style='color: blue; font-weight: bold;'"; }
+					
+					if(f.vip == true){ vip = "<span style='color: RoyalBlue; font-size: 15px'><p><b> VIP </span>" }else{vip =""}
+					
+					if(f.redFlag == true){ 
+						if(f.vip == true){ redFlag = "-<span class='blink' style='color: red; font-size: 15px'><b> REDFLAG</b></p></span>" }
+						else{ redFlag = "<span class='blink' style='color: red; font-size: 15px'><p><b>REDFLAG</b></p></span>" } 
+					} else{redFlag =""}
+					
+					var conteudo = 
+							'<tr>'
+                               +'<td>'+f.id+'</td>'
+                                +'<td style="padding-top: 0.3rem; padding-bottom: 0.3rem;">'+f.nomeCliente+vip+redFlag+'</td>'
+                                +'<td>'+f.afetado+'</td>'
+                                +'<td style="padding-top: 0.3rem; padding-bottom: 0.3rem;">'+f.descricao+'</td>'
+                                +'<td style="padding-top: 0.3rem; padding-bottom: 0.3rem;">'+'Local:'+f.local+'<br />Classificação: '+f.classificacao+'<br /><span '+alertaPrioridade+' > Prioridade: '+f.prioridade+'</td>'
+                                +'<td>'+f.status+'</td>'
+                                +'<td>'+f.nomeFuncionario+'</td>'
+                                +'<td '+alertaPeso+'>'+f.peso+'</td>'
+                            +'</tr>'
+					$('#conteudoTabelaUltimas').append(conteudo);
+				});
+			},
+			statusCode: {
+				    500: function() { alert('Erro! Contate o desenvolvedor!'); },
+				    401: function() { alert('Realize login novamente!'); }
+				}
+			});
+		} 
+	</script>
+</html>

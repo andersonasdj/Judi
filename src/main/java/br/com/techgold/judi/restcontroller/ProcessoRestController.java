@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,10 +25,14 @@ import br.com.techgold.judi.datajud.DataJudSyncService;
 import br.com.techgold.judi.dto.DtoAtualizarProcesso;
 import br.com.techgold.judi.dto.DtoCadastroMovimentacaoManual;
 import br.com.techgold.judi.dto.DtoCadastroProcesso;
+import br.com.techgold.judi.dto.DtoFiltroProcesso;
 import br.com.techgold.judi.dto.DtoMovimentacao;
 import br.com.techgold.judi.dto.DtoProcessoDetalhe;
 import br.com.techgold.judi.dto.DtoProcessoList;
 import br.com.techgold.judi.dto.DtoResultadoImportacaoProcessos;
+import br.com.techgold.judi.model.Funcionario;
+import br.com.techgold.judi.model.enums.StatusProcesso;
+import br.com.techgold.judi.services.FuncionarioService;
 import br.com.techgold.judi.services.MovimentacaoProcessoService;
 import br.com.techgold.judi.services.ProcessoService;
 
@@ -38,11 +43,19 @@ public class ProcessoRestController {
 	private final ProcessoService service;
 	private final MovimentacaoProcessoService movimentacaoService;
 	private final DataJudSyncService dataJudSyncService;
+	private final FuncionarioService funcionarioService;
 
-	ProcessoRestController(ProcessoService service, MovimentacaoProcessoService movimentacaoService, DataJudSyncService dataJudSyncService) {
+	ProcessoRestController(ProcessoService service, MovimentacaoProcessoService movimentacaoService, DataJudSyncService dataJudSyncService,
+			FuncionarioService funcionarioService) {
 		this.service = service;
 		this.movimentacaoService = movimentacaoService;
 		this.dataJudSyncService = dataJudSyncService;
+		this.funcionarioService = funcionarioService;
+	}
+
+	private Funcionario funcionarioAutenticado() {
+		Funcionario principal = (Funcionario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return funcionarioService.buscaPorNome(principal.getNomeFuncionario());
 	}
 
 	@GetMapping
@@ -56,6 +69,17 @@ public class ProcessoRestController {
 		return service.buscarPorPalavra(page, conteudo);
 	}
 
+	@GetMapping("/filtro")
+	public Page<DtoProcessoList> filtrar(
+			@RequestParam(required = false) String texto,
+			@RequestParam(required = false) Long clienteId,
+			@RequestParam(required = false) Long funcionarioId,
+			@RequestParam(required = false) Long casoId,
+			@RequestParam(required = false) StatusProcesso status,
+			@PageableDefault(size = 20, sort = { "id" }, direction = Direction.DESC) Pageable page) {
+		return service.listarFiltrado(new DtoFiltroProcesso(texto, clienteId, funcionarioId, casoId, status), page);
+	}
+
 	@GetMapping("/cliente/{clienteId}")
 	public Page<DtoProcessoList> listarPorCliente(@PathVariable Long clienteId,
 			@PageableDefault(size = 20, sort = { "id" }, direction = Direction.DESC) Pageable page) {
@@ -66,6 +90,12 @@ public class ProcessoRestController {
 	public Page<DtoProcessoList> listarPorFuncionario(@PathVariable Long funcionarioId,
 			@PageableDefault(size = 20, sort = { "id" }, direction = Direction.DESC) Pageable page) {
 		return service.listarPorFuncionario(funcionarioId, page);
+	}
+
+	@GetMapping("/caso/{casoId}")
+	public Page<DtoProcessoList> listarPorCaso(@PathVariable Long casoId,
+			@PageableDefault(size = 20, sort = { "id" }, direction = Direction.DESC) Pageable page) {
+		return service.listarPorCaso(casoId, page);
 	}
 
 	@GetMapping("/{id}")
@@ -102,7 +132,7 @@ public class ProcessoRestController {
 
 	@PostMapping("/{id}/movimentacoes")
 	public void registrarMovimentacao(@PathVariable Long id, @RequestBody DtoCadastroMovimentacaoManual dados) {
-		movimentacaoService.registrarManual(id, dados);
+		movimentacaoService.registrarManual(id, dados, funcionarioAutenticado());
 	}
 
 	@PostMapping("/{id}/sincronizar")

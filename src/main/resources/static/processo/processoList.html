@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="../assets/css/dark.css">
 	<link rel="stylesheet" href="../assets/css/navbar.css">
-	<title>Judi - Processos</title>
+	<title>Judera One - Processos</title>
 	<style>
 		/* cards — border sutil em modo claro */
 		.filtro-sidebar,
@@ -34,14 +34,23 @@
 			background: transparent;
 			color: #fff;
 			font-weight: 600;
-			font-size: .76rem;
+			font-size: .72rem;
 			text-transform: uppercase;
-			letter-spacing: .06em;
+			letter-spacing: .05em;
 			border: none !important;
-			padding: 12px 16px;
+			padding: 10px 16px;
+			white-space: nowrap;
 		}
 
 		.btn-filtro-rapido { border-radius: 20px !important; font-size: .82rem; font-weight: 500; }
+
+		/* AÇÕES da tabela — sobrescreve o .btn-action global (tamanhos inconsistentes entre dark.css) */
+		#tabela-processos .btn-action {
+			width: 32px;
+			height: 32px;
+			border-radius: 9px !important;
+			margin-right: 0;
+		}
 
 		/* dark mode */
 		body.dark-mode table   { background-color: transparent; color: #f1f5f9; }
@@ -64,18 +73,13 @@
 			<div class="sidebar-brand-icon">
 				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
 			</div>
-			<span class="sidebar-brand-text">Dashboard</span>
+			<span class="sidebar-brand-text">Judera One</span>
 		</div>
 		<div class="sidebar-scroll">
 			<a href="/judi/home" class="sidebar-item">
 				<i class="bi bi-house-fill"></i>
 				<span class="sidebar-item-label">Início</span>
 			</a>
-			<a href="/judi/painel" class="sidebar-item" target="_blank">
-				<i class="bi bi-tv"></i>
-				<span class="sidebar-item-label">Painel TV</span>
-			</a>
-
 			<div class="sidebar-group" id="sgClientes">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
 					<i class="bi bi-building"></i>
@@ -90,12 +94,23 @@
 			<div class="sidebar-group" id="sgFuncionarios">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
 					<i class="bi bi-person-badge"></i>
-					<span class="sidebar-group-label">Funcionários</span>
+					<span class="sidebar-group-label">Equipe</span>
 					<i class="bi bi-chevron-down sidebar-chevron"></i>
 				</button>
 				<div class="sidebar-group-items">
 					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
 			<div class="sidebar-group" id="sgProcessos">
@@ -110,10 +125,6 @@
 					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
 				</div>
 			</div>
-			<a href="/judi/processo/alertas" class="sidebar-item">
-				<i class="bi bi-bell"></i>
-				<span class="sidebar-item-label">Alertas</span>
-			</a>
 			<div class="sidebar-group" id="sgTarefas">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
 					<i class="bi bi-list-check"></i>
@@ -125,9 +136,21 @@
 					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
 				</div>
 			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
 			</a>
 		</div>
 		<div class="sidebar-footer">
@@ -151,7 +174,7 @@
 		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
 			<i class="bi bi-list"></i>
 		</button>
-		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judera One</span>
 		<div class="ms-auto d-flex align-items-center gap-2">
 			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
 				<i class="bi bi-layout-three-columns"></i>
@@ -186,7 +209,7 @@
 					<div class="brand-icon">
 						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
 					</div>
-					<span class="brand-text">Judi</span>
+					<span class="brand-text">Judera One</span>
 				</a>
 				<!-- Mobile toggle -->
 				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -204,11 +227,6 @@
 								<i class="bi bi-house-fill"></i> Início
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/painel" target="_blank">
-								<i class="bi bi-tv"></i> Painel TV
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-building"></i> Clientes
@@ -220,11 +238,20 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-person-badge"></i> Funcionários
+								<i class="bi bi-person-badge"></i> Equipe
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
 								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
 						<li class="nav-item dropdown">
@@ -237,11 +264,6 @@
 								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/processo/alertas">
-								<i class="bi bi-bell"></i> Alertas
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list-check"></i> Tarefas
@@ -252,8 +274,23 @@
 							</ul>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
 							</a>
 						</li>
 					</ul>
@@ -290,42 +327,68 @@
 		<!-- / NAVBAR -->
 
 		<div class="row g-4 mt-2 px-1">
-		    <!-- SIDEBAR -->
-		    <div class="col-lg-3">
+		    <!-- FILTROS -->
+		    <div class="col-12">
 		        <div class="card shadow-sm border-0 filtro-sidebar">
 		            <div class="card-body">
-		                <div class="d-flex justify-content-between align-items-center mb-3">
+		                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 		                    <div>
 		                        <h5 class="mb-0"><i class="bi bi-briefcase"></i> Processos </h5>
 		                        <small class="text-muted"><span id="contador">0</span> registros</small>
 							</div>
-		                    <a href="/judi/processo/form" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>
+		                    <a href="/judi/processo/form" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Novo</a>
 		                </div>
 
-		                <hr class="border-0 border-top border-1 opacity-25 my-3">
+		                <div class="row g-2 align-items-end">
+		                    <div class="col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Busca </label>
+		                        <div class="input-group input-group-sm">
+		                            <span class="input-group-text">
+		                                <i class="bi bi-search"></i>
+		                            </span>
+		                            <input class="form-control" type="search" placeholder="Nº do processo ou cliente..." id="palavraChave" onkeypress="if(event.key==='Enter'){ event.preventDefault(); aplicarFiltrosProcesso(); }">
+		                        </div>
+		                    </div>
 
-		                <!-- BUSCA -->
-		                <label class="form-label fw-semibold"> Busca </label>
-		                <div class="input-group mb-3">
-		                    <span class="input-group-text">
-		                        <i class="bi bi-search"></i>
-		                    </span>
-		                    <input class="form-control" type="search" placeholder="Nº do processo ou cliente..." id="palavraChave" onkeypress="if(event.key==='Enter'){ event.preventDefault(); buscaPorPalavra(); }">
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Status </label>
+		                        <select class="form-select form-select-sm" id="statusFiltro" name="statusFiltro">
+		                            <option value="">Todos</option>
+		                            <option value="ATIVO">Ativo</option>
+		                            <option value="SUSPENSO">Suspenso</option>
+		                            <option value="ARQUIVADO">Arquivado</option>
+		                            <option value="EXTINTO">Extinto</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Funcionário </label>
+		                        <select class="form-select form-select-sm" id="funcionarioFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Cliente </label>
+		                        <select class="form-select form-select-sm" id="clienteFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Caso </label>
+		                        <select class="form-select form-select-sm" id="casoFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-md-3 col-lg-2 d-flex gap-2">
+		                        <button class="btn btn-success btn-sm flex-fill" onclick="aplicarFiltrosProcesso()"><i class="bi bi-funnel"></i> Filtrar</button>
+		                        <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosProcesso()" title="Limpar filtros"><i class="bi bi-x-circle"></i></button>
+		                    </div>
 		                </div>
-		                <button class="btn btn-success w-100 mb-4" onclick="buscaPorPalavra()"><i class="bi bi-search"></i> Buscar</button>
 
-		                <!-- STATUS -->
-		                <label class="form-label fw-semibold"> Status </label>
-		                <select class="form-select mb-4" id="statusFiltro" name="statusFiltro">
-		                    <option value="">Todos</option>
-		                    <option value="ATIVO">Ativo</option>
-		                    <option value="SUSPENSO">Suspenso</option>
-		                    <option value="ARQUIVADO">Arquivado</option>
-		                    <option value="EXTINTO">Extinto</option>
-		                </select>
-
-		                <hr class="border-0 border-top border-1 opacity-25 my-3">
-		                <div class="small text-muted">
+		                <div class="small text-muted mt-2">
 		                    <span id="qtdFiltrados"></span>
 		                </div>
 		            </div>
@@ -333,15 +396,20 @@
 		    </div>
 
 		    <!-- TABELA -->
-		    <div class="col-lg-9">
+		    <div class="col-12">
 		        <div class="card shadow-sm border-0 tabela-card">
 		            <div class="card-body">
+		                <div class="input-group input-group-sm mb-3">
+		                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+		                    <input type="search" class="form-control" id="filtroRapidoTabela" placeholder="Filtrar nesta página...">
+		                </div>
 		                <div class="table-responsive">
 		                    <table class="table tabela-processos-clean align-middle" id="tabela-processos">
 		                        <thead>
 		                            <tr>
 		                                <th>Nº Processo</th>
 		                                <th>Cliente</th>
+		                                <th>Caso</th>
 		                                <th>Tribunal</th>
 		                                <th width="110">Status</th>
 		                                <th width="150">Última Movimentação</th>
@@ -365,12 +433,12 @@
 		</div>
 			</div>
 	<br /><br />
-	<footer class="container-fluid fixed-bottom text-center text-white">
+		<footer class="container-fluid fixed-bottom text-center text-white">
 			<div class="text-center" style="background-color: rgba(0, 0, 0, 0.2);">
 				© 2026 Copyright:
 				<a class="text-white" href="#">TechGold</a>
 			</div>
-	</footer>
+		</footer>
 	</div>
 
 	<script src="../assets/js/jquery-3.6.3.js"></script>
@@ -416,6 +484,7 @@
 			return '<tr id=linha' + i.id + '>'
 				+ '<td><span class="numero-processo">' + (i.numeroProcesso || '—') + '</span></td>'
 				+ '<td>' + (i.nomeCliente || '—') + '</td>'
+			+ '<td>' + (i.casoId ? '<a href="/judi/caso/detalhe?id=' + i.casoId + '">' + i.tituloCaso + '</a>' : '<span class="text-muted">—</span>') + '</td>'
 				+ '<td>' + (i.tribunal || '—') + '</td>'
 				+ '<td>' + badgeStatus(i.status) + '</td>'
 				+ '<td>' + (i.dataUltimaMovimentacao || '<span class="text-muted">—</span>') + '</td>'
@@ -431,7 +500,7 @@
 				    </button>
 				    ${_isAdmin ? `
 				    <button
-				        class="btn-action btn btn-outline-secondary btn-sm"
+				        class="btn-action btn btn-warning btn-sm"
 				        title="Editar"
 				        onclick="editarProcesso(${i.id})">
 				        <i class="bi bi-pencil-square"></i>
@@ -471,7 +540,7 @@
 			$('#qtdFiltrados').text(data.totalElements);
 
 			if (!data.content || data.content.length === 0) {
-				$('#corpoProcessos').html('<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-briefcase"></i> Nenhum processo encontrado</td></tr>');
+				$('#corpoProcessos').html('<tr><td colspan="8" class="text-center text-muted py-4"><i class="bi bi-briefcase"></i> Nenhum processo encontrado</td></tr>');
 				renderPaginas(data);
 				return;
 			}
@@ -479,16 +548,40 @@
 			data.content.forEach(function(i) {
 				$('#corpoProcessos').append(linhaProcesso(i));
 			});
-			aplicarFiltroStatus();
 			renderPaginas(data);
+			filtrarLinhasTabela();
 		}
 
-		function listarTodos() {
-			_paginaAtual = 0;
+		function filtrarLinhasTabela() {
+			var termo = $('#filtroRapidoTabela').val().toLowerCase().trim();
+			$('#corpoProcessos tr').each(function () {
+				var texto = $(this).text().toLowerCase();
+				$(this).toggle(!termo || texto.indexOf(termo) > -1);
+			});
+		}
+
+		$(document).ready(function () {
+			$('#filtroRapidoTabela').on('input', filtrarLinhasTabela);
+		});
+
+		function paramsFiltroProcesso() {
+			var params = {};
+			var texto = $('#palavraChave').val(); if (texto) params.texto = texto;
+			var status = $('#statusFiltro').val(); if (status) params.status = status;
+			var funcionario = $('#funcionarioFiltro').val(); if (funcionario) params.funcionarioId = funcionario;
+			var cliente = $('#clienteFiltro').val(); if (cliente) params.clienteId = cliente;
+			var caso = $('#casoFiltro').val(); if (caso) params.casoId = caso;
+			return params;
+		}
+
+		function carregar() {
+			var params = paramsFiltroProcesso();
+			params.page = _paginaAtual;
 			$.ajax({
 				type: "GET",
 				contentType: "application/json",
-				url: "/judi/processos?page=0",
+				url: "/judi/processos/filtro",
+				data: params,
 				success: renderResultado,
 				statusCode: {
 					500: function() { alert('Erro! Contate o desenvolvedor!'); },
@@ -502,60 +595,42 @@
 
 		function paginacao(num) {
 			_paginaAtual = num;
-			$.ajax({
-				type: "GET",
-				contentType: "application/json",
-				url: "/judi/processos?page=" + num,
-				success: renderResultado,
-				statusCode: {
-					500: function() { alert('Erro! Contate o desenvolvedor!'); },
-					401: function() {
-						alert('Realize login novamente!');
-						window.location.href = "/judi/login";
-					}
-				}
-			});
+			carregar();
 		}
 
-		function buscaPorPalavra() {
-			var palavra = document.getElementById('palavraChave').value;
+		function aplicarFiltrosProcesso() {
+			_paginaAtual = 0;
+			carregar();
+		}
 
-			if (palavra != '') {
-				_paginaAtual = 0;
-				$.ajax({
-					type: "GET",
-					contentType: "application/json",
-					url: "/judi/processos/nome/" + encodeURIComponent(palavra),
-					success: renderResultado,
-					statusCode: {
-						500: function() { alert('Erro! Contate o desenvolvedor!'); },
-						401: function() {
-							alert('Realize login novamente!');
-							window.location.href = "/judi/login";
-						}
-					}
+		function limparFiltrosProcesso() {
+			$('#palavraChave').val('');
+			$('#statusFiltro, #funcionarioFiltro, #clienteFiltro, #casoFiltro').val('');
+			aplicarFiltrosProcesso();
+		}
+
+		function carregarOpcoesFiltroProcesso() {
+			$.ajax({ type: "GET", url: "/judi/funcionarios", success: function (data) {
+				var sel = $('#funcionarioFiltro');
+				(data || []).forEach(function (f) {
+					sel.append('<option value="' + f.id + '">' + f.nomeFuncionario + '</option>');
 				});
-			} else {
-				listarTodos();
-			}
-		}
+			}});
 
-		function aplicarFiltroStatus() {
-			var status = $('#statusFiltro').val();
-			if (!status) {
-				$('#corpoProcessos tr').show();
-				return;
-			}
-			var mapa = { ATIVO: 'Ativo', SUSPENSO: 'Suspenso', ARQUIVADO: 'Arquivado', EXTINTO: 'Extinto' };
-			$('#corpoProcessos tr').each(function() {
-				var txt = $(this).find('td').eq(3).text().trim();
-				$(this).toggle(txt === mapa[status]);
-			});
-		}
+			$.ajax({ type: "GET", url: "/judi/clientes?size=10000", success: function (data) {
+				var sel = $('#clienteFiltro');
+				(data.content || []).forEach(function (c) {
+					sel.append('<option value="' + c.id + '">' + c.nomeCliente + '</option>');
+				});
+			}});
 
-		$(document).ready(function() {
-			$('#statusFiltro').on('change', aplicarFiltroStatus);
-		});
+			$.ajax({ type: "GET", url: "/judi/casos?size=1000", success: function (data) {
+				var sel = $('#casoFiltro');
+				(data.content || []).forEach(function (c) {
+					sel.append('<option value="' + c.id + '">' + c.titulo + '</option>');
+				});
+			}});
+		}
 
 		function excluir(id) {
 			if (confirm("Tem certeza que deseja excluir o processo de ID: " + id + " ?") == true) {
@@ -581,7 +656,8 @@
 			}
 		}
 
-		$.when(carregarIsAdmin()).always(function () { listarTodos(); });
+		carregarOpcoesFiltroProcesso();
+		$.when(carregarIsAdmin()).always(function () { aplicarFiltrosProcesso(); });
 	</script>
 </body>
 </html>

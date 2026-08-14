@@ -3,26 +3,65 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="shortcut icon" href="assets/img/favicon.ico">
-	<link rel="stylesheet" href="assets/css/defaultStyle.css">
-	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	<title>Sistech - ERRO</title>
+	<link rel="shortcut icon" href="/judi/assets/img/favicon.ico">
+	<link rel="stylesheet" href="/judi/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/judi/assets/css/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/judi/assets/css/erro.css">
+	<title>Judera One - Erro</title>
+	<script>(function(){if(localStorage.getItem('darkMode')==='enabled')document.body.classList.add('dark-mode');})();</script>
 </head>
 <body>
-	<div class="container">
-			<div style="background-color: rgba(0, 0, 0, 0.2); text-align: center;">
-				<a href="#">SisTech</a>
-			</div>
-			<br /><br />
-			<h4 style="text-align: center;" >Você não possui esse acesso a esse recurso!</h4>
-			<h5 style="text-align: center;" ><a href="/sistech/home">Voltar!</a></h5>
-			<br /><br />
-			<footer>
-				<div style="background-color: rgba(0, 0, 0, 0.2); text-align: center;">
-					© 2025 Copyright:
-					<a href="#">TechGold</a>
-				</div>
-			</footer>
+
+	<div class="erro-topbar">
+		<a href="/judi/home" class="erro-brand">
+			<span class="erro-brand-icon"><i class="bi bi-bank2"></i></span>
+			Judera One
+		</a>
+		<button class="erro-icon-btn" id="toggleDarkBtn" title="Alternar modo escuro">
+			<i class="bi bi-moon"></i>
+		</button>
 	</div>
+
+	<div class="erro-wrap">
+		<div class="erro-card">
+			<div class="erro-icone aviso" id="erroIcone"><i class="bi bi-shield-exclamation"></i></div>
+			<div class="erro-codigo" id="erroCodigo">Erro</div>
+			<h1 class="erro-titulo" id="erroTitulo">Ocorreu um erro</h1>
+			<p class="erro-desc" id="erroDesc">
+				Não foi possível concluir a operação. Volte para o início ou tente novamente.
+			</p>
+			<div class="erro-acoes">
+				<a href="/judi/home" class="btn btn-primary"><i class="bi bi-house-fill"></i> Voltar ao início</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="erro-footer">© 2026 Copyright: TechGold</div>
+
+	<script src="/judi/assets/js/erro.js"></script>
+	<script>
+		var MENSAGENS = {
+			400: { titulo: 'Requisição inválida', desc: 'Os dados enviados não puderam ser processados. Verifique as informações e tente novamente.', icone: 'bi-file-earmark-excel' },
+			401: { titulo: 'Sessão expirada', desc: 'Sua sessão expirou ou você ainda não fez login. Entre novamente para continuar.', icone: 'bi-box-arrow-in-right' },
+			403: { titulo: 'Acesso negado', desc: 'Você não possui permissão para acessar este recurso. Se acredita que isso é um engano, contate um administrador.', icone: 'bi-shield-lock' },
+			405: { titulo: 'Ação não permitida', desc: 'Você não tem permissão para realizar esta ação.', icone: 'bi-shield-lock' },
+			408: { titulo: 'Tempo esgotado', desc: 'A solicitação demorou demais para ser concluída. Tente novamente.', icone: 'bi-hourglass-split' },
+			429: { titulo: 'Muitas tentativas', desc: 'Foram feitas muitas solicitações em pouco tempo. Aguarde um instante e tente novamente.', icone: 'bi-speedometer2' },
+			503: { titulo: 'Serviço indisponível', desc: 'O sistema está temporariamente indisponível. Tente novamente em instantes.', icone: 'bi-cone-striped' }
+		};
+
+		var params = new URLSearchParams(window.location.search);
+		var status = parseInt(params.get('status'), 10);
+		var info = MENSAGENS[status];
+
+		if (status) {
+			document.getElementById('erroCodigo').textContent = 'Erro ' + status;
+		}
+		if (info) {
+			document.getElementById('erroTitulo').textContent = info.titulo;
+			document.getElementById('erroDesc').textContent = info.desc;
+			document.getElementById('erroIcone').innerHTML = '<i class="bi ' + info.icone + '"></i>';
+		}
+	</script>
 </body>
 </html>

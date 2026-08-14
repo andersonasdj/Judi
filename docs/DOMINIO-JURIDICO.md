@@ -77,6 +77,15 @@ Regras: número fora do formato CNJ (`NNNNNNN-DD.AAAA.J.TR.OOOO`) ou já cadastr
 |---|---|---|
 | GET | `/dashboard/resumo` | contagens agregadas: processos ativos, por status, alertas não lidos, processos com erro de consulta, movimentações nos últimos 7 dias |
 | GET | `/dashboard/painel` | mesmo resumo + últimas 10 movimentações e últimos 10 alertas não lidos de qualquer processo — usado pela tela `/judi/painel` |
+| GET | `/dashboard/recentes` | atividade recente para a home: 5 últimas tarefas atualizadas, 5 últimos processos criados, 5 últimos casos criados e 5 próximas tarefas agendadas (status `AGENDADA`, ordenadas pela `dataAgendamento` mais próxima) |
+
+### Busca universal (`/busca`)
+
+| Método | Path | |
+|---|---|---|
+| GET | `/busca?q=` | agrega, numa única chamada, a busca por palavra já existente em Caso/Processo/Tarefa/Alerta (`buscarPorPalavra`), limitando a 5 resultados por categoria; usada pelo campo de busca da home (`/judi/home`). `q` com menos de 2 caracteres retorna listas vazias sem consultar o banco |
+
+`BuscaUniversalService` apenas delega para `CasoService`/`ProcessoService`/`TarefaService`/`AlertaProcessoService`, sem lógica de busca própria — a query de cada categoria continua em seu respectivo repositório (`buscarPorPalavra`, com `LIKE` sobre título/número/mensagem + nome do cliente).
 
 ### Painel de TV (`/judi/painel`)
 
@@ -99,6 +108,36 @@ Pacote `br.com.techgold.judi.datajud`.
 3. Conferir/ajustar `TribunalDataJud` para os tribunais realmente usados pelo escritório.
 4. Acompanhar os primeiros ciclos via `statusUltimaConsulta`/`mensagemErroUltimaConsulta` de cada processo e os alertas do tipo `ERRO_CONSULTA`.
 
+## Caso
+
+`Caso` é o agrupador acima de Processo: o problema/assunto jurídico do cliente (ex: "Disputa contratual com Fornecedor XYZ"), que pode reunir vários processos (ação de cobrança, ação de indenização, processo administrativo — todos a mesma questão) e/ou tarefas que nunca viram processo formal (ex: "Revisão de contrato" num caso Consultivo).
+
+```
+Cliente → Caso → Processos
+                → Tarefas
+```
+
+### `Caso` (tabela `casos`)
+
+`titulo`, `descricao`, `cliente` (FK obrigatória), `funcionarioResponsavel` (FK opcional), `natureza` (`NaturezaCaso`: `CONSULTIVO, PREVENTIVO, CONTENCIOSO`), `status` (`StatusCaso`: `ABERTO, EM_ANDAMENTO, CONCLUIDO, ARQUIVADO` — só informativo, sem a trava de imutabilidade que `Tarefa` tem), `ativo` (soft delete).
+
+### Vínculo com Processo e Tarefa
+
+`Processo.caso` e `Tarefa.caso` são **opcionais** (nem todo processo/tarefa precisa de um caso — mantém compatibilidade com os registros já existentes, que nascem sem caso). Quando um `casoId` é informado no cadastro/edição de Processo ou Tarefa, o backend valida que `caso.cliente` é o mesmo `clienteId` informado — caso contrário, `IllegalStateException` ("O caso selecionado pertence a outro cliente."). Isso significa que o **cliente do processo/tarefa continua sendo um campo próprio** (não é derivado do caso) — os dois precisam bater, mas a fonte da verdade do cliente não migrou para dentro do caso, evitando refatorar cadastro/edição/importação de processo já existentes.
+
+### Endpoints
+
+| Método | Path | Observação |
+|---|---|---|
+| GET | `/casos`, `/casos/nome/{conteudo}`, `/casos/cliente/{id}`, `/casos/funcionario/{id}`, `/casos/{id}` | listagens/detalhe (paginado); detalhe inclui `processos` e `tarefas` vinculados |
+| POST | `/casos` | cadastro |
+| PUT | `/casos` | `ROLE_ADMIN` |
+| PUT | `/casos/{id}/status/{status}` | qualquer autenticado |
+| DELETE | `/casos/delete/{id}` | `ROLE_ADMIN` — soft delete |
+| GET | `/processos/caso/{casoId}`, `/tarefas/caso/{casoId}` | processos/tarefas de um caso específico |
+
+`DtoCadastroProcesso`/`DtoAtualizarProcesso` e `DtoCadastroTarefa`/`DtoAtualizarTarefa` ganharam o campo opcional `casoId`. `DtoProcessoList`/`DtoProcessoDetalhe`/`DtoTarefaList`/`DtoTarefaDetalhe` ganharam `casoId`/`tituloCaso` para exibição.
+
 ## Anexos de Processo
 
 `AnexoProcesso` (tabela `anexos_processo`): `processo` (FK), `funcionario` (FK — quem enviou), `nomeOriginal`, `nomeArmazenado` (UUID gerado pelo servidor, nunca o nome enviado pelo usuário — evita colisão e travessia de diretório), `mimeType`, `tamanho`, `dataUpload`.
@@ -118,11 +157,13 @@ Módulo de controle de trabalho: tarefas ligadas a um cliente (e opcionalmente a
 
 ### `Tarefa` (tabela `tarefas`)
 
-`titulo`, `descricao`, `cliente` (FK obrigatória), `processo` (FK opcional), `funcionarioResponsavel` (FK opcional — quem está com a tarefa agora), `status` (`StatusTarefa`: `ABERTA, EM_ANDAMENTO, CONCLUIDA, CANCELADA`), `ativo` (soft delete). `status`/`funcionarioResponsavel` são atualizados automaticamente pelo `TimesheetService` ao iniciar/finalizar um timesheet — não precisam ser gerenciados manualmente no dia a dia (mas podem ser ajustados via `PUT /tarefas` ou `PUT /tarefas/{id}/status/{status}`, por exemplo para marcar `CONCLUIDA`/`CANCELADA`).
+`titulo`, `descricao`, `cliente` (FK obrigatória), `caso` (FK opcional), `processo` (FK opcional), `funcionarioResponsavel` (FK opcional — quem está com a tarefa agora), `status` (`StatusTarefa`: `ABERTA, AGENDADA, EM_ANDAMENTO, CONCLUIDA, CANCELADA`), `dataAgendamento` (preenchida só quando `status=AGENDADA`), `ativo` (soft delete). `status`/`funcionarioResponsavel` são atualizados automaticamente pelo `TimesheetService` ao iniciar/finalizar um timesheet — não precisam ser gerenciados manualmente no dia a dia (mas podem ser ajustados via `PUT /tarefas` ou `PUT /tarefas/{id}/status/{status}`, por exemplo para marcar `CONCLUIDA`/`CANCELADA`).
 
 **Estados finais (`StatusTarefa.isFinal()` — `CONCLUIDA`/`CANCELADA`)**: uma vez lá, a tarefa trava o fluxo de trabalho — `TimesheetService` (`iniciar`, `registrarManual`, `atualizar`, `excluir`) e `DespesaTarefaService.cadastrar` recusam qualquer nova operação com `IllegalStateException`. Metadados da tarefa (título/descrição/cliente/processo) continuam editáveis via `PUT /tarefas` (`ROLE_ADMIN`), e `DespesaTarefaService.marcarReembolsada` continua funcionando normalmente (fluxo financeiro é independente do fluxo de trabalho). `TarefaService.alterarStatus`:
 - Não deixa sair de um estado final (reabrir) a não ser que quem chamou seja `ROLE_ADMIN` — outros usuários recebem erro.
 - Não deixa entrar em `CONCLUIDA`/`CANCELADA` se ainda houver um timesheet aberto (`dataFim IS NULL`) na tarefa — precisa finalizar o trabalho em andamento antes.
+- Recusa transição direta para `AGENDADA` (não tem como carregar a data por essa rota) — use `PUT /tarefas/{id}/agendar` (`TarefaService.agendar`), que grava `status=AGENDADA` + `dataAgendamento` atomicamente. `PUT /tarefas` (edição completa) também aceita `status=AGENDADA` desde que `dataAgendamento` venha preenchido no mesmo payload.
+- `dataAgendamento` é só o registro da data escolhida — **ainda não existe** um job que gera alertas a partir dela; isso é trabalho futuro. Hoje ela só serve para exibição (`GET /tarefas/{id}` e listagens já retornam o campo).
 
 ### `Timesheet` (tabela `timesheets`)
 
@@ -137,6 +178,8 @@ Módulo de controle de trabalho: tarefas ligadas a um cliente (e opcionalmente a
 
 Despesa de um funcionário numa tarefa, para reembolso: `tarefa`, `funcionario`, `descricao`, `valor`, `data`, `reembolsada` (Boolean, sem fluxo de aprovação — só marca paga/não paga via `PUT /despesas/{id}/reembolsar`, `ROLE_ADMIN`), `dataReembolso`.
 
+**Comprovante (opcional, um por despesa)**: PDF ou imagem (jpg/jpeg/png/gif/webp), armazenado em disco sob `upload.dir/despesas/{despesaId}/{nomeArmazenado}` — mesmo padrão de `AnexoProcesso` (nome em disco é sempre um UUID gerado pelo servidor, nunca o nome enviado pelo usuário). Metadados na própria linha da despesa (`comprovanteNomeOriginal`, `comprovanteNomeArmazenado`, `comprovanteMimeType`, `comprovanteTamanho`). Só o funcionário que registrou a despesa ou um `ROLE_ADMIN` pode anexar/trocar/remover o comprovante; download é liberado a qualquer autenticado (mesma regra do anexo de processo).
+
 ### Endpoints
 
 | Método | Path | Observação |
@@ -144,7 +187,8 @@ Despesa de um funcionário numa tarefa, para reembolso: `tarefa`, `funcionario`,
 | GET | `/tarefas`, `/tarefas/nome/{conteudo}`, `/tarefas/cliente/{id}`, `/tarefas/processo/{id}`, `/tarefas/funcionario/{id}`, `/tarefas/{id}` | listagens/detalhe (paginado) |
 | POST | `/tarefas` | cadastro |
 | PUT | `/tarefas` | `ROLE_ADMIN` |
-| PUT | `/tarefas/{id}/status/{status}` | qualquer autenticado |
+| PUT | `/tarefas/{id}/status/{status}` | qualquer autenticado; recusa `status=AGENDADA` (use `/agendar`) |
+| PUT | `/tarefas/{id}/agendar` | body `{ dataAgendamento }` — marca `AGENDADA` com data/hora |
 | DELETE | `/tarefas/delete/{id}` | `ROLE_ADMIN` — soft delete |
 | GET | `/timesheets/tarefa/{tarefaId}` | histórico da tarefa |
 | GET | `/timesheets/meus`, `/timesheets/aberto` | do funcionário autenticado |
@@ -158,6 +202,9 @@ Despesa de um funcionário numa tarefa, para reembolso: `tarefa`, `funcionario`,
 | GET | `/despesas/funcionario/{id}`, `/despesas/pendentes` | `ROLE_ADMIN` |
 | POST | `/despesas` | cadastro (funcionário autenticado) |
 | PUT | `/despesas/{id}/reembolsar`, DELETE `/despesas/{id}` | `ROLE_ADMIN` |
+| POST | `/despesas/{id}/comprovante` | multipart (`arquivo`) — anexa/substitui o comprovante; dono da despesa ou `ROLE_ADMIN` |
+| GET | `/despesas/{id}/comprovante` | download/preview (`Content-Disposition: inline`); qualquer autenticado |
+| DELETE | `/despesas/{id}/comprovante` | remove só o comprovante (mantém a despesa); dono ou `ROLE_ADMIN` |
 
 ## Decisões de escopo (registradas para não serem re-discutidas sem necessidade)
 

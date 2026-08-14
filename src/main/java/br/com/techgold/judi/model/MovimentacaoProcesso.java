@@ -48,4 +48,9 @@ public class MovimentacaoProcesso {
 
 	private LocalDateTime dataRegistro;
 
+	/** Quem registrou a movimentação manualmente — nulo quando origem = DATAJUD (sincronização automática). */
+	@ManyToOne
+	@JoinColumn(name = "registrado_por_id")
+	private Funcionario registradoPor;
+
 }

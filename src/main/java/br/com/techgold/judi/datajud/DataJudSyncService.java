@@ -14,35 +14,37 @@ import br.com.techgold.judi.model.enums.StatusConsultaDataJud;
 import br.com.techgold.judi.model.enums.TipoAlerta;
 import br.com.techgold.judi.repository.ProcessoRepository;
 import br.com.techgold.judi.services.AlertaProcessoService;
+import br.com.techgold.judi.services.ConfiguracaoDataJudService;
 import br.com.techgold.judi.services.MovimentacaoProcessoService;
 
 /**
  * Orquestra a sincronização diária dos processos monitorados com a API
  * Pública do DataJud: busca movimentações novas, grava-as e dispara alertas.
  *
- * Enquanto {@link DataJudProperties#isConfigurado()} for falso (sem API key
- * definida em {@code DATAJUD_API_KEY}), a sincronização é ignorada — os
- * processos ficam marcados como {@code ERRO} de consulta com uma mensagem
- * explicativa, sem gerar exceção nem travar a aplicação.
+ * Enquanto {@link ConfiguracaoDataJudService#isConfigurado()} for falso
+ * (integração desativada ou sem api-key definida em Configurações →
+ * Integração DataJud), a sincronização é ignorada — os processos ficam
+ * marcados como {@code ERRO} de consulta com uma mensagem explicativa, sem
+ * gerar exceção nem travar a aplicação.
  */
 @Service
 public class DataJudSyncService {
 
 	private static final Logger log = LoggerFactory.getLogger(DataJudSyncService.class);
 
-	private static final String MENSAGEM_INTEGRACAO_PENDENTE = "Integração com o DataJud ainda não configurada (API key pendente).";
+	private static final String MENSAGEM_INTEGRACAO_PENDENTE = "Integração com o DataJud ainda não configurada ou desativada.";
 
 	private final ProcessoRepository processoRepository;
 	private final DataJudClient client;
-	private final DataJudProperties properties;
+	private final ConfiguracaoDataJudService configuracaoService;
 	private final MovimentacaoProcessoService movimentacaoService;
 	private final AlertaProcessoService alertaService;
 
-	DataJudSyncService(ProcessoRepository processoRepository, DataJudClient client, DataJudProperties properties,
+	DataJudSyncService(ProcessoRepository processoRepository, DataJudClient client, ConfiguracaoDataJudService configuracaoService,
 			MovimentacaoProcessoService movimentacaoService, AlertaProcessoService alertaService) {
 		this.processoRepository = processoRepository;
 		this.client = client;
-		this.properties = properties;
+		this.configuracaoService = configuracaoService;
 		this.movimentacaoService = movimentacaoService;
 		this.alertaService = alertaService;
 	}
@@ -77,7 +79,7 @@ public class DataJudSyncService {
 	}
 
 	public void sincronizarProcesso(Processo processo) {
-		if (!properties.isConfigurado()) {
+		if (!configuracaoService.isConfigurado()) {
 			marcarErro(processo, MENSAGEM_INTEGRACAO_PENDENTE, false);
 			return;
 		}

@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="../assets/css/defaultStyle.css">
 	<link rel="stylesheet" href="../assets/css/dark.css">
 	<link rel="stylesheet" href="../assets/css/navbar.css">
-	<title>Judi - Detalhe do Processo</title>
+	<title>Judera One - Detalhe do Processo</title>
 	<style>
 		.card { border: 1px solid rgba(0,0,0,.1) !important; box-shadow: 0 3px 12px rgba(0,0,0,.09) !important; border-radius: 16px !important; }
 		body.dark-mode .card { border-color: rgba(255,255,255,.15) !important; box-shadow: 0 3px 14px rgba(0,0,0,.6) !important; }
@@ -30,13 +30,6 @@
 		.timeline-desc { font-size: .88rem; color: #1e293b; }
 		body.dark-mode .timeline-desc { color: #f1f5f9; }
 
-		.timeline-item.minimizado { padding-bottom: 8px; }
-		.timeline-item.minimizado .timeline-desc {
-			white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-			max-width: 100%; display: block;
-		}
-		.timeline-item.minimizado .timeline-complemento,
-		.timeline-item.minimizado .timeline-codigo { display: none; }
 
 		.alerta-item { border-left: 3px solid transparent; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; background: #f8fafc; }
 		body.dark-mode .alerta-item { background:#1e1e1e; }
@@ -45,6 +38,22 @@
 		.alerta-item.sev-INFO    { border-left-color:#0dcaf0; }
 		.alerta-item.lido { opacity:.55; }
 		.alerta-item a { text-decoration:none; color:inherit; display:block; }
+
+		.anexos-lista { display: flex; flex-direction: column; gap: 8px; }
+		.anexo-item {
+			display: flex; align-items: center; justify-content: space-between; gap: 10px;
+			padding: 10px 12px; border: 1px solid rgba(0,0,0,.08); border-radius: 10px; background: #f8fafc;
+		}
+		body.dark-mode .anexo-item { background:#1e1e1e; border-color: rgba(255,255,255,.1); }
+		.anexo-item .anexo-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+		.anexo-item .anexo-icone { font-size: 1.15rem; flex-shrink: 0; }
+		.anexo-item .anexo-textos { min-width: 0; }
+		.anexo-item .anexo-nome { font-size: .88rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1e293b; }
+		body.dark-mode .anexo-item .anexo-nome { color: #f1f5f9; }
+		.anexo-item .anexo-meta { font-size: .74rem; color: #94a3b8; }
+		.anexo-item .anexo-lado { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+		.anexo-item .anexo-tamanho { font-size: .76rem; color: #94a3b8; white-space: nowrap; }
+		.anexo-item .anexo-acoes { display: flex; gap: 6px; }
 	</style>
 </head>
 <body>
@@ -57,18 +66,13 @@
 			<div class="sidebar-brand-icon">
 				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
 			</div>
-			<span class="sidebar-brand-text">Dashboard</span>
+			<span class="sidebar-brand-text">Judera One</span>
 		</div>
 		<div class="sidebar-scroll">
 			<a href="/judi/home" class="sidebar-item">
 				<i class="bi bi-house-fill"></i>
 				<span class="sidebar-item-label">Início</span>
 			</a>
-			<a href="/judi/painel" class="sidebar-item" target="_blank">
-				<i class="bi bi-tv"></i>
-				<span class="sidebar-item-label">Painel TV</span>
-			</a>
-
 			<div class="sidebar-group" id="sgClientes">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
 					<i class="bi bi-building"></i>
@@ -83,12 +87,23 @@
 			<div class="sidebar-group" id="sgFuncionarios">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
 					<i class="bi bi-person-badge"></i>
-					<span class="sidebar-group-label">Funcionários</span>
+					<span class="sidebar-group-label">Equipe</span>
 					<i class="bi bi-chevron-down sidebar-chevron"></i>
 				</button>
 				<div class="sidebar-group-items">
 					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
 			<div class="sidebar-group" id="sgProcessos">
@@ -103,10 +118,6 @@
 					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
 				</div>
 			</div>
-			<a href="/judi/processo/alertas" class="sidebar-item">
-				<i class="bi bi-bell"></i>
-				<span class="sidebar-item-label">Alertas</span>
-			</a>
 			<div class="sidebar-group" id="sgTarefas">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
 					<i class="bi bi-list-check"></i>
@@ -118,9 +129,21 @@
 					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
 				</div>
 			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
 			</a>
 		</div>
 		<div class="sidebar-footer">
@@ -144,7 +167,7 @@
 		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
 			<i class="bi bi-list"></i>
 		</button>
-		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judera One</span>
 		<div class="ms-auto d-flex align-items-center gap-2">
 			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
 				<i class="bi bi-layout-three-columns"></i>
@@ -179,7 +202,7 @@
 					<div class="brand-icon">
 						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
 					</div>
-					<span class="brand-text">Judi</span>
+					<span class="brand-text">Judera One</span>
 				</a>
 				<!-- Mobile toggle -->
 				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -197,11 +220,6 @@
 								<i class="bi bi-house-fill"></i> Início
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/painel" target="_blank">
-								<i class="bi bi-tv"></i> Painel TV
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-building"></i> Clientes
@@ -213,11 +231,20 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-person-badge"></i> Funcionários
+								<i class="bi bi-person-badge"></i> Equipe
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
 								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
 						<li class="nav-item dropdown">
@@ -230,11 +257,6 @@
 								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/processo/alertas">
-								<i class="bi bi-bell"></i> Alertas
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list-check"></i> Tarefas
@@ -245,8 +267,23 @@
 							</ul>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
 							</a>
 						</li>
 					</ul>
@@ -283,7 +320,6 @@
 		<!-- / NAVBAR -->
 
 		<div class="container-fluid mt-2 px-1" style="max-width:1200px;">
-
 			<div class="d-flex justify-content-between align-items-center mb-3">
 				<div>
 					<h4 class="fw-bold mb-0"><span class="numero-processo" id="tituloNumero">—</span></h4>
@@ -319,6 +355,9 @@
 								<div class="col-6"><div class="dado-label">Data de Distribuição</div><div class="dado-valor" id="dDistribuicao">—</div></div>
 								<div class="col-6"><div class="dado-label">Valor da Causa</div><div class="dado-valor" id="dValorCausa">—</div></div>
 								<div class="col-12"><div class="dado-label">Cliente</div><div class="dado-valor" id="dCliente">—</div></div>
+								<div class="col-6"><div class="dado-label">Parte Adversa</div><div class="dado-valor" id="dParteAdversa">—</div></div>
+								<div class="col-6"><div class="dado-label">Polo do Cliente</div><div class="dado-valor" id="dPoloCliente">—</div></div>
+								<div class="col-12"><div class="dado-label">Caso</div><div class="dado-valor" id="dCaso">—</div></div>
 								<div class="col-12"><div class="dado-label">Funcionário Responsável</div><div class="dado-valor" id="dFuncionario">—</div></div>
 								<div class="col-12"><div class="dado-label">Observações</div><div class="dado-valor" id="dObservacoes">—</div></div>
 								<div class="col-12"><div class="dado-label">Última Consulta ao DataJud</div>
@@ -356,19 +395,8 @@
 								</div>
 							</div>
 
-							<div class="table-responsive">
-								<table class="table align-middle table-sm">
-									<thead>
-										<tr>
-											<th>Arquivo</th>
-											<th>Tamanho</th>
-											<th class="text-end">Ações</th>
-										</tr>
-									</thead>
-									<tbody id="corpoAnexos">
-										<tr><td colspan="3" class="text-center text-muted py-3">Carregando...</td></tr>
-									</tbody>
-								</table>
+							<div id="corpoAnexos" class="anexos-lista">
+								<div class="text-center text-muted py-3">Carregando...</div>
 							</div>
 						</div>
 					</div>
@@ -409,14 +437,9 @@
 						<div class="card-body">
 							<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 								<h6 class="mb-0"><i class="bi bi-list-ul"></i> Movimentações</h6>
-								<div class="btn-group btn-group-sm">
-									<button type="button" class="btn btn-outline-secondary" title="Minimizar todas" onclick="minimizarTodasMovimentacoes()">
-										<i class="bi bi-arrows-collapse"></i> Minimizar tudo
-									</button>
-									<button type="button" class="btn btn-outline-secondary" title="Maximizar todas" onclick="maximizarTodasMovimentacoes()">
-										<i class="bi bi-arrows-expand"></i> Maximizar tudo
-									</button>
-								</div>
+								<button type="button" class="btn btn-sm btn-outline-secondary" id="btnToggleMovimentacoes" title="Mostrar todas" onclick="toggleMovimentacoes()" style="display:none;">
+									<i class="bi bi-chevron-down" id="iconeToggleMovimentacoes"></i>
+								</button>
 							</div>
 							<div class="timeline" id="timelineMovimentacoes">
 								<div class="text-muted small">Nenhuma movimentação registrada.</div>
@@ -520,6 +543,16 @@
 			$('#dDistribuicao').text(data.dataDistribuicao || '—');
 			$('#dValorCausa').text(data.valorCausa != null ? 'R$ ' + Number(data.valorCausa).toLocaleString('pt-BR', {minimumFractionDigits:2}) : '—');
 			$('#dCliente').text(data.nomeCliente || '—');
+			$('#dParteAdversa').text(data.parteAdversa
+				? data.parteAdversa + (data.documentoParteAdversa ? ' (' + data.documentoParteAdversa + ')' : '')
+				: '—');
+			var rotuloPolo = { ATIVO: 'Ativo (autor/exequente)', PASSIVO: 'Passivo (réu/executado)' };
+			$('#dPoloCliente').text(rotuloPolo[data.poloCliente] || '—');
+			if (data.casoId) {
+				$('#dCaso').html('<a href="/judi/caso/detalhe?id=' + data.casoId + '">' + escapeHtml(data.tituloCaso || ('#' + data.casoId)) + '</a>');
+			} else {
+				$('#dCaso').text('—');
+			}
 			$('#dFuncionario').text(data.nomeFuncionarioResponsavel || '—');
 			$('#dObservacoes').text(data.observacoes || '—');
 
@@ -535,21 +568,24 @@
 			renderAlertas(data.alertas || []);
 		}
 
-		var _movimentacoesMinimizadas = localStorage.getItem('movimentacoesMinimizadas') === 'true';
+		var MOVIMENTACOES_LIMITE = 6;
+		var _movimentacoesExpandido = false;
 
 		function renderMovimentacoes(lista) {
 			var el = $('#timelineMovimentacoes');
 			el.empty();
+			_movimentacoesExpandido = false;
+			$('#btnToggleMovimentacoes').hide();
 			if (!lista.length) {
 				el.html('<div class="text-muted small">Nenhuma movimentação registrada.</div>');
 				return;
 			}
-			lista.forEach(function(m) {
+			lista.forEach(function(m, index) {
 				var origemBadge = m.origem === 'MANUAL'
 					? '<span class="badge bg-secondary-subtle text-secondary border">Manual</span>'
 					: '<span class="badge bg-primary-subtle text-primary border">DataJud</span>';
 				var dotClass = m.origem === 'MANUAL' ? 'timeline-dot origem-manual' : 'timeline-dot';
-				var itemClass = 'timeline-item' + (_movimentacoesMinimizadas ? ' minimizado' : '');
+				var itemClass = 'timeline-item' + (index >= MOVIMENTACOES_LIMITE ? ' d-none' : '');
 				el.append(
 					'<div class="' + itemClass + '">' +
 						'<div class="' + dotClass + '"></div>' +
@@ -559,18 +595,25 @@
 					'</div>'
 				);
 			});
+
+			if (lista.length > MOVIMENTACOES_LIMITE) {
+				atualizarIconeToggleMovimentacoes();
+				$('#btnToggleMovimentacoes').show();
+			}
 		}
 
-		function minimizarTodasMovimentacoes() {
-			_movimentacoesMinimizadas = true;
-			localStorage.setItem('movimentacoesMinimizadas', 'true');
-			$('#timelineMovimentacoes .timeline-item').addClass('minimizado');
+		function toggleMovimentacoes() {
+			_movimentacoesExpandido = !_movimentacoesExpandido;
+			$('#timelineMovimentacoes .timeline-item').each(function(index) {
+				$(this).toggleClass('d-none', !_movimentacoesExpandido && index >= MOVIMENTACOES_LIMITE);
+			});
+			atualizarIconeToggleMovimentacoes();
 		}
 
-		function maximizarTodasMovimentacoes() {
-			_movimentacoesMinimizadas = false;
-			localStorage.setItem('movimentacoesMinimizadas', 'false');
-			$('#timelineMovimentacoes .timeline-item').removeClass('minimizado');
+		function atualizarIconeToggleMovimentacoes() {
+			var btn = document.getElementById('btnToggleMovimentacoes');
+			document.getElementById('iconeToggleMovimentacoes').className = _movimentacoesExpandido ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
+			btn.title = _movimentacoesExpandido ? 'Mostrar somente as últimas 6' : 'Mostrar todas';
 		}
 
 		function renderAlertas(lista) {
@@ -692,23 +735,28 @@
 			var el = $('#corpoAnexos');
 			el.empty();
 			if (!lista.length) {
-				el.html('<tr><td colspan="3" class="text-center text-muted py-3">Nenhum anexo enviado.</td></tr>');
+				el.html('<div class="text-center text-muted py-3">Nenhum anexo enviado.</div>');
 				return;
 			}
 			lista.forEach(function (a) {
-				var linha = $('<tr></tr>');
-				linha.html(
-					'<td>' +
-						'<div><i class="bi ' + iconeArquivo(a.nomeOriginal) + ' me-2"></i>' + escapeHtml(a.nomeOriginal) + '</div>' +
-						'<div class="small text-muted">' + escapeHtml(a.nomeFuncionario || '—') + ' · ' + (a.dataUpload || '—') + '</div>' +
-					'</td>' +
-					'<td>' + formatarTamanho(a.tamanho) + '</td>' +
-					'<td class="text-end text-nowrap">' +
-						'<a class="btn btn-outline-primary btn-sm me-1" title="Baixar" href="/judi/anexos/' + a.id + '/download"><i class="bi bi-download"></i></a>' +
-						'<button class="btn btn-outline-danger btn-sm" title="Excluir" onclick="excluirAnexo(' + a.id + ')"><i class="bi bi-trash"></i></button>' +
-					'</td>'
+				var item = $('<div class="anexo-item"></div>');
+				item.html(
+					'<div class="anexo-info">' +
+						'<i class="bi ' + iconeArquivo(a.nomeOriginal) + ' anexo-icone"></i>' +
+						'<div class="anexo-textos">' +
+							'<div class="anexo-nome" title="' + escapeHtml(a.nomeOriginal) + '">' + escapeHtml(a.nomeOriginal) + '</div>' +
+							'<div class="anexo-meta">' + escapeHtml(a.nomeFuncionario || '—') + ' · ' + (a.dataUpload || '—') + '</div>' +
+						'</div>' +
+					'</div>' +
+					'<div class="anexo-lado">' +
+						'<span class="anexo-tamanho">' + formatarTamanho(a.tamanho) + '</span>' +
+						'<div class="anexo-acoes">' +
+							'<a class="btn btn-outline-primary btn-sm" title="Baixar" href="/judi/anexos/' + a.id + '/download"><i class="bi bi-download"></i></a>' +
+							'<button class="btn btn-outline-danger btn-sm" title="Excluir" onclick="excluirAnexo(' + a.id + ')"><i class="bi bi-trash"></i></button>' +
+						'</div>' +
+					'</div>'
 				);
-				el.append(linha);
+				el.append(item);
 			});
 		}
 

@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="../assets/css/dark.css">
 	<link rel="stylesheet" href="../assets/css/navbar.css">
-	<title>SisTech - Clientes</title>
+	<title>Judera One - Clientes</title>
 	<style>
 		/* cards — border sutil em modo claro */
 		.filtro-sidebar,
@@ -35,11 +35,11 @@
 			background: transparent;
 			color: #fff;
 			font-weight: 600;
-			font-size: .76rem;
+			font-size: .68rem;
 			text-transform: uppercase;
-			letter-spacing: .06em;
+			letter-spacing: .04em;
 			border: none !important;
-			padding: 12px 16px;
+			padding: 5px 16px;
 		}
 
 		/* botões de filtro rápido arredondados */
@@ -64,18 +64,13 @@
 			<div class="sidebar-brand-icon">
 				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
 			</div>
-			<span class="sidebar-brand-text">Dashboard</span>
+			<span class="sidebar-brand-text">Judera One</span>
 		</div>
 		<div class="sidebar-scroll">
 			<a href="/judi/home" class="sidebar-item active">
 				<i class="bi bi-house-fill"></i>
 				<span class="sidebar-item-label">Início</span>
-			</a>
-			<a href="/judi/painel" class="sidebar-item" target="_blank">
-				<i class="bi bi-tv"></i>
-				<span class="sidebar-item-label">Painel TV</span>
-			</a>
-		
+			</a>		
 			<div class="sidebar-group" id="sgClientes">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
 					<i class="bi bi-building"></i>
@@ -90,12 +85,23 @@
 			<div class="sidebar-group" id="sgFuncionarios">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
 					<i class="bi bi-person-badge"></i>
-					<span class="sidebar-group-label">Funcionários</span>
+					<span class="sidebar-group-label">Equipe</span>
 					<i class="bi bi-chevron-down sidebar-chevron"></i>
 				</button>
 				<div class="sidebar-group-items">
 					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
 			<div class="sidebar-group" id="sgProcessos">
@@ -110,10 +116,6 @@
 					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
 				</div>
 			</div>
-			<a href="/judi/processo/alertas" class="sidebar-item">
-				<i class="bi bi-bell"></i>
-				<span class="sidebar-item-label">Alertas</span>
-			</a>
 			<div class="sidebar-group" id="sgTarefas">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
 					<i class="bi bi-list-check"></i>
@@ -125,9 +127,21 @@
 					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
 				</div>
 			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
 			</a>
 		</div>
 		<div class="sidebar-footer">
@@ -151,7 +165,7 @@
 		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
 			<i class="bi bi-list"></i>
 		</button>
-		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judera One</span>
 		<div class="ms-auto d-flex align-items-center gap-2">
 			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
 				<i class="bi bi-layout-three-columns"></i>
@@ -204,11 +218,6 @@
 								<i class="bi bi-house-fill"></i> Início
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/painel" target="_blank">
-								<i class="bi bi-tv"></i> Painel TV
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-building"></i> Clientes
@@ -220,11 +229,20 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-person-badge"></i> Funcionários
+								<i class="bi bi-person-badge"></i> Equipe
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
 								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
 						<li class="nav-item dropdown">
@@ -237,11 +255,6 @@
 								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/processo/alertas">
-								<i class="bi bi-bell"></i> Alertas
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list-check"></i> Tarefas
@@ -252,8 +265,23 @@
 							</ul>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
 							</a>
 						</li>
 					</ul>
@@ -384,28 +412,38 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-6">
-								<label class="form-label" for="usuariomodal"><b>Usuario</b></label>
-								<input type="text" id="usuariomodal" class="form-control"><br />
+							<div class="col-md-12">
+								<label class="form-label mt-1" for="nomeFantasiaModal"><b>Nome Fantasia</b></label>
+								<input type="text" id="nomeFantasiaModal" class="form-control"><br />
 							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 ms-auto">
+								<label class="form-label mt-1" for="cnpjmodal"><b>CNPJ</b></label>
+								<input type="text" id="cnpjmodal" class="form-control"><br />
+							</div>
+						</div>
+						<div class="row">
 							<div class="col-md-6 ms-auto">
-								<label class="form-label" for="senhamodal"><b>Senha</b></label>
-								<div class="input-group">
-									<input type="password" id="senhamodal" class="form-control" autocomplete="new-password">
-									<button type="button" class="btn btn-outline-primary" onclick="abrirGeradorSenha()" title="Gerar senha aleatória">
-										<i class="bi bi-key-fill"></i>
-									</button>
-								</div>
+								<label class="form-label mt-1" for="tipoPessoaModal"><b>Tipo de Pessoa</b></label>
+								<select class="form-select" id="tipoPessoaModal">
+									<option value="PJ">Jurídica</option>
+									<option value="PF">Física</option>
+								</select>
+							</div>
+							<div class="col-md-6">
+								<label class="form-label mt-1" for="telefonemodal"><b>Telefone</b></label>
+								<input type="tel" maxlength="15" onkeyup="handlePhone(event)" id="telefonemodal" class="form-control">
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-6">
-								<label class="form-label" for="telefonemodal"><b>Telefone</b></label>
-								<input type="tel" maxlength="15" onkeyup="handlePhone(event)" id="telefonemodal" class="form-control">
+								<label class="form-label mt-1" for="inscricaoEstadualModal"><b>Inscrição Estadual</b></label>
+								<input type="text" id="inscricaoEstadualModal" class="form-control"><br />
 							</div>
 							<div class="col-md-6 ms-auto">
-								<label class="form-label" for="cnpjmodal"><b>CNPJ</b></label>
-								<input type="text" id="cnpjmodal" class="form-control"><br />
+								<label class="form-label mt-1" for="inscricaoMunicipalModal"><b>Inscrição Municipal</b></label>
+								<input type="text" id="inscricaoMunicipalModal" class="form-control"><br />
 							</div>
 						</div>
 						<div class="row">
@@ -413,7 +451,7 @@
 								<label class="form-label" for="enderecomodal"><b>Endereço</b></label>
 								<input type="text" id="enderecomodal" class="form-control"><br />
 							</div>
-						</div>					
+						</div>
 						<div class="row">
 							<div class="col-md-6">
 								<label class="form-label mt-1" for="bairroModal"><b>Bairro</b></label>
@@ -422,6 +460,21 @@
 							<div class="col-md-6">
 								<label class="form-label mt-1" for="ativoModal"><b>Ativo</b></label>
 								<select class="form-select" id="ativoModal"> </select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<label class="form-label mt-1" for="usuariomodal"><b>Usuario</b></label>
+								<input type="text" id="usuariomodal" class="form-control"><br />
+							</div>
+							<div class="col-md-6 ms-auto">
+								<label class="form-label mt-1" for="senhamodal"><b>Senha</b></label>
+								<div class="input-group">
+									<input type="password" id="senhamodal" class="form-control" autocomplete="new-password">
+									<button type="button" class="btn btn-outline-primary" onclick="abrirGeradorSenha()" title="Gerar senha aleatória">
+										<i class="bi bi-key-fill"></i>
+									</button>
+								</div>
 							</div>
 						</div>
 						<div class="row">
@@ -491,6 +544,48 @@
 			</div>
 		</div>
 		<!-- ####################################### MODAL LISTA DE COLABORADORES ########################################### -->
+		<!-- ####################################### MODAL VALOR/HORA POR FUNCIONÁRIO ####################################### -->
+		<div class="modal fade" id="modalValorHora" tabindex="-1" aria-labelledby="modalLabelValorHora" aria-hidden="true">
+			<div class="modal-dialog modal-lg modal-dialog-scrollable">
+				<div class="modal-content border-0 rounded-3 overflow-hidden shadow-lg">
+					<div class="modal-header" style="background:linear-gradient(135deg,#1e3a5f,#1a56c4);color:#fff;">
+						<div class="d-flex align-items-center gap-2">
+							<i class="bi bi-clock-history fs-4"></i>
+							<div>
+								<h1 class="modal-title fs-5 mb-0" id="modalLabelValorHora">Valor/Hora por Funcionário</h1>
+								<small class="opacity-75" id="clienteValorHoraNome"></small>
+							</div>
+						</div>
+						<input type="text" hidden id="idClienteValorHora">
+						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"> </button>
+					</div>
+					<div class="modal-body">
+						<p class="text-muted small mb-3">
+							Deixe o campo "Personalizado" em branco e salve para usar o valor/hora padrão do funcionário (definido no cadastro dele).
+						</p>
+						<div class="table-responsive">
+							<table class="table table-hover align-middle mb-0" id="tabela-valor-hora">
+								<thead>
+									<tr>
+										<th>Funcionário</th>
+										<th width="140">Padrão</th>
+										<th width="190">Personalizado (R$)</th>
+										<th width="90" class="text-end">Ação</th>
+									</tr>
+								</thead>
+								<tbody id="tbValorHoraCorpo">
+									<tr><td colspan="4" class="text-center text-muted py-4">Carregando...</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ####################################### MODAL VALOR/HORA POR FUNCIONÁRIO ####################################### -->
 		<!-- ####################################### MODAL ADICIONA COLABORADOR ############################################# -->
 		<div class="modal fade" id="addColaboradorModal" tabindex="-1" aria-labelledby="addColaboradorModalLabel"
 			aria-hidden="true">
@@ -704,6 +799,12 @@
 									<i class="bi bi-image"></i>
 								</button>
 								<button
+									class="btn-action btn btn-outline-info"
+									title="Valor/Hora por Funcionário"
+									onclick="abrirModalValorHora(${i.id}, '${i.nomeCliente}')">
+									<i class="bi bi-clock-history"></i>
+								</button>
+								<button
 							        class="btn-action btn btn-danger"
 							        onclick="excluir(${i.id})">
 							        <i class="bi bi-trash"></i>
@@ -716,9 +817,9 @@
 					},
 					statusCode: {
 					    500: function() { alert('Erro! Contate o desenvolvedor!'); },
-						401: function() { 
-							alert('Realize login novamente!'); 
-							window.location.href = "/judi/login"; 
+						401: function() {
+							alert('Realize login novamente!');
+							window.location.href = "/judi/login";
 						}
 					}
 				});
@@ -807,6 +908,12 @@
 					        title="Gerenciar logo"
 					        onclick="abrirModalLogo(${i.id}, '${i.nomeCliente}')">
 					        <i class="bi bi-image"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-outline-info"
+					        title="Valor/Hora por Funcionário"
+					        onclick="abrirModalValorHora(${i.id}, '${i.nomeCliente}')">
+					        <i class="bi bi-clock-history"></i>
 					    </button>
 					    <button
 					        class="btn-action btn btn-danger"
@@ -919,6 +1026,12 @@
 					        <i class="bi bi-image"></i>
 					    </button>
 					    <button
+					        class="btn-action btn btn-outline-info"
+					        title="Valor/Hora por Funcionário"
+					        onclick="abrirModalValorHora(${i.id}, '${i.nomeCliente}')">
+					        <i class="bi bi-clock-history"></i>
+					    </button>
+					    <button
 					        class="btn-action btn btn-danger"
 					        onclick="excluir(${i.id})">
 					        <i class="bi bi-trash"></i>
@@ -991,6 +1104,12 @@
 					        title="Gerenciar logo"
 					        onclick="abrirModalLogo(${i.id}, '${i.nomeCliente}')">
 					        <i class="bi bi-image"></i>
+					    </button>
+					    <button
+					        class="btn-action btn btn-outline-info"
+					        title="Valor/Hora por Funcionário"
+					        onclick="abrirModalValorHora(${i.id}, '${i.nomeCliente}')">
+					        <i class="bi bi-clock-history"></i>
 					    </button>
 					    <button
 					        class="btn-action btn btn-danger"
@@ -1094,6 +1213,10 @@
 					$('#ultimologinModal').val("");
 					$('#usernamemodal').val("");
 					$('#passwordmodal').val("");
+					$('#nomeFantasiaModal').val("");
+					$('#tipoPessoaModal').val("PJ");
+					$('#inscricaoEstadualModal').val("");
+					$('#inscricaoMunicipalModal').val("");
 
 					$('#idmodal').val(data.id);
 					$('#nomemodal').val(data.nomeCliente);
@@ -1106,7 +1229,11 @@
 					$('#ultimologinModal').val(data.dataUltimoLogin);
 					$('#usernamemodal').val(data.username);
 					$('#passwordmodal').val(data.password);
-									
+					$('#nomeFantasiaModal').val(data.nomeFantasia);
+					$('#tipoPessoaModal').val(data.tipoPessoa || "PJ");
+					$('#inscricaoEstadualModal').val(data.inscricaoEstadual);
+					$('#inscricaoMunicipalModal').val(data.inscricaoMunicipal);
+
 					if (data.ativo == true) {
 						$('#ativoModal').append("<option value=" + data.ativo + "> Ativado </option>");
 						$('#ativoModal').append("<option value=false>Desativado</option>");
@@ -1310,7 +1437,11 @@
 				cnpj = $('#cnpjmodal').val(),
 				endereco = $('#enderecomodal').val(),
 				ativo = $('#ativoModal').val(),
-				bairro = $('#bairroModal').val();
+				bairro = $('#bairroModal').val(),
+				nomeFantasia = $('#nomeFantasiaModal').val(),
+				tipoPessoa = $('#tipoPessoaModal').val(),
+				inscricaoEstadual = $('#inscricaoEstadualModal').val(),
+				inscricaoMunicipal = $('#inscricaoMunicipalModal').val();
 
 			$.ajax({
 				type: "PUT",
@@ -1325,7 +1456,11 @@
 					"cnpj": cnpj,
 					"endereco": endereco,
 					"ativo": ativo,
-					"bairro": bairro
+					"bairro": bairro,
+					"nomeFantasia": nomeFantasia,
+					"tipoPessoa": tipoPessoa,
+					"inscricaoEstadual": inscricaoEstadual,
+					"inscricaoMunicipal": inscricaoMunicipal
 				}),
 				success: function (data) {
 
@@ -1368,6 +1503,12 @@
 						        title="Gerenciar logo"
 						        onclick="abrirModalLogo(${data.id}, '${data.nomeCliente}')">
 						        <i class="bi bi-image"></i>
+						    </button>
+						    <button
+						        class="btn-action btn btn-outline-info"
+						        title="Valor/Hora por Funcionário"
+						        onclick="abrirModalValorHora(${data.id}, '${data.nomeCliente}')">
+						        <i class="bi bi-clock-history"></i>
 						    </button>
 						    <button
 						        class="btn-action btn btn-danger"
@@ -1538,6 +1679,107 @@ function salvarLogo() {
   .finally(function() {
     btn.disabled = false;
     btn.innerHTML = '<i class="bi bi-save2 me-1"></i>Salvar Logo';
+  });
+}
+
+// ########################################
+// VALOR/HORA POR FUNCIONÁRIO (CLIENTE)
+// ########################################
+function abrirModalValorHora(clienteId, nomeCliente) {
+  document.getElementById('idClienteValorHora').value = clienteId;
+  document.getElementById('clienteValorHoraNome').textContent = nomeCliente;
+  document.getElementById('tbValorHoraCorpo').innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">Carregando...</td></tr>';
+  new bootstrap.Modal(document.getElementById('modalValorHora')).show();
+  carregarValoresHora(clienteId);
+}
+
+function formatarMoedaValorHora(v) {
+  return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function carregarValoresHora(clienteId) {
+  $.ajax({
+    type: "GET",
+    contentType: "application/json",
+    url: "/judi/clientes/" + clienteId + "/valores-hora",
+    success: function (data) {
+      var corpo = $('#tbValorHoraCorpo');
+      corpo.empty();
+
+      if (!data || !data.length) {
+        corpo.html('<tr><td colspan="4" class="text-center text-muted py-4"><i class="bi bi-person-x fs-4 d-block mb-1 opacity-50"></i>Nenhum funcionário ativo</td></tr>');
+        return;
+      }
+
+      data.forEach(function (v) {
+        var padrao = v.valorHoraPadrao != null
+          ? formatarMoedaValorHora(v.valorHoraPadrao)
+          : '<span class="text-danger small">Não configurado</span>';
+
+        var linha =
+          '<tr id="linhaValorHora' + v.funcionarioId + '">' +
+            '<td>' + v.nomeFuncionario + '</td>' +
+            '<td>' + padrao + '</td>' +
+            '<td>' +
+              '<input type="number" min="0.01" step="0.01" class="form-control form-control-sm" id="valorHoraInput' + v.funcionarioId + '" ' +
+                'placeholder="Usar padrão" value="' + (v.valorHoraPersonalizado != null ? Number(v.valorHoraPersonalizado).toFixed(2) : '') + '">' +
+            '</td>' +
+            '<td class="text-end text-nowrap">' +
+              '<button class="btn btn-outline-success btn-sm" title="Salvar" onclick="salvarValorHora(' + v.funcionarioId + ')"><i class="bi bi-check2"></i></button> ' +
+              '<button class="btn btn-outline-secondary btn-sm" title="Usar valor padrão" onclick="limparValorHora(' + v.funcionarioId + ')"><i class="bi bi-arrow-counterclockwise"></i></button>' +
+            '</td>' +
+          '</tr>';
+        corpo.append(linha);
+      });
+    },
+    statusCode: {
+      403: function() { alert('Você não possui permissão para configurar valores/hora.'); },
+      500: function() { alert('Erro! Contate o desenvolvedor!'); },
+      401: function() { alert('Realize login novamente!'); window.location.href = "/judi/login"; }
+    }
+  });
+}
+
+function salvarValorHora(funcionarioId) {
+  var clienteId = $('#idClienteValorHora').val();
+  var valor = $('#valorHoraInput' + funcionarioId).val();
+
+  if (!valor) {
+    limparValorHora(funcionarioId);
+    return;
+  }
+  if (Number(valor) <= 0) {
+    alert('Informe um valor maior que zero.');
+    return;
+  }
+
+  $.ajax({
+    type: "PUT",
+    contentType: "application/json",
+    url: "/judi/clientes/" + clienteId + "/valores-hora/" + funcionarioId,
+    data: JSON.stringify({ valorHora: valor }),
+    success: function () { carregarValoresHora(clienteId); },
+    statusCode: {
+      403: function() { alert('Você não possui permissão para configurar valores/hora.'); },
+      500: function() { alert('Erro! Contate o desenvolvedor!'); },
+      401: function() { alert('Realize login novamente!'); window.location.href = "/judi/login"; }
+    }
+  });
+}
+
+function limparValorHora(funcionarioId) {
+  var clienteId = $('#idClienteValorHora').val();
+  $.ajax({
+    type: "PUT",
+    contentType: "application/json",
+    url: "/judi/clientes/" + clienteId + "/valores-hora/" + funcionarioId,
+    data: JSON.stringify({ valorHora: null }),
+    success: function () { carregarValoresHora(clienteId); },
+    statusCode: {
+      403: function() { alert('Você não possui permissão para configurar valores/hora.'); },
+      500: function() { alert('Erro! Contate o desenvolvedor!'); },
+      401: function() { alert('Realize login novamente!'); window.location.href = "/judi/login"; }
+    }
   });
 }
 </script>

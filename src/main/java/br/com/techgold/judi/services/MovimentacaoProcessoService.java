@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.techgold.judi.dto.DtoCadastroMovimentacaoManual;
 import br.com.techgold.judi.dto.DtoMovimentacao;
+import br.com.techgold.judi.model.Funcionario;
 import br.com.techgold.judi.model.MovimentacaoProcesso;
 import br.com.techgold.judi.model.Processo;
 import br.com.techgold.judi.model.enums.OrigemMovimentacao;
@@ -28,7 +29,7 @@ public class MovimentacaoProcessoService {
 		return repository.findByProcessoIdOrderByDataMovimentacaoDesc(processoId).stream().map(DtoMovimentacao::new).toList();
 	}
 
-	public MovimentacaoProcesso registrarManual(Long processoId, DtoCadastroMovimentacaoManual dados) {
+	public MovimentacaoProcesso registrarManual(Long processoId, DtoCadastroMovimentacaoManual dados, Funcionario funcionarioLogado) {
 		Processo processo = processoRepository.getReferenceById(processoId);
 
 		MovimentacaoProcesso movimentacao = new MovimentacaoProcesso();
@@ -39,6 +40,7 @@ public class MovimentacaoProcessoService {
 		movimentacao.setComplemento(dados.complemento());
 		movimentacao.setOrigem(OrigemMovimentacao.MANUAL);
 		movimentacao.setDataRegistro(LocalDateTime.now().withNano(0));
+		movimentacao.setRegistradoPor(funcionarioLogado);
 		MovimentacaoProcesso salva = repository.save(movimentacao);
 
 		atualizarDataUltimaMovimentacao(processo, dados.dataMovimentacao());

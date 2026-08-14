@@ -3,26 +3,44 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="shortcut icon" href="assets/img/favicon.ico">
-	<link rel="stylesheet" href="assets/css/defaultStyle.css">
-	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	<title>Sistech - ERRO 500</title>
+	<link rel="shortcut icon" href="/judi/assets/img/favicon.ico">
+	<link rel="stylesheet" href="/judi/assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/judi/assets/css/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/judi/assets/css/erro.css">
+	<title>Judera One - Erro no servidor</title>
+	<script>(function(){if(localStorage.getItem('darkMode')==='enabled')document.body.classList.add('dark-mode');})();</script>
 </head>
 <body>
-	<div class="container">
-			<div style="background-color: rgba(0, 0, 0, 0.2); text-align: center;">
-				<a href="#">SisTech</a>
-			</div>
-			<br /><br />
-			<h4 style="text-align: center;" >ERRO 500! Contate o desenvolvedor!</h4>
-			<h5 style="text-align: center;" ><a href="/judi/home">Voltar!</a></h5>
-			<br /><br />
-			<footer>
-				<div style="background-color: rgba(0, 0, 0, 0.2); text-align: center;">
-					© 2025 Copyright:
-					<a href="#">TechGold</a>
-				</div>
-			</footer>
+
+	<div class="erro-topbar">
+		<a href="/judi/home" class="erro-brand">
+			<span class="erro-brand-icon"><i class="bi bi-bank2"></i></span>
+			Judera One
+		</a>
+		<button class="erro-icon-btn" id="toggleDarkBtn" title="Alternar modo escuro">
+			<i class="bi bi-moon"></i>
+		</button>
 	</div>
+
+	<div class="erro-wrap">
+		<div class="erro-card">
+			<div class="erro-icone critico"><i class="bi bi-exclamation-octagon"></i></div>
+			<div class="erro-codigo">Erro 500</div>
+			<h1 class="erro-titulo">Erro interno do servidor</h1>
+			<p class="erro-desc">
+				Algo deu errado ao processar sua solicitação. Tente novamente em
+				instantes — se o problema continuar, entre em contato com o suporte
+				técnico.
+			</p>
+			<div class="erro-acoes">
+				<button class="btn btn-outline-secondary" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> Tentar novamente</button>
+				<a href="/judi/home" class="btn btn-primary"><i class="bi bi-house-fill"></i> Voltar ao início</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="erro-footer">© 2026 Copyright: TechGold</div>
+
+	<script src="/judi/assets/js/erro.js"></script>
 </body>
 </html>

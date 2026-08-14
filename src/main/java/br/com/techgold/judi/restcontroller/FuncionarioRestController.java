@@ -67,6 +67,15 @@ public class FuncionarioRestController {
 		return ResponseEntity.ok(admin);
 	}
 
+	/** SADMIN e ADMIN já carregam a authority ROLE_ADMIN — cobre os três perfis com acesso ao Financeiro. */
+	@GetMapping("/acessoFinanceiro")
+	public ResponseEntity<Boolean> acessoFinanceiro() {
+		boolean acesso = SecurityContextHolder.getContext().getAuthentication()
+				.getAuthorities().stream()
+				.anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_FINANCEIRO"));
+		return ResponseEntity.ok(acesso);
+	}
+
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@GetMapping("/perfil") //RETORNA DADOS DO FUNCIONARIO PARA PROPRIA EDICAO (PERFIL)
 	public ResponseEntity<DtoFuncionarioEditSimplificado> perfil(){
@@ -135,7 +144,7 @@ public class FuncionarioRestController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/avancado") //RESTORNA UMA DTO DE UM FUNCIONARIO POR ID
-	public ResponseEntity<DtoFuncionarioAdvancedEdit> salvarEdicaoAvancada(@RequestBody DtoFuncionarioAdvancedEdit dados ) {
+	public ResponseEntity<DtoFuncionarioAdvancedEdit> salvarEdicaoAvancada(@RequestBody @Valid DtoFuncionarioAdvancedEdit dados ) {
 		return ResponseEntity.ok().body(service.atualizarFuncionarioAdvanced(dados));
 	}
 	

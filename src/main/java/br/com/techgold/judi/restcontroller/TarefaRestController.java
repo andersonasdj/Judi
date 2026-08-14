@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.techgold.judi.dto.DtoAgendarTarefa;
 import br.com.techgold.judi.dto.DtoAtualizarTarefa;
 import br.com.techgold.judi.dto.DtoCadastroTarefa;
+import br.com.techgold.judi.dto.DtoFiltroTarefa;
 import br.com.techgold.judi.dto.DtoTarefaDetalhe;
 import br.com.techgold.judi.dto.DtoTarefaList;
 import br.com.techgold.judi.model.Funcionario;
@@ -42,9 +45,13 @@ public class TarefaRestController {
 	 * login (ver bug de TransientPropertyValueException/id nulo já corrigido
 	 * em TimesheetRestController/DespesaTarefaRestController).
 	 */
-	private boolean admin() {
+	private Funcionario funcionarioAutenticado() {
 		Funcionario principal = (Funcionario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Funcionario funcionario = funcionarioService.buscaPorNome(principal.getNomeFuncionario());
+		return funcionarioService.buscaPorNome(principal.getNomeFuncionario());
+	}
+
+	private boolean admin() {
+		Funcionario funcionario = funcionarioAutenticado();
 		return funcionario.getRole() == UserRole.ADMIN || funcionario.getRole() == UserRole.SADMIN;
 	}
 
@@ -57,6 +64,17 @@ public class TarefaRestController {
 	public Page<DtoTarefaList> buscarPorPalavra(@PathVariable String conteudo,
 			@PageableDefault(size = 20, sort = { "id" }, direction = Direction.DESC) Pageable page) {
 		return service.buscarPorPalavra(page, conteudo);
+	}
+
+	@GetMapping("/filtro")
+	public Page<DtoTarefaList> filtrar(
+			@RequestParam(required = false) String texto,
+			@RequestParam(required = false) Long clienteId,
+			@RequestParam(required = false) Long processoId,
+			@RequestParam(required = false) Long funcionarioId,
+			@RequestParam(required = false) StatusTarefa status,
+			@PageableDefault(size = 20, sort = { "id" }, direction = Direction.DESC) Pageable page) {
+		return service.listarFiltrado(new DtoFiltroTarefa(texto, clienteId, processoId, funcionarioId, status), page);
 	}
 
 	@GetMapping("/cliente/{clienteId}")
@@ -77,6 +95,12 @@ public class TarefaRestController {
 		return service.listarPorFuncionario(funcionarioId, page);
 	}
 
+	@GetMapping("/caso/{casoId}")
+	public Page<DtoTarefaList> listarPorCaso(@PathVariable Long casoId,
+			@PageableDefault(size = 20, sort = { "id" }, direction = Direction.DESC) Pageable page) {
+		return service.listarPorCaso(casoId, page);
+	}
+
 	@GetMapping("/{id}")
 	public DtoTarefaDetalhe buscar(@PathVariable Long id) {
 		return service.buscarDetalhe(id);
@@ -84,18 +108,23 @@ public class TarefaRestController {
 
 	@PostMapping
 	public void cadastrar(@RequestBody DtoCadastroTarefa dados) {
-		service.cadastrar(dados);
+		service.cadastrar(dados, funcionarioAutenticado());
 	}
 
 	@PutMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void atualizar(@RequestBody DtoAtualizarTarefa dados) {
-		service.atualizar(dados);
+		service.atualizar(dados, funcionarioAutenticado());
 	}
 
 	@PutMapping("/{id}/status/{status}")
 	public void alterarStatus(@PathVariable Long id, @PathVariable StatusTarefa status) {
-		service.alterarStatus(id, status, admin());
+		service.alterarStatus(id, status, admin(), funcionarioAutenticado());
+	}
+
+	@PutMapping("/{id}/agendar")
+	public void agendar(@PathVariable Long id, @RequestBody DtoAgendarTarefa dados) {
+		service.agendar(id, dados.dataAgendamento(), funcionarioAutenticado());
 	}
 
 	@DeleteMapping("/delete/{id}")

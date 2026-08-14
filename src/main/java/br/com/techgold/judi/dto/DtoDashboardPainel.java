@@ -5,5 +5,7 @@ import java.util.List;
 public record DtoDashboardPainel(
 		DtoDashboardResumo resumo,
 		List<DtoMovimentacaoPainel> ultimasMovimentacoes,
-		List<DtoAlerta> ultimosAlertas) {
+		List<DtoAlerta> ultimosAlertas,
+		List<DtoTarefaList> proximosAgendamentos,
+		List<DtoTarefaList> tarefasAtualizadas) {
 }

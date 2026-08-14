@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="assets/css/dark.css?v=1">
 	<link rel="stylesheet" href="assets/css/navbar.css?v=4">
 	<link rel="stylesheet" href="assets/css/home.css?v=8.1">
-	<title>Judi - Início</title>
+	<title>Judera One - Início</title>
 	<style>
 		.card-curso {
 			border: none;
@@ -54,10 +54,158 @@
 		body.dark-mode .kpi-value { color: #f1f5f9; }
 		.kpi-label { font-size: .72rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
 
-		/* ===== Lista de certificados recentes ===== */
+		/* ===== Usuários online ===== */
+		.online-users-card {
+			position: sticky; top: 82px;
+			max-height: 320px;
+			display: flex; flex-direction: column;
+		}
+		body[data-layout="side"] .online-users-card { top: 76px; }
+		.online-users-list { overflow-y: auto; overflow-x: hidden; }
+		.online-user-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-radius: 8px; cursor: pointer; }
+		.online-user-item:hover { background: rgba(13,110,253,.07); }
+		body.dark-mode .online-user-item:hover { background: rgba(255,255,255,.06); }
+		.online-user-item + .online-user-item { border-top: 1px solid rgba(0,0,0,.06); }
+		body.dark-mode .online-user-item + .online-user-item { border-top-color: rgba(255,255,255,.08); }
+		.online-user-dot {
+			width: 10px; height: 10px; border-radius: 50%; background: #198754; flex-shrink: 0;
+			box-shadow: 0 0 0 3px rgba(25,135,84,.18);
+		}
+		.online-user-dot.inativo { background: #fab219; box-shadow: 0 0 0 3px rgba(250,178,25,.18); }
+		.online-user-nome { font-size: .86rem; font-weight: 600; color: #1e293b; }
+		body.dark-mode .online-user-nome { color: #f1f5f9; }
+		.online-user-meta { font-size: .72rem; color: #94a3b8; }
+
+		/* ----- estado recolhido: só a barrinha com bolinhas de iniciais ----- */
+		#onlineUsersCol.online-users-col-collapsed { flex: 0 0 72px; max-width: 72px; }
+		.online-users-card.collapsed { max-height: 420px; }
+		/* sem isso, o conteúdo principal fica preso na largura antiga (col-xl-10/col-lg-9)
+		   e sobra um vão vazio entre ele e a barrinha recolhida — o !important é necessário
+		   para vencer a largura fixa que o Bootstrap define para col-xl-10/col-lg-9. */
+		#homeMainCol.home-col-collapsed-sidebar { flex: 1 1 0% !important; max-width: 100% !important; }
+		.online-users-card.collapsed .card-body { padding: 12px 6px; }
+		.online-users-card.collapsed h6 { justify-content: center; }
+		.online-users-card.collapsed #onlineUsersTitulo,
+		.online-users-card.collapsed #qtdUsuariosOnline,
+		.online-users-card.collapsed #onlineUsersIcone { display: none; }
+		.online-users-card.collapsed .online-user-item { display: none; }
+		.online-user-avatar {
+			display: none; position: relative;
+			width: 34px; height: 34px; margin: 0 auto 8px; border-radius: 50%;
+			background: #198754; color: #fff; font-size: .68rem; font-weight: 700;
+			align-items: center; justify-content: center; cursor: pointer;
+			flex-shrink: 0;
+		}
+		.online-user-avatar.inativo { background: #fab219; }
+		.online-users-card.collapsed .online-user-avatar { display: flex; }
+		#onlineUsersToggleBtn { font-size: .95rem; }
+		.online-users-card.collapsed #onlineUsersToggleBtn { margin-left: 0 !important; }
+
+		/* Contador de mensagens não lidas por usuário */
+		.online-user-badge {
+			background: #dc3545; color: #fff; font-size: .62rem; font-weight: 700; min-width: 16px; height: 16px;
+			border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; padding: 0 4px;
+			flex-shrink: 0; margin-left: auto;
+		}
+		.online-user-badge-avatar { position: absolute; top: -3px; right: -3px; margin-left: 0; }
+
+		/* ===== Chat privado ===== */
+		.chat-panel {
+			position: fixed; bottom: 16px; right: 16px; width: 320px; height: 420px;
+			background: #fff; border-radius: 14px; box-shadow: 0 12px 32px rgba(0,0,0,.22);
+			display: flex; flex-direction: column; overflow: hidden; z-index: 1080;
+		}
+		body.dark-mode .chat-panel { background: #212529; }
+		.chat-panel-header {
+			background: linear-gradient(135deg,#1e3a5f,#1a56c4); color: #fff;
+			padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+			font-weight: 600; font-size: .88rem; flex-shrink: 0;
+		}
+		.chat-panel-mensagens { flex: 1; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+		.chat-msg { max-width: 78%; padding: 7px 11px; border-radius: 14px; font-size: .84rem; line-height: 1.35; word-wrap: break-word; }
+		.chat-msg-recebida { align-self: flex-start; background: #f1f3f5; color: #1e293b; border-bottom-left-radius: 4px; }
+		body.dark-mode .chat-msg-recebida { background: #343a40; color: #f1f5f9; }
+		.chat-msg-enviada { align-self: flex-end; background: #0d6efd; color: #fff; border-bottom-right-radius: 4px; }
+		.chat-msg-hora { font-size: .64rem; opacity: .7; margin-top: 2px; display: block; }
+		.chat-panel-input { display: flex; gap: 6px; padding: 8px 10px; border-top: 1px solid rgba(0,0,0,.08); flex-shrink: 0; }
+		body.dark-mode .chat-panel-input { border-top-color: rgba(255,255,255,.08); }
+		@media (max-width: 420px) { .chat-panel { width: calc(100vw - 20px); right: 10px; } }
+
+		.chat-som-btn {
+			position: fixed; bottom: 16px; right: 16px; z-index: 1075;
+			background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 999px;
+			padding: 9px 16px; font-size: .82rem; font-weight: 600; color: #1e293b;
+			box-shadow: 0 6px 18px rgba(0,0,0,.18); align-items: center; gap: 7px; cursor: pointer;
+		}
+		.chat-som-btn:hover { filter: brightness(.97); }
+		body.dark-mode .chat-som-btn { background: #212529; color: #f1f5f9; border-color: rgba(255,255,255,.1); }
+		.chat-som-btn.chat-som-btn-pulso { animation: chat-som-btn-pulso-anim 2s ease-in-out infinite; }
+		@keyframes chat-som-btn-pulso-anim {
+			0%, 100% { box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+			50% { box-shadow: 0 6px 18px rgba(0,0,0,.18), 0 0 0 6px rgba(13,110,253,.12); }
+		}
+
+		/* ===== Lista de certificados recentes / atividade recente ===== */
 		.cert-recente-item { transition: background-color .12s ease; border-radius: 8px; }
 		.cert-recente-item:hover { background: rgba(13,110,253,.07) !important; }
 		body.dark-mode .cert-recente-item:hover { background: rgba(255,255,255,.06) !important; }
+		.cert-recente-item + .cert-recente-item { border-top: 1px solid rgba(0,0,0,.06); }
+		body.dark-mode .cert-recente-item + .cert-recente-item { border-top-color: rgba(255,255,255,.08); }
+
+		/* Agendamentos vencidos/próximos de vencer */
+		.cert-recente-item.agendamento-item-vencido { background: rgba(220,53,69,.10) !important; box-shadow: inset 3px 0 0 #dc3545; }
+		.cert-recente-item.agendamento-item-vencido:hover { background: rgba(220,53,69,.16) !important; }
+		body.dark-mode .cert-recente-item.agendamento-item-vencido { background: rgba(220,53,69,.20) !important; }
+		.cert-recente-item.agendamento-item-proximo { background: rgba(255,193,7,.08) !important; box-shadow: inset 3px 0 0 #ffc107; }
+		.cert-recente-item.agendamento-item-proximo:hover { background: rgba(255,193,7,.14) !important; }
+		body.dark-mode .cert-recente-item.agendamento-item-proximo { background: rgba(255,193,7,.15) !important; }
+		.agendamento-vencido { color: #dc3545 !important; font-weight: 700; }
+		.agendamento-proximo { color: #b7791f !important; }
+		body.dark-mode .agendamento-vencido { color: #ff6b6b !important; }
+		body.dark-mode .agendamento-proximo { color: #ffc107 !important; }
+
+		/* Flash breve quando um agendamento acabou de vencer / entrar na janela de "próximo" */
+		.agendamento-item-flash { animation: agendamento-flash 1s ease-in-out 3; }
+		@keyframes agendamento-flash {
+			0%, 100% { outline: 2px solid transparent; }
+			50% { outline: 2px solid rgba(220,53,69,.6); outline-offset: -2px; }
+		}
+		#tituloAgendamentos.tem-atencao { animation: titulo-agendamento-pulso 1.6s ease-in-out infinite; }
+		@keyframes titulo-agendamento-pulso {
+			0%, 100% { opacity: 1; }
+			50% { opacity: .55; }
+		}
+
+		/* ===== Busca universal ===== */
+		/* .anim-in cria um novo stacking context (animação de transform com
+		   fill-mode both); sem um z-index explícito aqui, o card seguinte no
+		   DOM (boas-vindas) pinta por cima do dropdown absoluto. */
+		.busca-universal-col { position: relative; z-index: 20; }
+		.busca-universal-wrap .input-group-text,
+		.busca-universal-wrap .form-control { background: transparent; }
+		.busca-universal-dropdown {
+			position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+			background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 12px;
+			box-shadow: 0 10px 30px rgba(0,0,0,.15);
+			max-height: 440px; overflow-y: auto; z-index: 1050;
+			display: none;
+		}
+		.busca-universal-dropdown.show { display: block; }
+		body.dark-mode .busca-universal-dropdown { background: #212529; border-color: #333; }
+		.busca-universal-categoria {
+			padding: 10px 14px 4px; font-size: .68rem; font-weight: 700;
+			text-transform: uppercase; letter-spacing: .04em; color: #94a3b8;
+		}
+		.busca-universal-item {
+			display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+			text-decoration: none; color: inherit; transition: background-color .12s ease;
+		}
+		.busca-universal-item:hover { background: rgba(13,110,253,.07); }
+		body.dark-mode .busca-universal-item:hover { background: rgba(255,255,255,.06); }
+		.busca-universal-item .bi { color: #94a3b8; flex-shrink: 0; }
+		.busca-universal-vazio, .busca-universal-carregando {
+			padding: 18px; text-align: center; color: #94a3b8; font-size: .85rem;
+		}
 
 		/* ===== Gráfico de adesão às aulas (funil de retenção) ===== */
 		.viz-root {
@@ -133,18 +281,13 @@
 			<div class="sidebar-brand-icon">
 				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
 			</div>
-			<span class="sidebar-brand-text">Dashboard</span>
+			<span class="sidebar-brand-text">Judera One</span>
 		</div>
 		<div class="sidebar-scroll">
 			<a href="/judi/home" class="sidebar-item active">
 				<i class="bi bi-house-fill"></i>
 				<span class="sidebar-item-label">Início</span>
 			</a>
-			<a href="/judi/painel" class="sidebar-item" target="_blank">
-				<i class="bi bi-tv"></i>
-				<span class="sidebar-item-label">Painel TV</span>
-			</a>
-		
 			<div class="sidebar-group" id="sgClientes">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
 					<i class="bi bi-building"></i>
@@ -159,12 +302,23 @@
 			<div class="sidebar-group" id="sgFuncionarios">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
 					<i class="bi bi-person-badge"></i>
-					<span class="sidebar-group-label">Funcionários</span>
+					<span class="sidebar-group-label">Equipe</span>
 					<i class="bi bi-chevron-down sidebar-chevron"></i>
 				</button>
 				<div class="sidebar-group-items">
 					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
 			<div class="sidebar-group" id="sgProcessos">
@@ -179,10 +333,6 @@
 					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
 				</div>
 			</div>
-			<a href="/judi/processo/alertas" class="sidebar-item">
-				<i class="bi bi-bell"></i>
-				<span class="sidebar-item-label">Alertas</span>
-			</a>
 			<div class="sidebar-group" id="sgTarefas">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
 					<i class="bi bi-list-check"></i>
@@ -194,11 +344,22 @@
 					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
 				</div>
 			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
 			</a>
-
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
 		</div>
 		<div class="sidebar-footer">
 			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
@@ -257,7 +418,7 @@
 					<div class="brand-icon">
 						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
 					</div>
-					<span class="brand-text">Judi</span>
+					<span class="brand-text">Judera One</span>
 				</a>
 
 				<!-- Mobile toggle -->
@@ -278,12 +439,6 @@
 								<i class="bi bi-house-fill"></i> Início
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/painel" target="_blank">
-								<i class="bi bi-tv"></i> Painel TV
-							</a>
-						</li>
-
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-building"></i> Clientes
@@ -293,14 +448,22 @@
 								<li><a class="dropdown-item" href="/judi/cliente/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
-
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-person-badge"></i> Funcionários
+								<i class="bi bi-person-badge"></i> Equipe
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
 								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
 						<li class="nav-item dropdown">
@@ -313,11 +476,6 @@
 								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/processo/alertas">
-								<i class="bi bi-bell"></i> Alertas
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list-check"></i> Tarefas
@@ -328,11 +486,25 @@
 							</ul>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
 							</a>
 						</li>
-
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
+							</a>
+						</li>
 					</ul>
 
 					<!-- Direita: ícones + usuário -->
@@ -392,7 +564,29 @@
 			</div>
 
 			<div class="container-fluid mb-3">
+				<div class="row g-3 align-items-start">
+
+				<div class="col-12 col-xl-10 col-lg-9" id="homeMainCol">
 				<div class="row g-3 align-items-stretch">
+				<!-- Busca universal -->
+				<div class="col-12 anim-in busca-universal-col">
+					<div class="card shadow-sm border-0">
+						<div class="card-body py-2">
+							<div class="busca-universal-wrap position-relative">
+								<div class="input-group">
+									<span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+									<input type="text" id="buscaUniversalInput" class="form-control border-start-0 ps-0"
+										placeholder="Buscar em casos, processos, tarefas e alertas..." autocomplete="off">
+									<button type="button" class="btn btn-link text-muted border-0 d-none" id="buscaUniversalLimpar" title="Limpar">
+										<i class="bi bi-x-lg"></i>
+									</button>
+								</div>
+								<div id="buscaUniversalResultados" class="busca-universal-dropdown"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<!-- Card de Boas-Vindas + KPIs -->
 				<div class="col-12 col-lg-12 anim-in">
 					<div class="card shadow-sm border-0 h-100">
@@ -470,7 +664,74 @@
 					</div>
 				</div>
 
+				<!-- Atividade recente -->
+				<div class="col-12 col-lg-6 anim-in">
+					<div class="card shadow-sm border-0 h-100">
+						<div class="card-body">
+							<h6 class="fw-bold mb-3"><i class="bi bi-list-check text-primary me-2"></i>Últimas Tarefas Atualizadas</h6>
+							<div id="listaTarefasRecentes">
+								<p class="text-muted small mb-0 py-2">Carregando…</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-12 col-lg-6 anim-in">
+					<div class="card shadow-sm border-0 h-100">
+						<div class="card-body">
+							<h6 class="fw-bold mb-3 d-flex align-items-center" id="tituloAgendamentos">
+								<i class="bi bi-alarm text-info me-2"></i>Próximos Agendamentos
+								<span class="badge bg-danger ms-2 d-none" id="qtdAgendamentosAtencao">0</span>
+							</h6>
+							<div id="listaAgendamentos">
+								<p class="text-muted small mb-0 py-2">Carregando…</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-12 col-lg-6 anim-in">
+					<div class="card shadow-sm border-0 h-100">
+						<div class="card-body">
+							<h6 class="fw-bold mb-3"><i class="bi bi-briefcase text-success me-2"></i>Últimos Processos Criados</h6>
+							<div id="listaProcessosRecentes">
+								<p class="text-muted small mb-0 py-2">Carregando…</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-12 col-lg-6 anim-in">
+					<div class="card shadow-sm border-0 h-100">
+						<div class="card-body">
+							<h6 class="fw-bold mb-3"><i class="bi bi-folder2-open text-warning me-2"></i>Últimos Casos Criados</h6>
+							<div id="listaCasosRecentes">
+								<p class="text-muted small mb-0 py-2">Carregando…</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
 			</div><!-- /row g-3 align-items-stretch -->
+			</div><!-- /col-12 col-xl-10 col-lg-9 -->
+
+			<!-- Usuários online -->
+			<div class="col-12 col-xl-2 col-lg-3 anim-in" id="onlineUsersCol">
+				<div class="card shadow-sm border-0 online-users-card" id="onlineUsersCard">
+					<div class="card-body d-flex flex-column">
+						<h6 class="fw-bold mb-3 d-flex align-items-center">
+							<i class="bi bi-people-fill text-success me-2" id="onlineUsersIcone"></i>
+							<span id="onlineUsersTitulo">Usuários Online</span>
+							<span class="badge bg-success ms-2" id="qtdUsuariosOnline">0</span>
+							<button type="button" class="btn btn-sm btn-link ms-auto p-0 text-muted" id="onlineUsersToggleBtn" title="Recolher">
+								<i class="bi bi-chevron-right" id="onlineUsersToggleIcon"></i>
+							</button>
+						</h6>
+						<div id="listaUsuariosOnline" class="online-users-list flex-grow-1">
+							<p class="text-muted small mb-0 py-2">Carregando…</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			</div><!-- /row g-3 align-items-start -->
 		</div><!-- /container-fluid mb-3 -->
 	</div><!-- /homePageShell -->
 	</div><!-- /container-fluid (wrapper do nav) -->
@@ -485,6 +746,25 @@
 
 	<!-- Toast container -->
 	<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999" id="toastContainer"></div>
+
+	<!-- Chat privado entre usuários online -->
+	<audio id="chatBeepAudio" preload="auto"><source src="assets/audio/beep1.mp3" type="audio/mpeg"></audio>
+	<button type="button" class="chat-som-btn" id="chatSomBtn" style="display:none;" title="Ativar som de notificações (chat e agendamentos)">
+		<i class="bi bi-volume-mute-fill"></i> Ativar som
+	</button>
+	<div class="chat-panel" id="chatPanel" style="display:none;">
+		<div class="chat-panel-header">
+			<span class="text-truncate" id="chatPanelNome">Usuário</span>
+			<button type="button" class="btn-close btn-close-white" id="chatPanelFechar" aria-label="Fechar"></button>
+		</div>
+		<div class="chat-panel-mensagens" id="chatPanelMensagens"></div>
+		<div class="chat-panel-input">
+			<input type="text" id="chatPanelInput" class="form-control form-control-sm" placeholder="Digite uma mensagem..." autocomplete="off" maxlength="2000">
+			<button type="button" class="btn btn-primary btn-sm" id="chatPanelEnviar" title="Enviar">
+				<i class="bi bi-send-fill"></i>
+			</button>
+		</div>
+	</div>
 
 
 	<!-- ################################################# MODAL FOTO ################################################# -->
@@ -569,12 +849,17 @@
 	<script defer src="assets/js/dark.js"></script>
 	<script defer src="assets/js/navbar.js"></script>
 	<script defer src="assets/js/sidebar.js"></script>
+	<script defer src="assets/js/sockjs.min.js"></script>
+	<script defer src="assets/js/stomp.umd.min.js"></script>
 
 	<script defer>
 		document.addEventListener("DOMContentLoaded", () => {
 		    iniciarSistema();
 		    iniciarRelogio();
 		    iniciarEventos();
+		    iniciarBuscaUniversal();
+		    iniciarToggleOnlineUsers();
+		    iniciarChat();
 		});
 
 		function showHomeLoading() {
@@ -606,12 +891,17 @@
 		        await Promise.all([
 		            carregarHome(),
 		            carregarDashboardResumo(),
+		            carregarDashboardRecentes(),
+		            carregarUsuariosOnline(),
+		            carregarNaoLidasChat(),
 		        ]);
 		    } catch (e) {
 		        console.error("Erro ao iniciar sistema", e);
 		    } finally {
 		        hideHomeLoading();
 		    }
+		    setInterval(carregarUsuariosOnline, 30000);
+		    setInterval(carregarDashboardRecentes, 60000);
 		}
 
 		// ======================================================
@@ -648,6 +938,781 @@
 		    setText("kpiAlertasNaoLidos", data.alertasNaoLidos ?? 0);
 		    setText("kpiErrosConsulta", data.processosComErroConsulta ?? 0);
 		    setText("kpiMovimentacoes7d", data.movimentacoesUltimos7Dias ?? 0);
+		}
+
+		// ======================================================
+		// ATIVIDADE RECENTE (home)
+		// ======================================================
+		async function carregarDashboardRecentes() {
+		    try {
+		        const response = await fetch("/judi/dashboard/recentes");
+
+		        if (response.status === 401) {
+		            window.location.href = "/judi/login";
+		            return;
+		        }
+		        if (!response.ok) return;
+
+		        const data = await response.json();
+		        renderTarefasRecentes(data.tarefasAtualizadas);
+		        processarAgendamentos(data.tarefasAgendadas);
+		        renderAgendamentos(data.tarefasAgendadas);
+		        renderProcessosRecentes(data.processosCriados);
+		        renderCasosRecentes(data.casosCriados);
+		    } catch (e) {
+		        console.error("Erro ao carregar atividade recente", e);
+		    }
+		}
+
+		// ======================================================
+		// USUÁRIOS ONLINE (SessionRegistry do Spring Security)
+		// ======================================================
+		let _ultimaListaUsuariosOnline = [];
+
+		async function carregarUsuariosOnline() {
+		    try {
+		        const response = await fetch("/judi/dashboard/usuarios-online", { cache: 'no-store' });
+
+		        if (response.status === 401) {
+		            window.location.href = "/judi/login";
+		            return;
+		        }
+		        if (!response.ok) return;
+
+		        _ultimaListaUsuariosOnline = await response.json();
+		        renderUsuariosOnline(_ultimaListaUsuariosOnline);
+		    } catch (e) {
+		        console.error("Erro ao carregar usuários online", e);
+		    }
+		}
+
+		function obterIniciaisOnline(nome) {
+		    if (!nome) return '?';
+		    const partes = nome.trim().split(/\s+/).filter(Boolean);
+		    if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
+		    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+		}
+
+		var LIMITE_INATIVIDADE_MIN = 10;
+
+		// true quando a última atividade já passou de LIMITE_INATIVIDADE_MIN minutos.
+		function estaInativoOnline(dataStr) {
+		    var data = parseDataBr(dataStr);
+		    if (!data) return false;
+		    return (Date.now() - data.getTime()) / 60000 > LIMITE_INATIVIDADE_MIN;
+		}
+
+		function renderUsuariosOnline(lista) {
+		    const el = document.getElementById("listaUsuariosOnline");
+		    const badge = document.getElementById("qtdUsuariosOnline");
+		    if (!el) return;
+
+		    badge.textContent = (lista || []).length;
+
+		    if (!lista || !lista.length) {
+		        el.innerHTML = listaVaziaHtml("Nenhum usuário online no momento.");
+		        return;
+		    }
+
+		    el.innerHTML = lista.map(u => {
+		        const nome = escapeHtml(u.nome || 'Usuário');
+		        const inativo = estaInativoOnline(u.ultimaAtividade);
+		        const meta = (inativo ? 'inativo há ' : 'ativo ') + tempoRelativo(u.ultimaAtividade);
+		        const classeStatus = inativo ? ' inativo' : '';
+		        const naoLidas = _naoLidasPorUsuario[u.id] || 0;
+		        const rotuloBadge = naoLidas > 9 ? '9+' : String(naoLidas);
+		        const badgeItem = naoLidas > 0 ? '<span class="online-user-badge">' + rotuloBadge + '</span>' : '';
+		        const badgeAvatar = naoLidas > 0 ? '<span class="online-user-badge online-user-badge-avatar">' + rotuloBadge + '</span>' : '';
+		        return '<div class="online-user-item" data-usuario-id="' + u.id + '" data-usuario-nome="' + nome + '" role="button">'
+		            + '<span class="online-user-dot' + classeStatus + '" title="' + (inativo ? 'Inativo' : 'Online') + '"></span>'
+		            + '<div class="overflow-hidden">'
+		            + '<div class="online-user-nome text-truncate">' + nome + '</div>'
+		            + '<div class="online-user-meta">' + meta + '</div>'
+		            + '</div>'
+		            + badgeItem
+		            + '</div>'
+		            + '<div class="online-user-avatar' + classeStatus + '" data-usuario-id="' + u.id + '" data-usuario-nome="' + nome + '" role="button" title="' + nome + ' · ' + meta + '">'
+		            + escapeHtml(obterIniciaisOnline(u.nome))
+		            + badgeAvatar
+		            + '</div>';
+		    }).join('');
+		}
+
+		// ----- recolher/expandir para virar barrinha de bolinhas -----
+		let _onlineUsersCollapsed = localStorage.getItem('onlineUsersCollapsed') === 'true';
+
+		function aplicarEstadoOnlineUsers() {
+		    const col = document.getElementById('onlineUsersCol');
+		    const card = document.getElementById('onlineUsersCard');
+		    const icon = document.getElementById('onlineUsersToggleIcon');
+		    const btn = document.getElementById('onlineUsersToggleBtn');
+		    const mainCol = document.getElementById('homeMainCol');
+		    if (!col || !card) return;
+
+		    col.classList.toggle('col-xl-2', !_onlineUsersCollapsed);
+		    col.classList.toggle('col-lg-3', !_onlineUsersCollapsed);
+		    col.classList.toggle('online-users-col-collapsed', _onlineUsersCollapsed);
+		    card.classList.toggle('collapsed', _onlineUsersCollapsed);
+		    if (mainCol) mainCol.classList.toggle('home-col-collapsed-sidebar', _onlineUsersCollapsed);
+		    icon.className = _onlineUsersCollapsed ? 'bi bi-chevron-left' : 'bi bi-chevron-right';
+		    btn.title = _onlineUsersCollapsed ? 'Expandir' : 'Recolher';
+		}
+
+		function iniciarToggleOnlineUsers() {
+		    const btn = document.getElementById('onlineUsersToggleBtn');
+		    if (!btn) return;
+		    btn.addEventListener('click', function (e) {
+		        e.preventDefault();
+		        _onlineUsersCollapsed = !_onlineUsersCollapsed;
+		        localStorage.setItem('onlineUsersCollapsed', _onlineUsersCollapsed);
+		        aplicarEstadoOnlineUsers();
+		    });
+		    aplicarEstadoOnlineUsers();
+		}
+
+		// ======================================================
+		// CHAT PRIVADO ENTRE USUÁRIOS ONLINE (STOMP sobre WebSocket)
+		// ======================================================
+		let _meuFuncionarioId = null;
+		let _naoLidasPorUsuario = {};
+		let stompClient = null;
+		let _conversaAbertaId = null;
+
+		function conectarChat() {
+		    if (typeof SockJS === 'undefined' || typeof StompJs === 'undefined') {
+		        console.warn('Chat: SockJS/StompJs não carregados.');
+		        return;
+		    }
+		    stompClient = new StompJs.Client({
+		        webSocketFactory: () => new SockJS('/judi/ws'),
+		        reconnectDelay: 5000,
+		        onConnect: () => {
+		            stompClient.subscribe('/user/queue/mensagens', function (frame) {
+		                receberMensagemChat(JSON.parse(frame.body));
+		            });
+		        }
+		    });
+		    stompClient.activate();
+		}
+
+		async function carregarNaoLidasChat() {
+		    try {
+		        const response = await fetch("/judi/chat/nao-lidas");
+		        if (!response.ok) return;
+		        const lista = await response.json();
+		        _naoLidasPorUsuario = {};
+		        (lista || []).forEach(item => { _naoLidasPorUsuario[item.remetenteId] = item.quantidade; });
+		        renderUsuariosOnline(_ultimaListaUsuariosOnline);
+		    } catch (e) {
+		        console.error("Erro ao carregar mensagens não lidas", e);
+		    }
+		}
+
+		// ----- som de notificação -----
+		// Navegadores só liberam áudio depois de alguma interação do usuário na página;
+		// além do desbloqueio "passivo" no primeiro clique/tecla em qualquer lugar, também
+		// oferecemos um botão explícito (#chatSomBtn) para o usuário ativar o som na hora,
+		// em vez de descobrir que ele não tocou só quando a primeira mensagem chegar. O
+		// mesmo botão vira um alternador de mudo (preferência salva) depois de ativado.
+		const chatBeepAudio = document.getElementById('chatBeepAudio');
+		let _chatAudioDesbloqueado = false;
+		let _chatSomMutado = localStorage.getItem('chatSomMutado') === 'true';
+
+		function desbloquearAudioChat() {
+		    if (_chatAudioDesbloqueado || !chatBeepAudio) return;
+		    _chatAudioDesbloqueado = true;
+		    atualizarBotaoSomChat();
+		    const volumeOriginal = chatBeepAudio.volume;
+		    chatBeepAudio.volume = 0;
+		    chatBeepAudio.play().then(() => {
+		        chatBeepAudio.pause();
+		        chatBeepAudio.currentTime = 0;
+		        chatBeepAudio.volume = volumeOriginal;
+		    }).catch(() => {});
+		}
+		['click', 'keydown'].forEach(evt => document.addEventListener(evt, desbloquearAudioChat, { once: true }));
+
+		function tocarBeep(nomeArquivo) {
+		    if (!chatBeepAudio) return;
+		    try {
+		        if (nomeArquivo) chatBeepAudio.src = 'assets/audio/' + nomeArquivo;
+		        chatBeepAudio.currentTime = 0;
+		        const p = chatBeepAudio.play();
+		        if (p) p.catch(e => console.warn('Não foi possível tocar o som.', e));
+		    } catch (e) {
+		        console.warn('Não foi possível tocar o som.', e);
+		    }
+		}
+
+		function tocarBeepChat() {
+		    if (_chatSomMutado) return;
+		    tocarBeep('beep1.mp3');
+		}
+
+		// Som distinto do chat (beep3) para não confundir "chegou mensagem" com "vence um prazo".
+		function tocarBeepAgendamento() {
+		    if (_chatSomMutado) return;
+		    tocarBeep('beep3.mp3');
+		}
+
+		function ativarSomChatManualmente() {
+		    _chatSomMutado = false;
+		    localStorage.setItem('chatSomMutado', 'false');
+		    desbloquearAudioChat();
+		    tocarBeepChat();
+		    atualizarBotaoSomChat();
+		}
+
+		function alternarMuteChat() {
+		    _chatSomMutado = !_chatSomMutado;
+		    localStorage.setItem('chatSomMutado', _chatSomMutado);
+		    if (!_chatSomMutado) tocarBeepChat();
+		    atualizarBotaoSomChat();
+		}
+
+		function cliqueChatSomBtn() {
+		    if (!_chatAudioDesbloqueado) {
+		        ativarSomChatManualmente();
+		    } else {
+		        alternarMuteChat();
+		    }
+		}
+
+		function atualizarBotaoSomChat() {
+		    const btn = document.getElementById('chatSomBtn');
+		    const painel = document.getElementById('chatPanel');
+		    if (!btn) return;
+		    const painelAberto = painel && painel.style.display !== 'none';
+
+		    if (painelAberto) {
+		        btn.style.display = 'none';
+		        return;
+		    }
+		    btn.style.display = 'flex';
+
+		    if (!_chatAudioDesbloqueado) {
+		        btn.classList.add('chat-som-btn-pulso');
+		        btn.title = 'Ativar som de notificações (chat e agendamentos)';
+		        btn.innerHTML = '<i class="bi bi-volume-mute-fill"></i> Ativar som';
+		        return;
+		    }
+		    btn.classList.remove('chat-som-btn-pulso');
+
+		    if (_chatSomMutado) {
+		        btn.title = 'Notificações sonoras mutadas — clique para reativar';
+		        btn.innerHTML = '<i class="bi bi-volume-mute-fill"></i> Som mutado';
+		    } else {
+		        btn.title = 'Clique para mutar as notificações sonoras';
+		        btn.innerHTML = '<i class="bi bi-volume-up-fill"></i> Som ativado';
+		    }
+		}
+
+		function receberMensagemChat(msg) {
+		    const outroId = (msg.remetenteId === _meuFuncionarioId) ? msg.destinatarioId : msg.remetenteId;
+
+		    if (msg.remetenteId !== _meuFuncionarioId) tocarBeepChat();
+
+		    if (_conversaAbertaId !== null && Number(outroId) === Number(_conversaAbertaId)) {
+		        adicionarMensagemChatPanel(msg);
+		        if (msg.remetenteId !== _meuFuncionarioId) {
+		            fetch('/judi/chat/conversas/' + outroId + '/marcar-lida', { method: 'POST' });
+		        }
+		        return;
+		    }
+
+		    if (msg.remetenteId !== _meuFuncionarioId) {
+		        _naoLidasPorUsuario[msg.remetenteId] = (_naoLidasPorUsuario[msg.remetenteId] || 0) + 1;
+		        renderUsuariosOnline(_ultimaListaUsuariosOnline);
+		        mostrarToast('Nova mensagem de <strong>' + escapeHtml(msg.nomeRemetente) + '</strong>', 'success');
+		    }
+		}
+
+		// Paginação sob demanda: só a página mais recente é carregada ao abrir a
+		// conversa; páginas mais antigas só são buscadas quando o usuário rola até
+		// o topo do painel (ver listener de scroll em iniciarChat).
+		let _chatPaginaAtual = 0;
+		let _chatTemMaisAntigas = true;
+		let _chatCarregandoMais = false;
+
+		function abrirConversaChat(usuarioId, nomeUsuario) {
+		    usuarioId = Number(usuarioId);
+		    if (usuarioId === _meuFuncionarioId) return;
+
+		    _conversaAbertaId = usuarioId;
+		    _chatPaginaAtual = 0;
+		    _chatTemMaisAntigas = true;
+		    _chatCarregandoMais = false;
+		    document.getElementById('chatPanelNome').textContent = nomeUsuario;
+		    document.getElementById('chatPanel').style.display = 'flex';
+		    document.getElementById('chatPanelMensagens').innerHTML = '<p class="text-muted small text-center mt-3">Carregando…</p>';
+		    document.getElementById('chatPanelInput').focus();
+		    atualizarBotaoSomChat();
+
+		    carregarHistoricoChat(usuarioId, 0);
+
+		    if (_naoLidasPorUsuario[usuarioId]) {
+		        delete _naoLidasPorUsuario[usuarioId];
+		        renderUsuariosOnline(_ultimaListaUsuariosOnline);
+		    }
+		    fetch('/judi/chat/conversas/' + usuarioId + '/marcar-lida', { method: 'POST' });
+		}
+
+		async function carregarHistoricoChat(usuarioId, pagina) {
+		    try {
+		        const response = await fetch('/judi/chat/conversas/' + usuarioId + '?pagina=' + pagina + '&tamanho=30');
+		        if (!response.ok) return;
+
+		        const paginaResp = await response.json();
+		        if (Number(_conversaAbertaId) !== Number(usuarioId)) return;
+
+		        const mensagens = (paginaResp.content || []).slice().reverse();
+		        _chatPaginaAtual = paginaResp.number;
+		        _chatTemMaisAntigas = !paginaResp.last;
+
+		        const el = document.getElementById('chatPanelMensagens');
+
+		        if (pagina === 0) {
+		            el.innerHTML = '';
+		            if (!mensagens.length) {
+		                el.innerHTML = '<p class="text-muted small text-center mt-3">Nenhuma mensagem ainda. Diga oi!</p>';
+		                return;
+		            }
+		            mensagens.forEach(msg => adicionarMensagemChatPanel(msg, false));
+		            el.scrollTop = el.scrollHeight;
+		            return;
+		        }
+
+		        // carregando mensagens mais antigas: tira o indicador antes de medir, para o
+		        // cálculo de scroll não considerar uma altura que está prestes a sumir
+		        const indicador = document.getElementById('chatPanelCarregandoMais');
+		        if (indicador) indicador.remove();
+
+		        const alturaAntes = el.scrollHeight;
+		        const scrollAntes = el.scrollTop;
+		        const fragmento = document.createDocumentFragment();
+		        mensagens.forEach(msg => fragmento.appendChild(criarBolhaMensagemChat(msg)));
+		        el.insertBefore(fragmento, el.firstChild);
+		        el.scrollTop = el.scrollHeight - alturaAntes + scrollAntes;
+		    } catch (e) {
+		        console.error("Erro ao carregar histórico do chat", e);
+		    } finally {
+		        _chatCarregandoMais = false;
+		        if (pagina > 0) {
+		            const indicadorResidual = document.getElementById('chatPanelCarregandoMais');
+		            if (indicadorResidual) indicadorResidual.remove();
+		        }
+		    }
+		}
+
+		function carregarMaisAntigasChat() {
+		    if (_chatCarregandoMais || !_chatTemMaisAntigas || !_conversaAbertaId) return;
+		    _chatCarregandoMais = true;
+		    atualizarIndicadorCarregandoMaisChat();
+		    carregarHistoricoChat(_conversaAbertaId, _chatPaginaAtual + 1);
+		}
+
+		function atualizarIndicadorCarregandoMaisChat() {
+		    const el = document.getElementById('chatPanelMensagens');
+		    if (!el) return;
+		    let indicador = document.getElementById('chatPanelCarregandoMais');
+		    if (_chatCarregandoMais) {
+		        if (!indicador) {
+		            indicador = document.createElement('p');
+		            indicador.id = 'chatPanelCarregandoMais';
+		            indicador.className = 'text-muted small text-center mb-2';
+		            indicador.textContent = 'Carregando mensagens antigas…';
+		            el.insertBefore(indicador, el.firstChild);
+		        }
+		    } else if (indicador) {
+		        indicador.remove();
+		    }
+		}
+
+		function criarBolhaMensagemChat(msg) {
+		    const enviada = msg.remetenteId === _meuFuncionarioId;
+		    const bolha = document.createElement('div');
+		    bolha.className = 'chat-msg ' + (enviada ? 'chat-msg-enviada' : 'chat-msg-recebida');
+		    bolha.innerHTML = escapeHtml(msg.conteudo) + '<span class="chat-msg-hora">' + escapeHtml(msg.dataEnvio || '') + '</span>';
+		    return bolha;
+		}
+
+		function adicionarMensagemChatPanel(msg, rolarParaFinal) {
+		    const el = document.getElementById('chatPanelMensagens');
+		    if (!el) return;
+		    const vazio = el.querySelector('.text-muted');
+		    if (vazio) el.innerHTML = '';
+
+		    el.appendChild(criarBolhaMensagemChat(msg));
+		    if (rolarParaFinal !== false) el.scrollTop = el.scrollHeight;
+		}
+
+		function enviarMensagemChatPanel() {
+		    const input = document.getElementById('chatPanelInput');
+		    const texto = input.value.trim();
+		    if (!texto || !_conversaAbertaId) return;
+		    if (!stompClient || !stompClient.connected) {
+		        mostrarToast('Conexão do chat indisponível no momento. Tente novamente em instantes.', 'warning');
+		        return;
+		    }
+		    stompClient.publish({
+		        destination: '/app/chat.enviar',
+		        body: JSON.stringify({ destinatarioId: _conversaAbertaId, conteudo: texto })
+		    });
+		    input.value = '';
+		}
+
+		function fecharChatPanel() {
+		    document.getElementById('chatPanel').style.display = 'none';
+		    _conversaAbertaId = null;
+		    atualizarBotaoSomChat();
+		}
+
+		function iniciarChat() {
+		    conectarChat();
+
+		    const lista = document.getElementById('listaUsuariosOnline');
+		    if (lista) {
+		        lista.addEventListener('click', function (e) {
+		            const alvo = e.target.closest('[data-usuario-id]');
+		            if (!alvo) return;
+		            abrirConversaChat(alvo.dataset.usuarioId, alvo.dataset.usuarioNome);
+		        });
+		    }
+
+		    document.getElementById('chatPanelFechar').addEventListener('click', fecharChatPanel);
+		    document.getElementById('chatPanelEnviar').addEventListener('click', enviarMensagemChatPanel);
+		    document.getElementById('chatPanelInput').addEventListener('keydown', function (e) {
+		        if (e.key === 'Enter') { e.preventDefault(); enviarMensagemChatPanel(); }
+		    });
+		    document.getElementById('chatPanelMensagens').addEventListener('scroll', function (e) {
+		        if (e.target.scrollTop < 40) carregarMaisAntigasChat();
+		    });
+
+		    const botaoSom = document.getElementById('chatSomBtn');
+		    if (botaoSom) botaoSom.addEventListener('click', cliqueChatSomBtn);
+
+		    // Só passa a mostrar/checar o prompt de "Ativar som" depois de alguns segundos —
+		    // dá tempo do usuário clicar em algo naturalmente (menu, busca) logo após o
+		    // carregamento, o que já libera o áudio sozinho e evita o prompt na maioria das vezes.
+		    setTimeout(atualizarBotaoSomChat, 6000);
+		}
+
+		function listaVaziaHtml(mensagem) {
+		    return '<p class="text-muted small mb-0 py-2">' + mensagem + '</p>';
+		}
+
+		function badgeStatusTarefaHome(status) {
+		    var cfg = {
+		        ABERTA:        { cor: 'secondary', label: 'Aberta' },
+		        AGENDADA:      { cor: 'info',       label: 'Agendada' },
+		        EM_ANDAMENTO:  { cor: 'primary',    label: 'Em andamento' },
+		        CONCLUIDA:     { cor: 'success',    label: 'Concluída' },
+		        CANCELADA:     { cor: 'dark',       label: 'Cancelada' }
+		    };
+		    var c = cfg[status] || { cor: 'secondary', label: status || '—' };
+		    return '<span class="badge bg-' + c.cor + '">' + c.label + '</span>';
+		}
+
+		function badgeStatusProcessoHome(status) {
+		    var cfg = {
+		        ATIVO:     { cor: 'success',   label: 'Ativo' },
+		        SUSPENSO:  { cor: 'warning',   label: 'Suspenso' },
+		        ARQUIVADO: { cor: 'secondary', label: 'Arquivado' },
+		        EXTINTO:   { cor: 'dark',      label: 'Extinto' }
+		    };
+		    var c = cfg[status] || { cor: 'secondary', label: status || '—' };
+		    return '<span class="badge bg-' + c.cor + '">' + c.label + '</span>';
+		}
+
+		function badgeStatusCasoHome(status) {
+		    var cfg = {
+		        ABERTO:        { cor: 'secondary', label: 'Aberto' },
+		        EM_ANDAMENTO:  { cor: 'primary',    label: 'Em andamento' },
+		        CONCLUIDO:     { cor: 'success',    label: 'Concluído' },
+		        ARQUIVADO:     { cor: 'dark',       label: 'Arquivado' }
+		    };
+		    var c = cfg[status] || { cor: 'secondary', label: status || '—' };
+		    return '<span class="badge bg-' + c.cor + '">' + c.label + '</span>';
+		}
+
+		function renderTarefasRecentes(lista) {
+		    const el = document.getElementById("listaTarefasRecentes");
+		    if (!el) return;
+		    if (!lista || !lista.length) {
+		        el.innerHTML = listaVaziaHtml("Nenhuma tarefa atualizada recentemente.");
+		        return;
+		    }
+		    el.innerHTML = lista.map(t =>
+		        '<a href="/judi/tarefa/detalhe?id=' + t.id + '" class="d-flex justify-content-between align-items-center gap-2 text-decoration-none text-reset px-2 py-2 cert-recente-item">'
+		        + '<div class="overflow-hidden">'
+		        + '<div class="fw-semibold text-truncate">' + escapeHtml(t.titulo) + '</div>'
+		        + '<div class="small text-muted text-truncate">'
+		        + '<i class="bi bi-building me-1"></i>' + escapeHtml(t.nomeCliente || '—')
+		        + '<span class="mx-1">·</span>'
+		        + '<i class="bi bi-person me-1"></i>' + escapeHtml(t.nomeFuncionarioResponsavel || 'Sem responsável')
+		        + '</div>'
+		        + '</div>'
+		        + '<div class="flex-shrink-0">' + badgeStatusTarefaHome(t.status) + '</div>'
+		        + '</a>'
+		    ).join('');
+		}
+
+		var LIMITE_PROXIMO_HORAS = 48;
+
+		// Converte "dd/MM/yyyy HH:mm" (formato vindo do backend) para Date.
+		function parseDataBr(str) {
+		    if (!str) return null;
+		    var partes = str.split(' ');
+		    var d = partes[0].split('/');
+		    var h = (partes[1] || '00:00').split(':');
+		    return new Date(d[2], d[1] - 1, d[0], h[0], h[1]);
+		}
+
+		// Retorna 'vencido', 'proximo' ou null com base na distância até o agendamento.
+		function situacaoAgendamento(dataAgendamentoStr) {
+		    var data = parseDataBr(dataAgendamentoStr);
+		    if (!data) return null;
+		    var diffHoras = (data.getTime() - Date.now()) / 36e5;
+		    if (diffHoras < 0) return 'vencido';
+		    if (diffHoras <= LIMITE_PROXIMO_HORAS) return 'proximo';
+		    return null;
+		}
+
+		// Estado por tarefa entre uma checagem e outra (null = ainda não checado nesta
+		// sessão, para não alertar sobre coisas que já estavam vencidas ao abrir a página).
+		let _situacoesAgendamentosConhecidas = null;
+		let _agendamentosPioraramAgora = new Set();
+
+		function severidadeAgendamento(situacao) {
+		    return situacao === 'vencido' ? 2 : situacao === 'proximo' ? 1 : 0;
+		}
+
+		function processarAgendamentos(lista) {
+		    const situacoesAtuais = new Map((lista || []).map(t => [t.id, situacaoAgendamento(t.dataAgendamento)]));
+		    _agendamentosPioraramAgora = new Set();
+
+		    if (_situacoesAgendamentosConhecidas === null) {
+		        _situacoesAgendamentosConhecidas = situacoesAtuais;
+		        atualizarBadgeAgendamentos(situacoesAtuais);
+		        return;
+		    }
+
+		    const piorados = [];
+		    situacoesAtuais.forEach((situacao, id) => {
+		        const anterior = _situacoesAgendamentosConhecidas.get(id) || null;
+		        if (severidadeAgendamento(situacao) > severidadeAgendamento(anterior)) {
+		            piorados.push({ id, situacao });
+		            _agendamentosPioraramAgora.add(id);
+		        }
+		    });
+		    _situacoesAgendamentosConhecidas = situacoesAtuais;
+		    atualizarBadgeAgendamentos(situacoesAtuais);
+
+		    if (piorados.length) {
+		        tocarBeepAgendamento();
+		        const item = (lista || []).find(t => t.id === piorados[0].id);
+		        const tituloItem = item ? escapeHtml(item.titulo) : 'Um agendamento';
+		        const texto = piorados.length === 1
+		            ? tituloItem + (piorados[0].situacao === 'vencido' ? ' venceu.' : ' está próximo do prazo.')
+		            : piorados.length + ' agendamentos precisam de atenção agora.';
+		        mostrarToast('<strong>Agendamento</strong><br>' + texto, 'warning');
+		    }
+		}
+
+		function atualizarBadgeAgendamentos(situacoesAtuais) {
+		    let total = 0;
+		    situacoesAtuais.forEach(situacao => { if (situacao) total++; });
+
+		    const badge = document.getElementById('qtdAgendamentosAtencao');
+		    const titulo = document.getElementById('tituloAgendamentos');
+		    if (badge) {
+		        badge.textContent = total;
+		        badge.classList.toggle('d-none', total === 0);
+		    }
+		    if (titulo) titulo.classList.toggle('tem-atencao', total > 0);
+		}
+
+		function renderAgendamentos(lista) {
+		    const el = document.getElementById("listaAgendamentos");
+		    if (!el) return;
+		    if (!lista || !lista.length) {
+		        el.innerHTML = listaVaziaHtml("Nenhum agendamento próximo.");
+		        return;
+		    }
+		    el.innerHTML = lista.map(t => {
+		        var situacao = situacaoAgendamento(t.dataAgendamento);
+		        var classeItem = situacao === 'vencido' ? ' agendamento-item-vencido' : situacao === 'proximo' ? ' agendamento-item-proximo' : '';
+		        if (_agendamentosPioraramAgora.has(t.id)) classeItem += ' agendamento-item-flash';
+		        var icone = situacao === 'vencido' ? 'bi-exclamation-triangle-fill' : 'bi-alarm';
+		        var classeTexto = situacao === 'vencido' ? 'agendamento-vencido' : situacao === 'proximo' ? 'agendamento-proximo' : 'text-info';
+		        var rotulo = situacao === 'vencido' ? ' (vencido)' : situacao === 'proximo' ? ' (próximo)' : '';
+		        return '<a href="/judi/tarefa/detalhe?id=' + t.id + '" class="d-flex justify-content-between align-items-center gap-2 text-decoration-none text-reset px-2 py-2 cert-recente-item' + classeItem + '">'
+		        + '<div class="overflow-hidden">'
+		        + '<div class="fw-semibold text-truncate">' + escapeHtml(t.titulo) + '</div>'
+		        + '<div class="small text-muted text-truncate">'
+	        + '<i class="bi bi-building me-1"></i>' + escapeHtml(t.nomeCliente || '—')
+	        + '<span class="mx-1">·</span>'
+	        + '<i class="bi bi-person me-1"></i>' + escapeHtml(t.nomeFuncionarioResponsavel || 'Sem responsável')
+	        + '</div>'
+		        + '</div>'
+		        + '<div class="small fw-semibold text-nowrap flex-shrink-0 ' + classeTexto + '"><i class="bi ' + icone + ' me-1"></i>' + (t.dataAgendamento || '—') + rotulo + '</div>'
+		        + '</a>';
+		    }).join('');
+		}
+
+		function renderProcessosRecentes(lista) {
+		    const el = document.getElementById("listaProcessosRecentes");
+		    if (!el) return;
+		    if (!lista || !lista.length) {
+		        el.innerHTML = listaVaziaHtml("Nenhum processo criado recentemente.");
+		        return;
+		    }
+		    el.innerHTML = lista.map(p =>
+		        '<a href="/judi/processo/detalhe?id=' + p.id + '" class="d-flex justify-content-between align-items-center gap-2 text-decoration-none text-reset px-2 py-2 cert-recente-item">'
+		        + '<div class="overflow-hidden">'
+		        + '<div class="fw-semibold text-truncate">' + escapeHtml(p.numeroProcesso || ('#' + p.id)) + '</div>'
+		        + '<div class="small text-muted text-truncate">' + escapeHtml(p.nomeCliente || '—') + '</div>'
+		        + '</div>'
+		        + '<div class="flex-shrink-0">' + badgeStatusProcessoHome(p.status) + '</div>'
+		        + '</a>'
+		    ).join('');
+		}
+
+		function renderCasosRecentes(lista) {
+		    const el = document.getElementById("listaCasosRecentes");
+		    if (!el) return;
+		    if (!lista || !lista.length) {
+		        el.innerHTML = listaVaziaHtml("Nenhum caso criado recentemente.");
+		        return;
+		    }
+		    el.innerHTML = lista.map(c =>
+		        '<a href="/judi/caso/detalhe?id=' + c.id + '" class="d-flex justify-content-between align-items-center gap-2 text-decoration-none text-reset px-2 py-2 cert-recente-item">'
+		        + '<div class="overflow-hidden">'
+		        + '<div class="fw-semibold text-truncate">' + escapeHtml(c.titulo) + '</div>'
+		        + '<div class="small text-muted text-truncate">' + escapeHtml(c.nomeCliente || '—') + '</div>'
+		        + '</div>'
+		        + '<div class="d-flex align-items-center gap-2 flex-shrink-0">'
+		        + (c.totalProcessos ? '<span class="badge bg-secondary"><i class="bi bi-briefcase"></i> ' + c.totalProcessos + '</span>' : '')
+		        + badgeStatusCasoHome(c.status)
+		        + '</div>'
+		        + '</a>'
+		    ).join('');
+		}
+
+		// ======================================================
+		// BUSCA UNIVERSAL (casos, processos, tarefas, alertas)
+		// ======================================================
+		let _buscaUniversalTimer = null;
+
+		function iniciarBuscaUniversal() {
+		    const input = document.getElementById("buscaUniversalInput");
+		    const dropdown = document.getElementById("buscaUniversalResultados");
+		    const btnLimpar = document.getElementById("buscaUniversalLimpar");
+		    if (!input || !dropdown) return;
+
+		    input.addEventListener("input", () => {
+		        const termo = input.value.trim();
+		        btnLimpar.classList.toggle("d-none", termo.length === 0);
+		        clearTimeout(_buscaUniversalTimer);
+
+		        if (termo.length < 2) {
+		            dropdown.classList.remove("show");
+		            dropdown.innerHTML = "";
+		            return;
+		        }
+
+		        dropdown.innerHTML = '<div class="busca-universal-carregando">Buscando…</div>';
+		        dropdown.classList.add("show");
+		        _buscaUniversalTimer = setTimeout(() => executarBuscaUniversal(termo), 300);
+		    });
+
+		    input.addEventListener("focus", () => {
+		        if (dropdown.innerHTML.trim() && input.value.trim().length >= 2) dropdown.classList.add("show");
+		    });
+
+		    input.addEventListener("keydown", (e) => {
+		        if (e.key === "Escape") {
+		            dropdown.classList.remove("show");
+		            input.blur();
+		        }
+		    });
+
+		    btnLimpar.addEventListener("click", () => {
+		        input.value = "";
+		        btnLimpar.classList.add("d-none");
+		        dropdown.classList.remove("show");
+		        dropdown.innerHTML = "";
+		        input.focus();
+		    });
+
+		    document.addEventListener("click", (e) => {
+		        if (!e.target.closest(".busca-universal-wrap")) {
+		            dropdown.classList.remove("show");
+		        }
+		    });
+		}
+
+		async function executarBuscaUniversal(termo) {
+		    const dropdown = document.getElementById("buscaUniversalResultados");
+		    try {
+		        const response = await fetch("/judi/busca?q=" + encodeURIComponent(termo));
+
+		        if (response.status === 401) {
+		            window.location.href = "/judi/login";
+		            return;
+		        }
+		        if (!response.ok) return;
+
+		        const data = await response.json();
+		        renderBuscaUniversal(data);
+		    } catch (e) {
+		        console.error("Erro na busca universal", e);
+		    }
+		}
+
+		function renderBuscaUniversal(data) {
+		    const dropdown = document.getElementById("buscaUniversalResultados");
+		    const blocos = [];
+
+		    if (data.casos && data.casos.length) {
+		        blocos.push(buscaUniversalCategoria("Casos", "bi-folder2-open", data.casos.map(c =>
+		            buscaUniversalItem("/judi/caso/detalhe?id=" + c.id, "bi-folder2-open", c.titulo, c.nomeCliente)
+		        )));
+		    }
+		    if (data.processos && data.processos.length) {
+		        blocos.push(buscaUniversalCategoria("Processos", "bi-briefcase", data.processos.map(p =>
+		            buscaUniversalItem("/judi/processo/detalhe?id=" + p.id, "bi-briefcase", p.numeroProcesso, p.nomeCliente)
+		        )));
+		    }
+		    if (data.tarefas && data.tarefas.length) {
+		        blocos.push(buscaUniversalCategoria("Tarefas", "bi-list-check", data.tarefas.map(t =>
+		            buscaUniversalItem("/judi/tarefa/detalhe?id=" + t.id, "bi-list-check", t.titulo, t.nomeCliente)
+		        )));
+		    }
+		    if (data.alertas && data.alertas.length) {
+		        blocos.push(buscaUniversalCategoria("Alertas", "bi-bell", data.alertas.map(a =>
+		            buscaUniversalItem("/judi/processo/detalhe?id=" + a.processoId, "bi-bell", a.mensagem, a.numeroProcesso)
+		        )));
+		    }
+
+		    dropdown.innerHTML = blocos.length ? blocos.join('')
+		        : '<div class="busca-universal-vazio">Nenhum resultado encontrado.</div>';
+		    dropdown.classList.add("show");
+		}
+
+		function buscaUniversalCategoria(titulo, icone, itensHtml) {
+		    return '<div class="busca-universal-categoria"><i class="bi ' + icone + ' me-1"></i>' + titulo + '</div>'
+		        + itensHtml.join('');
+		}
+
+		function buscaUniversalItem(href, icone, titulo, subtitulo) {
+		    return '<a href="' + href + '" class="busca-universal-item">'
+		        + '<i class="bi ' + icone + '"></i>'
+		        + '<div class="overflow-hidden">'
+		        + '<div class="fw-semibold text-truncate">' + escapeHtml(titulo || '—') + '</div>'
+		        + (subtitulo ? '<div class="small text-muted text-truncate">' + escapeHtml(subtitulo) + '</div>' : '')
+		        + '</div>'
+		        + '</a>';
 		}
 
 		function iniciarEventos() {
@@ -719,6 +1784,7 @@
 
 		function preencherHome(data){
 		    _homeData = data;
+		    _meuFuncionarioId = data.id;
 		    document.getElementById("saudacao").textContent = gerarSaudacao();
 		    document.getElementById("nomeFuncionario").textContent = data.nomeFuncionario; 
 		    document.getElementById("dataUltimoLogin").textContent = "Último login: " + data.dataUltimoLogin;

@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class Cliente extends Usuario {
 
 	@Column(length = 100)
-	private String nomeCliente;
+	private String nomeCliente;		
 	@Column(length = 200)
 	private String endereco;
 	@Column(length = 20)
@@ -30,7 +30,17 @@ public class Cliente extends Usuario {
 	private String cnpj;
 	@Column(length = 20)
 	private String bairro;
+	
 	private String caminhoFoto;
+
+	@Column(length = 200)
+	private String nomeFantasia;
+	@Column(length = 5)
+	private String tipoPessoa;
+	@Column(length = 200)
+	private String inscricaoEstadual;
+	@Column(length = 200)
+	private String inscricaoMunicipal;
 
 	public Cliente(DtoCadastroCliente dados) {
 		this.nomeCliente = dados.nomeCliente();
@@ -43,6 +53,10 @@ public class Cliente extends Usuario {
 		this.telefone = dados.telefone();
 		this.cnpj = dados.cnpj();
 		this.bairro = dados.bairro();
+		this.nomeFantasia = dados.nomeFantasia();
+		this.tipoPessoa = dados.tipoPessoa();
+		this.inscricaoEstadual = dados.inscricaoEstadual();
+		this.inscricaoMunicipal = dados.inscricaoMunicipal();
 	}
 
 public Cliente(DtoAtualizarCliente dados) {
@@ -57,5 +71,10 @@ public Cliente(DtoAtualizarCliente dados) {
 		this.telefone = dados.telefone();
 		this.cnpj = dados.cnpj();
 		this.bairro = dados.bairro();
+		this.nomeFantasia = dados.nomeFantasia();
+		this.tipoPessoa = dados.tipoPessoa();
+		this.inscricaoEstadual = dados.inscricaoEstadual();
+		this.inscricaoMunicipal = dados.inscricaoMunicipal();	
+	
 	}
 }

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/css/styleBusca.css">
+	<link rel="stylesheet" href="../assets/css/StyleClientesFuncionarios.css">
+	<link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="../assets/css/dark.css">
+	<link rel="stylesheet" href="../assets/css/navbar.css">
+	<title>Judera One - Casos</title>
+	<style>
+		/* cards — border sutil em modo claro */
+		.filtro-sidebar,
+		.tabela-card {
+			border: 1px solid rgba(0,0,0,.1) !important;
+			box-shadow: 0 3px 12px rgba(0,0,0,.09) !important;
+			border-radius: 16px !important;
+			overflow: hidden;
+		}
+
+		/* cabeçalho da tabela */
+		.tabela-card .table-responsive {
+			border-radius: 10px;
+			overflow: hidden;
+			border: 1px solid rgba(0,0,0,.06);
+		}
+		body.dark-mode .tabela-card .table-responsive { border-color: rgba(255,255,255,.08); }
+		.tabela-casos-clean thead {
+			background: linear-gradient(135deg, #1e3a5f, #1a56c4);
+		}
+		.tabela-casos-clean thead th {
+			background: transparent;
+			color: #fff;
+			font-weight: 600;
+			font-size: .72rem;
+			text-transform: uppercase;
+			letter-spacing: .05em;
+			border: none !important;
+			padding: 10px 16px;
+			white-space: nowrap;
+		}
+
+		.btn-filtro-rapido { border-radius: 20px !important; font-size: .82rem; font-weight: 500; }
+
+		/* AÇÕES da tabela — sobrescreve o .btn-action global (tamanhos inconsistentes entre dark.css) */
+		#tabela-casos .btn-action {
+			width: 32px;
+			height: 32px;
+			border-radius: 9px !important;
+			margin-right: 0;
+		}
+
+		/* dark mode */
+		body.dark-mode table   { background-color: transparent; color: #f1f5f9; }
+		body.dark-mode th,
+		body.dark-mode td      { background-color: transparent; color: #f1f5f9; border-color: #2a2d31; }
+		body.dark-mode .table-primary { background-color: #0d6efd; color: #fff; }
+		.card { border: 1px solid rgba(0,0,0,.15) !important; box-shadow: 0 3px 12px rgba(0,0,0,.13) !important; }
+		body.dark-mode .card { border-color: rgba(255,255,255,.15) !important; box-shadow: 0 3px 14px rgba(0,0,0,.6) !important; }
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		 <script>(function(){if(localStorage.getItem('darkMode')==='enabled')document.body.classList.add('dark-mode');document.body.dataset.layout=localStorage.getItem('navLayout')||'top';if(localStorage.getItem('sidebarCollapsed')==='true')document.body.classList.add('sidebar-collapsed');})();</script>
+
+	<!-- SIDEBAR -->
+	<aside id="sidebarNav" class="sistech-sidebar">
+		<div class="sidebar-brand">
+			<div class="sidebar-brand-icon">
+				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
+			</div>
+			<span class="sidebar-brand-text">Judera One</span>
+		</div>
+		<div class="sidebar-scroll">
+			<a href="/judi/home" class="sidebar-item">
+				<i class="bi bi-house-fill"></i>
+				<span class="sidebar-item-label">Início</span>
+			</a>
+			<div class="sidebar-group" id="sgClientes">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
+					<i class="bi bi-building"></i>
+					<span class="sidebar-group-label">Clientes</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/cliente/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/cliente/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgFuncionarios">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
+					<i class="bi bi-person-badge"></i>
+					<span class="sidebar-group-label">Funcionários</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem active"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgProcessos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
+					<i class="bi bi-briefcase"></i>
+					<span class="sidebar-group-label">Processos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/processo/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/processo/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgTarefas">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
+					<i class="bi bi-list-check"></i>
+					<span class="sidebar-group-label">Tarefas</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/tarefa/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
+				</div>
+			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
+			<a href="/judi/tarefa/despesas" class="sidebar-item">
+				<i class="bi bi-receipt"></i>
+				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
+		</div>
+		<div class="sidebar-footer">
+			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
+				<i class="bi bi-arrow-bar-left" id="sidebarCollapseIcon"></i>
+			</button>
+		</div>
+	</aside>
+
+	<!-- FLYOUT: submenu ao clicar no ícone com sidebar recolhida -->
+	<div id="sidebarFlyout" class="sidebar-flyout">
+		<div class="sidebar-flyout-title" id="sidebarFlyoutTitle"></div>
+		<div id="sidebarFlyoutItems"></div>
+	</div>
+
+	<!-- OVERLAY MOBILE -->
+	<div id="sidebarOverlay" onclick="closeSidebarMobile()"></div>
+
+	<!-- SLIM TOPBAR (modo sidebar) -->
+	<div id="slimTopbar" class="sistech-slim-topbar">
+		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
+			<i class="bi bi-list"></i>
+		</button>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judera One</span>
+		<div class="ms-auto d-flex align-items-center gap-2">
+			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
+				<i class="bi bi-layout-three-columns"></i>
+			</button>
+			<button class="icon-btn" onclick="toggleDarkMode()" title="Alternar modo escuro">
+				<i class="bi bi-moon"></i>
+			</button>
+
+			<div class="dropdown">
+				<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<div class="user-avatar" id="userInitialsSlim">?</div>
+					<span class="user-name d-none d-md-inline" id="navNomeSlim">Usuário</span>
+					<i class="bi bi-chevron-down nav-chevron"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end">
+					<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+					<li><hr class="dropdown-divider"></li>
+					<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<!-- NAVBAR -->
+		<nav class="navbar navbar-expand-lg navbar-modern sticky-top mb-2">
+			<div class="container-fluid px-3">
+				<!-- Brand -->
+				<a class="navbar-brand-modern" href="/judi/home">
+					<div class="brand-icon">
+						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
+					</div>
+					<span class="brand-text">Judera One</span>
+				</a>
+				<!-- Mobile toggle -->
+				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarMain" aria-controls="navbarMain"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<!-- Collapse -->
+				<div class="collapse navbar-collapse" id="navbarMain">
+					<!-- Nav items -->
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 align-items-lg-center">
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/home">
+								<i class="bi bi-house-fill"></i> Início
+							</a>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-building"></i> Clientes
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/cliente/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/cliente/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-person-badge"></i> Equipe
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-briefcase"></i> Processos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/processo/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list-check"></i> Tarefas
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/tarefa/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/tarefa/form"><i class="bi bi-plus-circle me-2 text-success"></i>Nova</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/tarefa/despesas">
+								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
+							</a>
+						</li>
+					</ul>
+
+					<!-- Direita: ícones + usuário -->
+					<div class="d-flex align-items-center gap-2">
+						<!-- Layout toggle -->
+						<button class="layout-toggle-btn" onclick="toggleLayout()" title="Alternar para barra lateral">
+							<i class="bi bi-layout-sidebar"></i>
+						</button>
+						<!-- Dark mode -->
+						<button class="icon-btn" onclick="toggleDarkMode()" id="toggleDarkBtn" title="Alternar modo escuro" aria-label="Alternar modo escuro">
+							<i class="bi bi-moon"></i>
+						</button>
+						<!-- Usuário dropdown -->
+						<div class="dropdown">
+							<button class="user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<div class="user-avatar" id="userInitials">?</div>
+								<span class="user-name" id="navNome">Usuário</span>
+								<i class="bi bi-chevron-down nav-chevron"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item" href="/judi/funcionario/perfil"><i class="bi bi-person me-2"></i>Perfil</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/judi/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item text-danger" href="/judi/logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<!-- / NAVBAR -->
+
+		<div class="row g-4 mt-2 px-1">
+		    <!-- FILTROS -->
+		    <div class="col-12">
+		        <div class="card shadow-sm border-0 filtro-sidebar">
+		            <div class="card-body">
+		                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+		                    <div>
+		                        <h5 class="mb-0"><i class="bi bi-folder2-open"></i> Casos </h5>
+		                        <small class="text-muted"><span id="contador">0</span> registros</small>
+							</div>
+		                    <a href="/judi/caso/form" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Novo</a>
+		                </div>
+
+		                <div class="row g-2 align-items-end">
+		                    <div class="col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Busca </label>
+		                        <div class="input-group input-group-sm">
+		                            <span class="input-group-text">
+		                                <i class="bi bi-search"></i>
+		                            </span>
+		                            <input class="form-control" type="search" placeholder="Título ou cliente..." id="palavraChave" onkeypress="if(event.key==='Enter'){ event.preventDefault(); aplicarFiltrosCaso(); }">
+		                        </div>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Natureza </label>
+		                        <select class="form-select form-select-sm" id="naturezaFiltro" name="naturezaFiltro">
+		                            <option value="">Todas</option>
+		                            <option value="CONSULTIVO">Consultivo</option>
+		                            <option value="PREVENTIVO">Preventivo</option>
+		                            <option value="CONTENCIOSO">Contencioso</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Status </label>
+		                        <select class="form-select form-select-sm" id="statusFiltro" name="statusFiltro">
+		                            <option value="">Todos</option>
+		                            <option value="ABERTO">Aberto</option>
+		                            <option value="EM_ANDAMENTO">Em andamento</option>
+		                            <option value="CONCLUIDO">Concluído</option>
+		                            <option value="ARQUIVADO">Arquivado</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Funcionário </label>
+		                        <select class="form-select form-select-sm" id="funcionarioFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Cliente </label>
+		                        <select class="form-select form-select-sm" id="clienteFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-md-3 col-lg-2 d-flex gap-2">
+		                        <button class="btn btn-success btn-sm flex-fill" onclick="aplicarFiltrosCaso()"><i class="bi bi-funnel"></i> Filtrar</button>
+		                        <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosCaso()" title="Limpar filtros"><i class="bi bi-x-circle"></i></button>
+		                    </div>
+		                </div>
+
+		                <div class="small text-muted mt-2">
+		                    <span id="qtdFiltrados"></span>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+
+		    <!-- TABELA -->
+		    <div class="col-12">
+		        <div class="card shadow-sm border-0 tabela-card">
+		            <div class="card-body">
+		                <div class="input-group input-group-sm mb-3">
+		                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+		                    <input type="search" class="form-control" id="filtroRapidoTabela" placeholder="Filtrar nesta página...">
+		                </div>
+		                <div class="table-responsive">
+		                    <table class="table tabela-casos-clean align-middle" id="tabela-casos">
+		                        <thead>
+		                            <tr>
+		                                <th>Título</th>
+		                                <th>Cliente</th>
+		                                <th width="130">Natureza</th>
+		                                <th width="100" class="text-center">Processos</th>
+		                                <th width="130">Status</th>
+		                                <th>Responsável</th>
+		                                <th width="140" class="text-end">Ações</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody id="corpoCasos">
+		                            <tr></tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+
+		                <nav class="mt-4">
+		                    <ul id="paginas" class="pagination justify-content-center">
+		                    </ul>
+		                </nav>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+			</div>
+	<br /><br />
+	<footer class="container-fluid fixed-bottom text-center text-white">
+			<div class="text-center" style="background-color: rgba(0, 0, 0, 0.2);">
+				© 2026 Copyright:
+				<a class="text-white" href="#">TechGold</a>
+			</div>
+	</footer>
+	</div>
+
+	<script src="../assets/js/jquery-3.6.3.js"></script>
+	<script src="../assets/js/bootstrap.bundle.min.js"></script>
+	<script src="../assets/js/dark.js"></script>
+	<script src="../assets/js/navbar.js"></script>
+	<script src="../assets/js/sidebar.js"></script>
+	<script>
+
+		var _paginaAtual = 0;
+		var _isAdmin = false;
+
+		function carregarIsAdmin() {
+			return $.ajax({
+				type: "GET",
+				url: "/judi/funcionarios/isAdmin",
+				success: function (data) { _isAdmin = data === true; }
+			});
+		}
+
+		function badgeNatureza(natureza) {
+			var cfg = {
+				CONSULTIVO:  { cor: 'info',    label: 'Consultivo' },
+				PREVENTIVO:  { cor: 'warning', label: 'Preventivo' },
+				CONTENCIOSO: { cor: 'danger',  label: 'Contencioso' }
+			};
+			var c = cfg[natureza] || { cor: 'secondary', label: natureza || '—' };
+			var textClass = natureza === 'PREVENTIVO' ? ' text-dark' : '';
+			return '<span class="badge bg-' + c.cor + textClass + '">' + c.label + '</span>';
+		}
+
+		function badgeStatus(status) {
+			var cfg = {
+				ABERTO:        { cor: 'secondary', label: 'Aberto' },
+				EM_ANDAMENTO:  { cor: 'primary',   label: 'Em andamento' },
+				CONCLUIDO:     { cor: 'success',   label: 'Concluído' },
+				ARQUIVADO:     { cor: 'dark',      label: 'Arquivado' }
+			};
+			var c = cfg[status] || { cor: 'secondary', label: status || '—' };
+			return '<span class="badge bg-' + c.cor + '">' + c.label + '</span>';
+		}
+
+		function badgeTotalProcessos(total) {
+			if (!total) {
+				return '<span class="text-muted small">—</span>';
+			}
+			return '<span class="badge bg-secondary"><i class="bi bi-briefcase"></i> ' + total + '</span>';
+		}
+
+		function linhaCaso(i) {
+			return '<tr id=linha' + i.id + '>'
+				+ '<td>' + (i.titulo || '—') + '</td>'
+				+ '<td>' + (i.nomeCliente || '—') + '</td>'
+				+ '<td>' + badgeNatureza(i.natureza) + '</td>'
+				+ '<td class="text-center">' + badgeTotalProcessos(i.totalProcessos) + '</td>'
+				+ '<td>' + badgeStatus(i.status) + '</td>'
+				+ '<td>' + (i.nomeFuncionarioResponsavel || '<span class="text-muted">—</span>') + '</td>'
+				+ `
+				<td class="text-end">
+				    <div class="acoes-wrapper d-inline-flex gap-1">
+				    <button
+				        class="btn-action btn btn-primary btn-sm"
+				        title="Ver detalhes"
+				        onclick="verDetalhes(${i.id})">
+				        <i class="bi bi-eye"></i>
+				    </button>
+				    ${_isAdmin ? `
+				    <button
+				        class="btn-action btn btn-danger btn-sm"
+				        title="Excluir"
+				        onclick="excluir(${i.id})">
+				        <i class="bi bi-trash"></i>
+				    </button>` : ''}
+					</div>
+				</td>`
+				+ '</tr>';
+		}
+
+		function verDetalhes(id) {
+			window.location.href = '/judi/caso/detalhe?id=' + id;
+		}
+
+		function renderPaginas(data) {
+			$('#paginas').empty();
+			if (data.totalPages > 1) {
+				for (var i = 0; i < data.totalPages; i++) {
+					$('#paginas').append('<li class="page-item" id=numPag' + i + '><a class="page-link" onclick="paginacao(' + i + ')">' + (i + 1) + '</a></li>');
+				}
+				$('#numPag' + _paginaAtual).find('a').css('color', 'red');
+			}
+		}
+
+		function renderResultado(data) {
+			$('#corpoCasos').empty();
+			$('#contador').text(data.totalElements);
+			$('#qtdFiltrados').text(data.totalElements);
+
+			if (!data.content || data.content.length === 0) {
+				$('#corpoCasos').html('<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-folder2-open"></i> Nenhum caso encontrado</td></tr>');
+				renderPaginas(data);
+				return;
+			}
+
+			data.content.forEach(function(i) {
+				$('#corpoCasos').append(linhaCaso(i));
+			});
+			renderPaginas(data);
+			filtrarLinhasTabela();
+		}
+
+		function filtrarLinhasTabela() {
+			var termo = $('#filtroRapidoTabela').val().toLowerCase().trim();
+			$('#corpoCasos tr').each(function () {
+				var texto = $(this).text().toLowerCase();
+				$(this).toggle(!termo || texto.indexOf(termo) > -1);
+			});
+		}
+
+		$(document).ready(function () {
+			$('#filtroRapidoTabela').on('input', filtrarLinhasTabela);
+		});
+
+		function paramsFiltroCaso() {
+			var params = {};
+			var texto = $('#palavraChave').val(); if (texto) params.texto = texto;
+			var natureza = $('#naturezaFiltro').val(); if (natureza) params.natureza = natureza;
+			var status = $('#statusFiltro').val(); if (status) params.status = status;
+			var funcionario = $('#funcionarioFiltro').val(); if (funcionario) params.funcionarioId = funcionario;
+			var cliente = $('#clienteFiltro').val(); if (cliente) params.clienteId = cliente;
+			return params;
+		}
+
+		function carregar() {
+			var params = paramsFiltroCaso();
+			params.page = _paginaAtual;
+			$.ajax({
+				type: "GET",
+				contentType: "application/json",
+				url: "/judi/casos/filtro",
+				data: params,
+				success: renderResultado,
+				statusCode: {
+					500: function() { alert('Erro! Contate o desenvolvedor!'); },
+					401: function() {
+						alert('Realize login novamente!');
+						window.location.href = "/judi/login";
+					}
+				}
+			});
+		}
+
+		function paginacao(num) {
+			_paginaAtual = num;
+			carregar();
+		}
+
+		function aplicarFiltrosCaso() {
+			_paginaAtual = 0;
+			carregar();
+		}
+
+		function limparFiltrosCaso() {
+			$('#palavraChave').val('');
+			$('#naturezaFiltro, #statusFiltro, #funcionarioFiltro, #clienteFiltro').val('');
+			aplicarFiltrosCaso();
+		}
+
+		function carregarOpcoesFiltroCaso() {
+			$.ajax({ type: "GET", url: "/judi/funcionarios", success: function (data) {
+				var sel = $('#funcionarioFiltro');
+				(data || []).forEach(function (f) {
+					sel.append('<option value="' + f.id + '">' + f.nomeFuncionario + '</option>');
+				});
+			}});
+
+			$.ajax({ type: "GET", url: "/judi/clientes?size=10000", success: function (data) {
+				var sel = $('#clienteFiltro');
+				(data.content || []).forEach(function (c) {
+					sel.append('<option value="' + c.id + '">' + c.nomeCliente + '</option>');
+				});
+			}});
+		}
+
+		function excluir(id) {
+			if (confirm("Tem certeza que deseja excluir o caso de ID: " + id + " ?") == true) {
+				var remove = $('#linha' + id);
+				$.ajax({
+					type: "DELETE",
+					contentType: "application/json",
+					url: "/judi/casos/delete/" + id,
+					success: function () {
+						remove.fadeOut(600, function () {
+							remove.remove();
+						});
+					},
+					statusCode: {
+						403: function() { alert('Você não possui permissão'); },
+						500: function() { alert('Erro! Contate o desenvolvedor!'); },
+						401: function() {
+							alert('Realize login novamente!');
+							window.location.href = "/judi/login";
+						}
+					}
+				});
+			}
+		}
+
+		carregarOpcoesFiltroCaso();
+		carregarIsAdmin().always(function () { aplicarFiltrosCaso(); });
+	</script>
+</body>
+</html>

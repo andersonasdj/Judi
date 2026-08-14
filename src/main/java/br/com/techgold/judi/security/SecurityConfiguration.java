@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 @EnableWebSecurity
@@ -77,5 +78,15 @@ public class SecurityConfiguration {
 	SessionRegistry sessionRegistry() {
 		return new SessionRegistryImpl();
 	}
-	
+
+	/**
+	 * Sem isso, o SessionRegistry só é avisado de sessões encerradas no logout
+	 * explícito — uma sessão que expira por timeout de inatividade continuaria
+	 * aparecendo como "online" até a próxima tentativa de acesso com o cookie.
+	 */
+	@Bean
+	HttpSessionEventPublisher httpSessionEventPublisher() {
+		return new HttpSessionEventPublisher();
+	}
+
 }

@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="../assets/css/defaultStyle.css">
 	<link rel="stylesheet" href="../assets/css/dark.css">
 	<link rel="stylesheet" href="../assets/css/navbar.css">
-	<title>Judi - Importar Processos</title>
+	<title>Judera One - Importar Processos</title>
 	<style>
 		.card-cor { transition: all .2s ease; border-radius: 14px; background: #fff; }
 		.card-body h6 { font-weight: 600; color: #374151; }
@@ -38,18 +38,13 @@
 			<div class="sidebar-brand-icon">
 				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
 			</div>
-			<span class="sidebar-brand-text">Dashboard</span>
+			<span class="sidebar-brand-text">Judera One</span>
 		</div>
 		<div class="sidebar-scroll">
 			<a href="/judi/home" class="sidebar-item">
 				<i class="bi bi-house-fill"></i>
 				<span class="sidebar-item-label">Início</span>
 			</a>
-			<a href="/judi/painel" class="sidebar-item" target="_blank">
-				<i class="bi bi-tv"></i>
-				<span class="sidebar-item-label">Painel TV</span>
-			</a>
-
 			<div class="sidebar-group" id="sgClientes">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
 					<i class="bi bi-building"></i>
@@ -64,12 +59,23 @@
 			<div class="sidebar-group" id="sgFuncionarios">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
 					<i class="bi bi-person-badge"></i>
-					<span class="sidebar-group-label">Funcionários</span>
+					<span class="sidebar-group-label">Equipe</span>
 					<i class="bi bi-chevron-down sidebar-chevron"></i>
 				</button>
 				<div class="sidebar-group-items">
 					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
 			<div class="sidebar-group" id="sgProcessos">
@@ -84,10 +90,6 @@
 					<a href="/judi/processo/importar" class="sidebar-subitem active"><i class="bi bi-upload text-info"></i>Importar</a>
 				</div>
 			</div>
-			<a href="/judi/processo/alertas" class="sidebar-item">
-				<i class="bi bi-bell"></i>
-				<span class="sidebar-item-label">Alertas</span>
-			</a>
 			<div class="sidebar-group" id="sgTarefas">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
 					<i class="bi bi-list-check"></i>
@@ -99,9 +101,21 @@
 					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
 				</div>
 			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
 			</a>
 		</div>
 		<div class="sidebar-footer">
@@ -125,7 +139,7 @@
 		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
 			<i class="bi bi-list"></i>
 		</button>
-		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judera One</span>
 		<div class="ms-auto d-flex align-items-center gap-2">
 			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
 				<i class="bi bi-layout-three-columns"></i>
@@ -159,7 +173,7 @@
 					<div class="brand-icon">
 						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
 					</div>
-					<span class="brand-text">Judi</span>
+					<span class="brand-text">Judera One</span>
 				</a>
 				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
 					data-bs-target="#navbarMain" aria-controls="navbarMain"
@@ -173,11 +187,6 @@
 								<i class="bi bi-house-fill"></i> Início
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/painel" target="_blank">
-								<i class="bi bi-tv"></i> Painel TV
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-building"></i> Clientes
@@ -189,11 +198,20 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-person-badge"></i> Funcionários
+								<i class="bi bi-person-badge"></i> Equipe
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
 								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
 						<li class="nav-item dropdown">
@@ -206,11 +224,6 @@
 								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/processo/alertas">
-								<i class="bi bi-bell"></i> Alertas
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list-check"></i> Tarefas
@@ -221,8 +234,23 @@
 							</ul>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
 							</a>
 						</li>
 					</ul>
@@ -254,7 +282,6 @@
 		<!-- / NAVBAR -->
 
 	<div class="container py-3" style="max-width: 900px;">
-
 		<div class="d-flex justify-content-between align-items-center mb-4">
 			<div>
 				<h4 class="fw-bold mb-0"><i class="bi bi-upload"></i> Importar Processos</h4>

@@ -74,6 +74,7 @@ public class TimesheetService {
 		tarefa.setFuncionarioResponsavel(funcionario);
 		tarefa.setStatus(StatusTarefa.EM_ANDAMENTO);
 		tarefa.setDataAtualizacao(agora);
+		tarefa.setAtualizadoPor(funcionario);
 		tarefaRepository.save(tarefa);
 
 		return salvo;
@@ -98,6 +99,7 @@ public class TimesheetService {
 			tarefa.setStatus(StatusTarefa.ABERTA);
 		}
 		tarefa.setDataAtualizacao(agora);
+		tarefa.setAtualizadoPor(funcionario);
 		tarefaRepository.save(tarefa);
 
 		return salvo;
@@ -168,6 +170,7 @@ public class TimesheetService {
 		if (estavaAberto && tarefa.getStatus() == StatusTarefa.EM_ANDAMENTO) {
 			tarefa.setStatus(StatusTarefa.ABERTA);
 			tarefa.setDataAtualizacao(LocalDateTime.now().withNano(0));
+			tarefa.setAtualizadoPor(funcionarioLogado);
 			tarefaRepository.save(tarefa);
 		}
 	}

@@ -50,4 +50,20 @@ public class DespesaTarefa {
 
 	private LocalDateTime dataRegistro;
 
+	/**
+	 * Comprovante (PDF ou imagem) da despesa — opcional, um por despesa. O
+	 * arquivo em si fica em disco sob {@code upload.dir}/despesas/{despesaId}/
+	 * {comprovanteNomeArmazenado}; ver {@code DespesaTarefaService}.
+	 */
+	@Column(length = 255)
+	private String comprovanteNomeOriginal;
+
+	@Column(length = 255)
+	private String comprovanteNomeArmazenado;
+
+	@Column(length = 100)
+	private String comprovanteMimeType;
+
+	private Long comprovanteTamanho;
+
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.com.techgold.judi.model.Processo;
+import br.com.techgold.judi.model.enums.PoloCliente;
 import br.com.techgold.judi.model.enums.StatusConsultaDataJud;
 import br.com.techgold.judi.model.enums.StatusProcesso;
 
@@ -16,6 +17,8 @@ public record DtoProcessoDetalhe(
 		String numeroProcesso,
 		Long clienteId,
 		String nomeCliente,
+		Long casoId,
+		String tituloCaso,
 		Long funcionarioResponsavelId,
 		String nomeFuncionarioResponsavel,
 		String tribunal,
@@ -23,6 +26,9 @@ public record DtoProcessoDetalhe(
 		String assunto,
 		String orgaoJulgador,
 		String grau,
+		String parteAdversa,
+		String documentoParteAdversa,
+		PoloCliente poloCliente,
 		StatusProcesso status,
 		LocalDate dataDistribuicao,
 		BigDecimal valorCausa,
@@ -43,6 +49,8 @@ public record DtoProcessoDetalhe(
 				p.getNumeroProcesso(),
 				p.getCliente() != null ? p.getCliente().getId() : null,
 				p.getCliente() != null ? p.getCliente().getNomeCliente() : null,
+				p.getCaso() != null ? p.getCaso().getId() : null,
+				p.getCaso() != null ? p.getCaso().getTitulo() : null,
 				p.getFuncionarioResponsavel() != null ? p.getFuncionarioResponsavel().getId() : null,
 				p.getFuncionarioResponsavel() != null ? p.getFuncionarioResponsavel().getNomeFuncionario() : null,
 				p.getTribunal(),
@@ -50,6 +58,9 @@ public record DtoProcessoDetalhe(
 				p.getAssunto(),
 				p.getOrgaoJulgador(),
 				p.getGrau(),
+				p.getParteAdversa(),
+				p.getDocumentoParteAdversa(),
+				p.getPoloCliente(),
 				p.getStatus(),
 				p.getDataDistribuicao(),
 				p.getValorCausa(),

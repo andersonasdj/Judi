@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
-    <title>SisTech - Clientes</title>
+    <title>Judera One - Clientes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="../assets/img/favicon.ico">
     <!-- CSS -->
@@ -67,18 +67,13 @@
 			<div class="sidebar-brand-icon">
 				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
 			</div>
-			<span class="sidebar-brand-text">Dashboard</span>
+			<span class="sidebar-brand-text">Judera One</span>
 		</div>
 		<div class="sidebar-scroll">
 			<a href="/judi/home" class="sidebar-item active">
 				<i class="bi bi-house-fill"></i>
 				<span class="sidebar-item-label">Início</span>
-			</a>
-			<a href="/judi/painel" class="sidebar-item" target="_blank">
-				<i class="bi bi-tv"></i>
-				<span class="sidebar-item-label">Painel TV</span>
-			</a>
-		
+			</a>		
 			<div class="sidebar-group" id="sgClientes">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
 					<i class="bi bi-building"></i>
@@ -93,12 +88,23 @@
 			<div class="sidebar-group" id="sgFuncionarios">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
 					<i class="bi bi-person-badge"></i>
-					<span class="sidebar-group-label">Funcionários</span>
+					<span class="sidebar-group-label">Equipe</span>
 					<i class="bi bi-chevron-down sidebar-chevron"></i>
 				</button>
 				<div class="sidebar-group-items">
 					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
 			<div class="sidebar-group" id="sgProcessos">
@@ -132,7 +138,14 @@
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
 			</a>
-
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
 		</div>
 		<div class="sidebar-footer">
 			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
@@ -155,7 +168,7 @@
 		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
 			<i class="bi bi-list"></i>
 		</button>
-		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judera One</span>
 		<div class="ms-auto d-flex align-items-center gap-2">
 			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
 				<i class="bi bi-layout-three-columns"></i>
@@ -208,11 +221,6 @@
 								<i class="bi bi-house-fill"></i> Início
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/painel" target="_blank">
-								<i class="bi bi-tv"></i> Painel TV
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-building"></i> Clientes
@@ -224,11 +232,20 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-person-badge"></i> Funcionários
+								<i class="bi bi-person-badge"></i> Equipe
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
 								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
 						<li class="nav-item dropdown">
@@ -241,11 +258,6 @@
 								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/processo/alertas">
-								<i class="bi bi-bell"></i> Alertas
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list-check"></i> Tarefas
@@ -256,11 +268,25 @@
 							</ul>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
 							</a>
 						</li>
-
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
+							</a>
+						</li>
 					</ul>
 
 					<!-- Direita: ícones + usuário -->
@@ -294,328 +320,176 @@
 		</nav>
 		<!-- / NAVBAR -->
 	<br />
-	<div class="container py-3 corpoFormulario"
-	     style="max-width: 1100px;">
-
+	<div class="container py-3 corpoFormulario" style="max-width: 1100px;">
 	    <div class="d-flex justify-content-between align-items-center mb-4">
-
 	        <div>
-	            <h4 class="fw-bold mb-0">
-	                <i class="bi bi-building-add"></i>
-	                Novo Cliente
-	            </h4>
-
-	            <small class="text-muted">
-	                Cadastro de clientes e informações contratuais
-	            </small>
+	            <h4 class="fw-bold mb-0"><i class="bi bi-building-add"></i>Novo Cliente</h4>
+	            <small class="text-muted">Cadastro de clientes e informações contratuais</small>
 	        </div>
-
 	    </div>
 
 	    <!-- DADOS EMPRESA -->
-
 	    <div class="card card-cor shadow-sm border-0 mb-4">
-
 	        <div class="card-body">
-
-	            <h6 class="mb-3">
-	                <i class="bi bi-building"></i>
-	                Dados da Empresa
-	            </h6>
-
+	            <h6 class="mb-3"><i class="bi bi-building"></i>Dados da Empresa</h6>
 	            <div class="row g-3">
-
-	                <div class="col-lg-8">
-
-	                    <label>
-	                        <i class="bi bi-buildings"></i>
-	                        Nome
-	                    </label>
-
-	                    <input type="text"
-	                           id="nomeCliente"
-	                           class="form-control mt-2">
-
+	                <div class="col-lg-6">
+	                    <label><i class="bi bi-buildings"></i>Nome</label>
+	                    <input type="text" id="nomeCliente" class="form-control mt-2">
 	                </div>
 
-	                <div class="col-lg-4">
-
-	                    <label>
-	                        <i class="bi bi-file-earmark-text"></i>
-	                        CNPJ
-	                    </label>
-
-	                    <input type="text"
-	                           id="cnpj"
-	                           maxlength="18"
-	                           class="form-control mt-2">
-
+	                <div class="col-lg-6">
+	                    <label><i class="bi bi-tag"></i>Nome Fantasia</label>
+	                    <input type="text" id="nomeFantasia" class="form-control mt-2">
 	                </div>
 
+	                <div class="col-lg-3">
+	                    <label><i class="bi bi-person-vcard"></i>Tipo de Pessoa</label>
+	                    <select id="tipoPessoa" class="form-select mt-2">
+	                        <option value="PJ">Jurídica</option>
+	                        <option value="PF">Física</option>
+	                    </select>
+	                </div>
+
+	                <div class="col-lg-3">
+	                    <label><i class="bi bi-file-earmark-text"></i>CNPJ</label>
+	                    <div class="input-group mt-2">
+	                        <input type="text" id="cnpj" maxlength="18" class="form-control">
+	                        <button class="btn btn-outline-secondary" type="button" id="btnBuscarCnpj" title="Buscar dados na Receita Federal">
+	                            <i class="bi bi-search"></i>
+	                        </button>
+	                    </div>
+	                </div>
+
+	                <div class="col-lg-3">
+	                    <label><i class="bi bi-file-earmark-ruled"></i>Inscrição Estadual</label>
+	                    <input type="text" id="inscricaoEstadual" class="form-control mt-2">
+	                </div>
+
+	                <div class="col-lg-3">
+	                    <label><i class="bi bi-file-earmark-ruled"></i>Inscrição Municipal</label>
+	                    <input type="text" id="inscricaoMunicipal" class="form-control mt-2">
+	                </div>
 	            </div>
-
 	        </div>
-
 	    </div>
 
 	    <!-- LOCALIZAÇÃO -->
-
 	    <div class="card card-cor shadow-sm border-0 mb-4">
-
 	        <div class="card-body">
-
-	            <h6 class="mb-3">
-	                <i class="bi bi-geo-alt"></i>
-	                Localização
-	            </h6>
-
+	            <h6 class="mb-3"><i class="bi bi-geo-alt"></i>Localização</h6>
 	            <div class="row g-3">
-
 	                <div class="col-lg-8">
-
-	                    <label>
-	                        <i class="bi bi-pin-map"></i>
-	                        Endereço
-	                    </label>
-
-	                    <input type="text"
-	                           id="endereco"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-pin-map"></i>Endereço</label>
+	                    <input type="text" id="endereco" class="form-control mt-2">
 	                </div>
 
 	                <div class="col-lg-4">
-
-	                    <label>
-	                        <i class="bi bi-map"></i>
-	                        Bairro
-	                    </label>
-
-	                    <input type="text"
-	                           id="bairro"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-map"></i>Bairro</label>
+	                    <input type="text" id="bairro" class="form-control mt-2">
 	                </div>
 
 	                <div class="col-lg-4">
-
-	                    <label>
-	                        <i class="bi bi-telephone"></i>
-	                        Telefone
-	                    </label>
-
-	                    <input type="tel"
-	                           id="telefone"
-	                           maxlength="15"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-telephone"></i>Telefone</label>
+	                    <input type="tel" id="telefone" maxlength="15" class="form-control mt-2">
 	                </div>
-
 	            </div>
-
 	        </div>
-
 	    </div>
 
 	    <!-- CREDENCIAIS -->
-
 	    <div class="card card-cor shadow-sm border-0 mb-4">
-
 	        <div class="card-body">
-
-	            <h6 class="mb-3">
-	                <i class="bi bi-shield-lock"></i>
-	                Credenciais
-	            </h6>
-
+	            <h6 class="mb-3"><i class="bi bi-shield-lock"></i>Credenciais</h6>
 	            <div class="row g-3">
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-person"></i>
-	                        Usuário
-	                    </label>
-
-	                    <input type="text"
-	                           id="username"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-person"></i>Usuário</label>
+	                    <input type="text" id="username" class="form-control mt-2">
 	                </div>
 
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-key"></i>
-	                        Senha
-	                    </label>
-
+	                    <label><i class="bi bi-key"></i>Senha</label>
 	                    <div class="input-group mt-2">
-
-	                        <input type="password"
-	                               id="password"
-	                               class="form-control">
-
-	                        <button class="btn btn-outline-secondary"
-	                                type="button"
-	                                id="togglePassword">
-
+	                        <input type="password" id="password" class="form-control">
+	                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
 	                            <i class="bi bi-eye"></i>
-
 	                        </button>
-
 	                    </div>
-
 	                </div>
-
 	            </div>
-
 	        </div>
-
 	    </div>
 
 	    <!-- BOTÕES -->
-
 	    <div class="d-flex gap-2">
-
-	        <button class="btn btn-success"
-	                id="btnSalvar">
-
-	            <i class="bi bi-save"></i>
-	            Salvar
-
+	        <button class="btn btn-success" id="btnSalvar">
+	            <i class="bi bi-save"></i>Salvar
 	        </button>
 
-	        <a href="/judi/cliente/list"
-	           class="btn btn-primary">
-
-	            <i class="bi bi-arrow-left"></i>
-	            Voltar
-
+	        <a href="/judi/cliente/list" class="btn btn-primary">
+	            <i class="bi bi-arrow-left"></i>Voltar
 	        </a>
-
 	    </div>
-
 	</div>
 
     <!-- FOOTER -->
-
-    <footer class="container-fluid fixed-bottom text-center text-white">
+	<footer class="container-fluid fixed-bottom text-center text-white">
         © 2026 Copyright:
         <a class="text-white" href="#">TechGold</a>
     </footer>
-
 </div>
 
 <!-- ############################################ MODAL PASSWORD GENERATOR ########################################## -->
-
-<div class="modal fade"
-     id="modalPasswordGenerator"
-     tabindex="-1"
-     aria-hidden="true">
-
+<div class="modal fade" id="modalPasswordGenerator" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-
             <div class="container-password">
-
                 <div class="result">
-
-                    <div class="result__info right">
-                        click para copiar
-                    </div>
-
-                    <div class="result__info left">
-                        copiado
-                    </div>
-
-                    <div class="result__viewbox"
-                         id="result"
-                         style="color: aliceblue;"></div>
-
-                    <a id="copy-btn">
-                        <i class="far fa-copy"></i>
-                    </a>
-
+                    <div class="result__info right">click para copiar</div>
+                    <div class="result__info left">copiado</div>
+                    <div class="result__viewbox" id="result" style="color: aliceblue;"></div>
+                    <a id="copy-btn"><i class="far fa-copy"></i></a>
                 </div>
-
-                <div class="length range__slider"
-                     data-min="4"
-                     data-max="32">
-
-                    <div class="length__title field-title"
-                         data-length='0'>
-
-                        Tamanho:
-                    </div>
-
-                    <input id="slider"
-                           type="range"
-                           min="4"
-                           max="32"
-                           value="16" />
-
+                <div class="length range__slider" data-min="4" data-max="32">
+                    <div class="length__title field-title" data-length='0'>Tamanho:</div>
+                    <input id="slider" type="range" min="4" max="32" value="16" />
                 </div>
 
                 <div class="settings">
-
-                    <span class="settings__title field-title">
-                        configurações
-                    </span>
-
+                    <span class="settings__title field-title">configurações</span>
                     <div class="setting">
                         <input type="checkbox" id="uppercase" checked />
                         <label for="uppercase">Incluir Maiúsculo</label>
                     </div>
-
                     <div class="setting">
                         <input type="checkbox" id="lowercase" checked />
                         <label for="lowercase">Incluir Minúsculo</label>
                     </div>
-
                     <div class="setting">
                         <input type="checkbox" id="number" checked />
                         <label for="number">Incluir Número</label>
                     </div>
-
                     <div class="setting">
                         <input type="checkbox" id="symbol" />
                         <label for="symbol">Incluir Símbolo</label>
                     </div>
-
                 </div>
-
                 <button class="btn generate" id="generate">
                     Gerar Senha
                 </button>
-
             </div>
-
         </div>
     </div>
 </div>
-
 <!-- ############################################ TOAST ########################################## -->
 
 <div class="toast-container">
-
-    <div class="toast align-items-center text-bg-success border-0"
-         id="successToast"
-         role="alert">
-
+    <div class="toast align-items-center text-bg-success border-0" id="successToast" role="alert">
         <div class="d-flex">
-
-            <div class="toast-body">
-                Cliente salvo com sucesso!
-            </div>
-
-            <button type="button"
-                    class="btn-close btn-close-white me-2 m-auto"
-                    data-bs-dismiss="toast"></button>
-
+            <div class="toast-body">Cliente salvo com sucesso!</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
-
 </div>
 
 <!-- JS -->
@@ -626,7 +500,6 @@
 <script src="../assets/js/sidebar.js"></script>
 <script>
     const btnSalvar = document.getElementById('btnSalvar');
-
     const successToast = new bootstrap.Toast(
         document.getElementById('successToast')
     );
@@ -638,6 +511,62 @@
     document.getElementById('telefone').addEventListener('input', handlePhone);
     document.getElementById('togglePassword').addEventListener('click', togglePassword);
 	document.getElementById('cnpj').addEventListener('input', handleCNPJ);
+	document.getElementById('btnBuscarCnpj').addEventListener('click', buscarCnpj);
+
+    // ########################################
+    // CONSULTA CNPJ (Receita Federal via BrasilAPI)
+    // ########################################
+    async function buscarCnpj() {
+        const cnpjLimpo = getValue('cnpj').replace(/\D/g, '');
+        if (cnpjLimpo.length !== 14) {
+            alert('Informe um CNPJ válido (14 dígitos) para buscar.');
+            return;
+        }
+
+        const btn = document.getElementById('btnBuscarCnpj');
+        const iconeOriginal = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        try {
+            const response = await fetch('/judi/consulta/cnpj/' + cnpjLimpo);
+            if (response.status === 401) {
+                alert('Realize login novamente!');
+                window.location.href = "/judi/login";
+                return;
+            }
+
+            const data = await response.json().catch(() => null);
+            if (!data || !data.cnpj) {
+                alert('CNPJ não encontrado ou falha na consulta.');
+                return;
+            }
+
+            if (!getValue('nomeCliente') && data.razaoSocial) {
+                document.getElementById('nomeCliente').value = data.razaoSocial;
+            }
+            if (!getValue('nomeFantasia') && data.nomeFantasia) {
+                document.getElementById('nomeFantasia').value = data.nomeFantasia;
+            }
+            const endereco = [data.logradouro, data.numero].filter(Boolean).join(', ');
+            if (!getValue('endereco') && endereco) {
+                document.getElementById('endereco').value = endereco;
+            }
+            if (!getValue('bairro') && data.bairro) {
+                document.getElementById('bairro').value = data.bairro;
+            }
+            if (!getValue('telefone') && data.telefone) {
+                document.getElementById('telefone').value = data.telefone;
+                handlePhone({ target: document.getElementById('telefone') });
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Falha na comunicação com o servidor.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = iconeOriginal;
+        }
+    }
 
     // ########################################
     // SALVAR
@@ -652,7 +581,11 @@
                 username: getValue('username'),
                 password: getValue('password'),
                 bairro: getValue('bairro'),
-                cnpj: getValue('cnpj')
+                cnpj: getValue('cnpj'),
+                nomeFantasia: getValue('nomeFantasia'),
+                tipoPessoa: getValue('tipoPessoa'),
+                inscricaoEstadual: getValue('inscricaoEstadual'),
+                inscricaoMunicipal: getValue('inscricaoMunicipal')
             };
 
             const response = await fetch('/judi/clientes', {
@@ -737,7 +670,6 @@
             icon.classList.add('bi-eye');
         }
     }
-
 </script>
 </body>
 </html>

@@ -14,6 +14,8 @@ public record DtoTarefaDetalhe(
 		String descricao,
 		Long clienteId,
 		String nomeCliente,
+		Long casoId,
+		String tituloCaso,
 		Long processoId,
 		String numeroProcesso,
 		Long funcionarioResponsavelId,
@@ -22,6 +24,8 @@ public record DtoTarefaDetalhe(
 		boolean ativo,
 		@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 		LocalDateTime dataCadastro,
+		@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+		LocalDateTime dataAgendamento,
 		List<DtoTimesheet> timesheets,
 		List<DtoDespesaTarefa> despesas) {
 
@@ -31,6 +35,8 @@ public record DtoTarefaDetalhe(
 				t.getDescricao(),
 				t.getCliente() != null ? t.getCliente().getId() : null,
 				t.getCliente() != null ? t.getCliente().getNomeCliente() : null,
+				t.getCaso() != null ? t.getCaso().getId() : null,
+				t.getCaso() != null ? t.getCaso().getTitulo() : null,
 				t.getProcesso() != null ? t.getProcesso().getId() : null,
 				t.getProcesso() != null ? t.getProcesso().getNumeroProcesso() : null,
 				t.getFuncionarioResponsavel() != null ? t.getFuncionarioResponsavel().getId() : null,
@@ -38,6 +44,7 @@ public record DtoTarefaDetalhe(
 				t.getStatus(),
 				t.getAtivo(),
 				t.getDataCadastro(),
+				t.getDataAgendamento(),
 				timesheets,
 				despesas);
 	}

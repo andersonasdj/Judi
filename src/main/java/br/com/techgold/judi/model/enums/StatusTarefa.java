@@ -1,7 +1,7 @@
 package br.com.techgold.judi.model.enums;
 
 public enum StatusTarefa {
-	ABERTA, EM_ANDAMENTO, CONCLUIDA, CANCELADA;
+	ABERTA, AGENDADA, EM_ANDAMENTO, CONCLUIDA, CANCELADA;
 
 	/**
 	 * Estado final: a tarefa para de aceitar novos lançamentos de trabalho

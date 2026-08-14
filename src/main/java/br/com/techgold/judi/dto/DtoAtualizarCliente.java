@@ -16,12 +16,30 @@ public record DtoAtualizarCliente(
 		String endereco,
 		String telefone,
 		String cnpj,
+		String bairro,
 		Boolean ativo,
-		String bairro) {
+		String nomeFantasia,
+		String tipoPessoa,
+		String inscricaoEstadual,
+		String inscricaoMunicipal) {
 
 	public DtoAtualizarCliente(Cliente c) {
 
-		this(c.getId(),c.getNomeCliente(),c.getUsername(),c.getPassword(),c.getEndereco(),c.getTelefone(),c.getCnpj(),c.getAtivo(), c.getBairro());
+		this(
+			c.getId(),
+			c.getNomeCliente(),
+			c.getUsername(),
+			c.getPassword(),
+			c.getEndereco(),
+			c.getTelefone(),
+			c.getCnpj(),
+			c.getBairro(),
+			c.getAtivo(),
+			c.getNomeFantasia(),
+			c.getTipoPessoa(),
+			c.getInscricaoEstadual(),
+			c.getInscricaoMunicipal()
+		);
 	}
 
 }

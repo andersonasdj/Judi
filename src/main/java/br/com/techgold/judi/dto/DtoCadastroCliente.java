@@ -12,5 +12,9 @@ public record DtoCadastroCliente(
 		String endereco,
 		String telefone,
 		String cnpj,
-		String bairro
+		String bairro,
+		String nomeFantasia,
+		String tipoPessoa,
+		String inscricaoEstadual,
+		String inscricaoMunicipal
 		) {}

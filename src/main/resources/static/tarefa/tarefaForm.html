@@ -53,6 +53,23 @@
 		body {
 		    background: #f4f6f9;
 		}
+
+		/* ===== Combobox com busca (Caso / Processo) ===== */
+		.combo-busca { position: relative; }
+		.combo-busca-dropdown {
+		    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+		    background: #fff; border: 1px solid #d1d5db; border-radius: 10px;
+		    box-shadow: 0 10px 26px rgba(0,0,0,.14);
+		    max-height: 260px; overflow-y: auto; z-index: 40;
+		    display: none;
+		}
+		.combo-busca-dropdown.show { display: block; }
+		.combo-busca-item { padding: 8px 12px; cursor: pointer; font-size: .9rem; }
+		.combo-busca-item:hover { background: #eef2ff; }
+		.combo-busca-item .combo-busca-sub { color: #6b7280; font-size: .78rem; margin-left: 6px; }
+		.combo-busca-vazio { padding: 10px 12px; color: #9ca3af; font-size: .86rem; }
+		body.dark-mode .combo-busca-dropdown { background: #2a2a2a; border-color: #444; }
+		body.dark-mode .combo-busca-item:hover { background: #3a3a3a; }
     </style>
 </head>
 <body>
@@ -100,6 +117,17 @@
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
 			<div class="sidebar-group" id="sgProcessos">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
 					<i class="bi bi-briefcase"></i>
@@ -130,6 +158,10 @@
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
 			</a>
 
 		</div>
@@ -232,6 +264,15 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-briefcase"></i> Processos
 							</a>
 							<ul class="dropdown-menu">
@@ -257,6 +298,11 @@
 						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
 							</a>
 						</li>
 					</ul>
@@ -386,13 +432,30 @@
 	                <div class="col-lg-6">
 
 	                    <label>
+	                        <i class="bi bi-folder2-open"></i>
+	                        Caso
+	                    </label>
+
+	                    <div class="combo-busca mt-2">
+	                        <input type="text" id="casoBusca" class="form-control" placeholder="Selecione um cliente primeiro" autocomplete="off" disabled>
+	                        <input type="hidden" id="casoId">
+	                        <div id="casoBuscaResultados" class="combo-busca-dropdown"></div>
+	                    </div>
+
+	                </div>
+
+	                <div class="col-lg-6">
+
+	                    <label>
 	                        <i class="bi bi-briefcase"></i>
 	                        Processo
 	                    </label>
 
-	                    <select id="processoId" class="form-select mt-2">
-	                        <option value="">Nenhum</option>
-	                    </select>
+	                    <div class="combo-busca mt-2">
+	                        <input type="text" id="processoBusca" class="form-control" placeholder="Selecione um cliente primeiro" autocomplete="off" disabled>
+	                        <input type="hidden" id="processoId">
+	                        <div id="processoBuscaResultados" class="combo-busca-dropdown"></div>
+	                    </div>
 
 	                </div>
 
@@ -488,6 +551,197 @@
     // EVENTOS
     // ########################################
     btnSalvar.addEventListener('click', salvar);
+    document.getElementById('clienteId').addEventListener('change', function () {
+        var clienteId = this.value;
+        if (clienteId) {
+            carregarCasosDoCliente(clienteId);
+            carregarProcessosDoCliente(clienteId);
+        } else {
+            resetSelectCaso();
+            resetSelectProcesso();
+        }
+    });
+
+    // ########################################
+    // COMBOBOX COM BUSCA (Caso / Processo)
+    // ########################################
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function criarComboBusca(opts) {
+        function renderizar(filtro) {
+            const termo = (filtro || '').trim().toLowerCase();
+            const itens = opts.getItens();
+            const filtrados = termo ? itens.filter(i => i.label.toLowerCase().includes(termo)) : itens;
+
+            opts.dropdownEl.innerHTML = filtrados.length
+                ? filtrados.map(i =>
+                    '<div class="combo-busca-item" data-id="' + i.id + '">' + escapeHtml(i.label)
+                    + (i.sub ? '<span class="combo-busca-sub">' + escapeHtml(i.sub) + '</span>' : '')
+                    + '</div>'
+                  ).join('')
+                : '<div class="combo-busca-vazio">' + (opts.textoVazio || 'Nenhum resultado') + '</div>';
+
+            opts.dropdownEl.classList.add('show');
+        }
+
+        opts.inputEl.addEventListener('focus', () => {
+            if (!opts.inputEl.disabled) renderizar(opts.inputEl.value);
+        });
+
+        opts.inputEl.addEventListener('input', () => {
+            renderizar(opts.inputEl.value);
+            if (!opts.inputEl.value.trim() && opts.hiddenEl.value) {
+                opts.hiddenEl.value = '';
+                opts.hiddenEl.dispatchEvent(new Event('change'));
+            }
+        });
+
+        opts.inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                opts.dropdownEl.classList.remove('show');
+                opts.inputEl.blur();
+            }
+        });
+
+        opts.inputEl.addEventListener('blur', () => {
+            setTimeout(() => {
+                const id = opts.hiddenEl.value;
+                const encontrado = id ? opts.getItens().find(i => String(i.id) === String(id)) : null;
+                opts.inputEl.value = encontrado ? encontrado.label : '';
+                opts.dropdownEl.classList.remove('show');
+            }, 150);
+        });
+
+        opts.dropdownEl.addEventListener('click', (e) => {
+            const item = e.target.closest('.combo-busca-item');
+            if (!item || !item.dataset.id) return;
+            const encontrado = opts.getItens().find(i => String(i.id) === String(item.dataset.id));
+            if (!encontrado) return;
+            opts.hiddenEl.value = encontrado.id;
+            opts.inputEl.value = encontrado.label;
+            opts.dropdownEl.classList.remove('show');
+            opts.hiddenEl.dispatchEvent(new Event('change'));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!opts.inputEl.contains(e.target) && !opts.dropdownEl.contains(e.target)) {
+                opts.dropdownEl.classList.remove('show');
+            }
+        });
+    }
+
+    let _casosData = [];
+    let _processosData = [];
+
+    criarComboBusca({
+        inputEl: document.getElementById('casoBusca'),
+        hiddenEl: document.getElementById('casoId'),
+        dropdownEl: document.getElementById('casoBuscaResultados'),
+        getItens: () => _casosData,
+        textoVazio: 'Nenhum caso encontrado'
+    });
+
+    criarComboBusca({
+        inputEl: document.getElementById('processoBusca'),
+        hiddenEl: document.getElementById('processoId'),
+        dropdownEl: document.getElementById('processoBuscaResultados'),
+        getItens: () => _processosData,
+        textoVazio: 'Nenhum processo encontrado'
+    });
+
+    // ########################################
+    // CASO / PROCESSO (dependentes do cliente selecionado)
+    // ########################################
+    function rotuloNatureza(natureza) {
+        var cfg = { CONSULTIVO: 'Consultivo', PREVENTIVO: 'Preventivo', CONTENCIOSO: 'Contencioso' };
+        return cfg[natureza] || natureza || '';
+    }
+
+    function rotuloStatusProcesso(status) {
+        var cfg = { ATIVO: 'Ativo', SUSPENSO: 'Suspenso', ARQUIVADO: 'Arquivado', EXTINTO: 'Extinto' };
+        return cfg[status] || status || '';
+    }
+
+    function resetSelectCaso() {
+        _casosData = [];
+        document.getElementById('casoId').value = '';
+        const buscaInput = document.getElementById('casoBusca');
+        buscaInput.value = '';
+        buscaInput.placeholder = 'Selecione um cliente primeiro';
+        buscaInput.disabled = true;
+    }
+
+    function resetSelectProcesso() {
+        _processosData = [];
+        document.getElementById('processoId').value = '';
+        const buscaInput = document.getElementById('processoBusca');
+        buscaInput.value = '';
+        buscaInput.placeholder = 'Selecione um cliente primeiro';
+        buscaInput.disabled = true;
+    }
+
+    async function carregarCasosDoCliente(clienteId) {
+        const buscaInput = document.getElementById('casoBusca');
+        buscaInput.disabled = true;
+        buscaInput.value = '';
+        buscaInput.placeholder = 'Carregando...';
+        document.getElementById('casoId').value = '';
+        try {
+            const response = await fetch('/judi/casos/cliente/' + clienteId + '?page=0&size=1000');
+            if (!response.ok) {
+                _casosData = [];
+                buscaInput.placeholder = 'Nenhum caso encontrado';
+                buscaInput.disabled = false;
+                return;
+            }
+            const data = await response.json();
+            _casosData = (data.content || []).map(c => ({ id: c.id, label: c.titulo, sub: rotuloNatureza(c.natureza) }));
+            buscaInput.placeholder = 'Nenhum (opcional) — digite para buscar...';
+            buscaInput.disabled = false;
+        } catch (e) {
+            console.error('Erro ao carregar casos do cliente', e);
+            _casosData = [];
+            buscaInput.placeholder = 'Nenhum caso encontrado';
+            buscaInput.disabled = false;
+        }
+    }
+
+    async function carregarProcessosDoCliente(clienteId) {
+        const buscaInput = document.getElementById('processoBusca');
+        buscaInput.disabled = true;
+        buscaInput.value = '';
+        buscaInput.placeholder = 'Carregando...';
+        document.getElementById('processoId').value = '';
+        try {
+            const response = await fetch('/judi/processos/cliente/' + clienteId + '?page=0&size=1000');
+            if (!response.ok) {
+                _processosData = [];
+                buscaInput.placeholder = 'Nenhum processo encontrado';
+                buscaInput.disabled = false;
+                return;
+            }
+            const data = await response.json();
+            _processosData = (data.content || []).map(p => ({
+                id: p.id,
+                label: p.numeroProcesso || ('#' + p.id),
+                sub: rotuloStatusProcesso(p.status)
+            }));
+            buscaInput.placeholder = 'Nenhum (opcional) — digite para buscar...';
+            buscaInput.disabled = false;
+        } catch (e) {
+            console.error('Erro ao carregar processos do cliente', e);
+            _processosData = [];
+            buscaInput.placeholder = 'Nenhum processo encontrado';
+            buscaInput.disabled = false;
+        }
+    }
 
     // ########################################
     // CARREGAR SELECTS
@@ -509,23 +763,6 @@
         }
     }
 
-    async function carregarProcessos() {
-        try {
-            const response = await fetch('/judi/processos?page=0&size=10000');
-            if (!response.ok) return;
-            const data = await response.json();
-            const select = document.getElementById('processoId');
-            (data.content || []).forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.id;
-                opt.textContent = (p.numeroProcesso || '—') + ' — ' + (p.nomeCliente || '');
-                select.appendChild(opt);
-            });
-        } catch (e) {
-            console.error('Erro ao carregar processos', e);
-        }
-    }
-
     async function carregarFuncionarios() {
         try {
             const response = await fetch('/judi/funcionarios');
@@ -544,7 +781,6 @@
     }
 
     carregarClientes();
-    carregarProcessos();
     carregarFuncionarios();
 
     // ########################################
@@ -568,11 +804,13 @@
 
             const processoId = getValue('processoId');
             const funcionarioId = getValue('funcionarioResponsavelId');
+            const casoId = getValue('casoId');
 
             const payload = {
                 titulo: titulo,
                 descricao: getValue('descricao'),
                 clienteId: Number(clienteId),
+                casoId: casoId ? Number(casoId) : null,
                 processoId: processoId ? Number(processoId) : null,
                 funcionarioResponsavelId: funcionarioId ? Number(funcionarioId) : null
             };

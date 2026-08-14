@@ -7,5 +7,7 @@ public record DtoDashboardResumo(
 		List<DtoContagem> processosPorStatus,
 		long alertasNaoLidos,
 		long processosComErroConsulta,
-		long movimentacoesUltimos7Dias) {
+		long movimentacoesUltimos7Dias,
+		long totalCasosAbertos,
+		long totalTarefasAbertas) {
 }

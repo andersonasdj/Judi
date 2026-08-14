@@ -1,5 +1,6 @@
 package br.com.techgold.judi.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +37,8 @@ public class Funcionario extends Usuario implements UserDetails {
 	private String caminhoFoto;
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
+	/** Valor/hora padrão usado no cálculo de honorários pelo timesheet, quando o cliente não tiver um valor personalizado para este funcionário. */
+	private BigDecimal valorHora;
 	private LocalDateTime dataAtualizacaoSenha;
 	private Boolean trocaSenha;
 	private int tentativasLogin;
@@ -58,6 +61,7 @@ public class Funcionario extends Usuario implements UserDetails {
 		if(this.role == UserRole.SADMIN) return List.of(new SimpleGrantedAuthority("ROLE_SADMIN"), new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_EDITOR") );
 		else if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_EDITOR"),new SimpleGrantedAuthority("ROLE_USER"));
 		else if(this.role == UserRole.EDITOR) return List.of(new SimpleGrantedAuthority("ROLE_EDITOR"),new SimpleGrantedAuthority("ROLE_USER"));
+		else if(this.role == UserRole.FINANCEIRO) return List.of(new SimpleGrantedAuthority("ROLE_FINANCEIRO"), new SimpleGrantedAuthority("ROLE_USER"));
 		else if(this.role == UserRole.USER) {return List.of(new SimpleGrantedAuthority("ROLE_USER"));}
 		else {
 			 return List.of(new SimpleGrantedAuthority("PRE_2FA"));

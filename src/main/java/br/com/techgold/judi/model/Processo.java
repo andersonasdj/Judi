@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import br.com.techgold.judi.model.enums.PoloCliente;
 import br.com.techgold.judi.model.enums.StatusConsultaDataJud;
 import br.com.techgold.judi.model.enums.StatusProcesso;
 import jakarta.persistence.Column;
@@ -40,6 +41,11 @@ public class Processo {
 	@JoinColumn(name = "cliente_id", nullable = false)
 	private Cliente cliente;
 
+	/** Opcional: o caso (assunto jurídico) ao qual este processo pertence. */
+	@ManyToOne
+	@JoinColumn(name = "caso_id")
+	private Caso caso;
+
 	@ManyToOne
 	@JoinColumn(name = "funcionario_responsavel_id")
 	private Funcionario funcionarioResponsavel;
@@ -58,6 +64,17 @@ public class Processo {
 
 	@Column(length = 20)
 	private String grau;
+
+	/** Nome/razão social da contraparte no processo — o cliente é sempre o outro lado. */
+	@Column(length = 200)
+	private String parteAdversa;
+
+	@Column(length = 20)
+	private String documentoParteAdversa;
+
+	/** Em qual polo o cliente está: ATIVO (autor/exequente/reclamante) ou PASSIVO (réu/executado/reclamado). */
+	@Enumerated(EnumType.STRING)
+	private PoloCliente poloCliente;
 
 	@Enumerated(EnumType.STRING)
 	private StatusProcesso status = StatusProcesso.ATIVO;

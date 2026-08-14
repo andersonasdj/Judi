@@ -40,6 +40,11 @@ public class Tarefa {
 	@JoinColumn(name = "cliente_id", nullable = false)
 	private Cliente cliente;
 
+	/** Opcional: o caso ao qual esta tarefa pertence — trabalho consultivo/preventivo pode não ter processo algum. */
+	@ManyToOne
+	@JoinColumn(name = "caso_id")
+	private Caso caso;
+
 	@ManyToOne
 	@JoinColumn(name = "processo_id")
 	private Processo processo;
@@ -52,10 +57,18 @@ public class Tarefa {
 	@Enumerated(EnumType.STRING)
 	private StatusTarefa status = StatusTarefa.ABERTA;
 
+	/** Preenchida quando status = AGENDADA — usada futuramente para gerar alertas de tarefas agendadas. */
+	private LocalDateTime dataAgendamento;
+
 	private Boolean ativo = true;
 
 	private LocalDateTime dataCadastro;
 
 	private LocalDateTime dataAtualizacao;
+
+	/** Último funcionário a alterar esta tarefa (cadastro, edição, mudança de status ou agendamento). */
+	@ManyToOne
+	@JoinColumn(name = "atualizado_por_id")
+	private Funcionario atualizadoPor;
 
 }

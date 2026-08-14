@@ -34,14 +34,23 @@
 			background: transparent;
 			color: #fff;
 			font-weight: 600;
-			font-size: .76rem;
+			font-size: .72rem;
 			text-transform: uppercase;
-			letter-spacing: .06em;
+			letter-spacing: .05em;
 			border: none !important;
-			padding: 12px 16px;
+			padding: 10px 16px;
+			white-space: nowrap;
 		}
 
 		.btn-filtro-rapido { border-radius: 20px !important; font-size: .82rem; font-weight: 500; }
+
+		/* AÇÕES da tabela — sobrescreve o .btn-action global (tamanhos inconsistentes entre dark.css) */
+		#tabela-tarefas .btn-action {
+			width: 32px;
+			height: 32px;
+			border-radius: 9px !important;
+			margin-right: 0;
+		}
 
 		/* dark mode */
 		body.dark-mode table   { background-color: transparent; color: #f1f5f9; }
@@ -52,6 +61,28 @@
 		body.dark-mode .card { border-color: rgba(255,255,255,.15) !important; box-shadow: 0 3px 14px rgba(0,0,0,.6) !important; }
 
 		.numero-processo { font-family: 'Courier New', monospace; font-weight: 600; font-size: .86rem; }
+
+		/* AGENDAMENTOS vencidos/próximos de vencer */
+		tr.tarefa-vencida td {
+			background: rgba(220,53,69,.12) !important;
+		}
+		tr.tarefa-vencida td:first-child {
+			box-shadow: inset 3px 0 0 #dc3545;
+		}
+		body.dark-mode tr.tarefa-vencida td { background: rgba(220,53,69,.22) !important; }
+
+		tr.tarefa-proxima td {
+			background: rgba(255,193,7,.10) !important;
+		}
+		tr.tarefa-proxima td:first-child {
+			box-shadow: inset 3px 0 0 #ffc107;
+		}
+		body.dark-mode tr.tarefa-proxima td { background: rgba(255,193,7,.16) !important; }
+
+		.agendamento-vencido { color: #dc3545; font-weight: 700; }
+		.agendamento-proximo { color: #b7791f; font-weight: 600; }
+		body.dark-mode .agendamento-vencido { color: #ff6b6b; }
+		body.dark-mode .agendamento-proximo { color: #ffc107; }
 	</style>
 </head>
 <body>
@@ -98,6 +129,17 @@
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
 			<div class="sidebar-group" id="sgProcessos">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
 					<i class="bi bi-briefcase"></i>
@@ -128,6 +170,10 @@
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
 			</a>
 		</div>
 		<div class="sidebar-footer">
@@ -229,6 +275,15 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-briefcase"></i> Processos
 							</a>
 							<ul class="dropdown-menu">
@@ -254,6 +309,11 @@
 						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
 							</a>
 						</li>
 					</ul>
@@ -290,42 +350,69 @@
 		<!-- / NAVBAR -->
 
 		<div class="row g-4 mt-2 px-1">
-		    <!-- SIDEBAR -->
-		    <div class="col-lg-3">
+		    <!-- FILTROS -->
+		    <div class="col-12">
 		        <div class="card shadow-sm border-0 filtro-sidebar">
 		            <div class="card-body">
-		                <div class="d-flex justify-content-between align-items-center mb-3">
+		                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 		                    <div>
 		                        <h5 class="mb-0"><i class="bi bi-list-check"></i> Tarefas </h5>
 		                        <small class="text-muted"><span id="contador">0</span> registros</small>
 							</div>
-		                    <a href="/judi/tarefa/form" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i></a>
+		                    <a href="/judi/tarefa/form" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Nova</a>
 		                </div>
 
-		                <hr class="border-0 border-top border-1 opacity-25 my-3">
+		                <div class="row g-2 align-items-end">
+		                    <div class="col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Busca </label>
+		                        <div class="input-group input-group-sm">
+		                            <span class="input-group-text">
+		                                <i class="bi bi-search"></i>
+		                            </span>
+		                            <input class="form-control" type="search" placeholder="Título ou cliente..." id="palavraChave" onkeypress="if(event.key==='Enter'){ event.preventDefault(); aplicarFiltrosTarefa(); }">
+		                        </div>
+		                    </div>
 
-		                <!-- BUSCA -->
-		                <label class="form-label fw-semibold"> Busca </label>
-		                <div class="input-group mb-3">
-		                    <span class="input-group-text">
-		                        <i class="bi bi-search"></i>
-		                    </span>
-		                    <input class="form-control" type="search" placeholder="Título ou cliente..." id="palavraChave" onkeypress="if(event.key==='Enter'){ event.preventDefault(); buscaPorPalavra(); }">
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Status </label>
+		                        <select class="form-select form-select-sm" id="statusFiltro" name="statusFiltro">
+		                            <option value="">Todos</option>
+		                            <option value="ABERTA">Aberta</option>
+		                            <option value="AGENDADA">Agendada</option>
+		                            <option value="EM_ANDAMENTO">Em andamento</option>
+		                            <option value="CONCLUIDA">Concluída</option>
+		                            <option value="CANCELADA">Cancelada</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Funcionário </label>
+		                        <select class="form-select form-select-sm" id="funcionarioFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Cliente </label>
+		                        <select class="form-select form-select-sm" id="clienteFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-6 col-md-3 col-lg-2">
+		                        <label class="form-label fw-semibold small mb-1"> Processo </label>
+		                        <select class="form-select form-select-sm" id="processoFiltro">
+		                            <option value="">Todos</option>
+		                        </select>
+		                    </div>
+
+		                    <div class="col-md-3 col-lg-2 d-flex gap-2">
+		                        <button class="btn btn-success btn-sm flex-fill" onclick="aplicarFiltrosTarefa()"><i class="bi bi-funnel"></i> Filtrar</button>
+		                        <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosTarefa()" title="Limpar filtros"><i class="bi bi-x-circle"></i></button>
+		                    </div>
 		                </div>
-		                <button class="btn btn-success w-100 mb-4" onclick="buscaPorPalavra()"><i class="bi bi-search"></i> Buscar</button>
 
-		                <!-- STATUS -->
-		                <label class="form-label fw-semibold"> Status </label>
-		                <select class="form-select mb-4" id="statusFiltro" name="statusFiltro">
-		                    <option value="">Todos</option>
-		                    <option value="ABERTA">Aberta</option>
-		                    <option value="EM_ANDAMENTO">Em andamento</option>
-		                    <option value="CONCLUIDA">Concluída</option>
-		                    <option value="CANCELADA">Cancelada</option>
-		                </select>
-
-		                <hr class="border-0 border-top border-1 opacity-25 my-3">
-		                <div class="small text-muted">
+		                <div class="small text-muted mt-2">
 		                    <span id="qtdFiltrados"></span>
 		                </div>
 		            </div>
@@ -333,18 +420,24 @@
 		    </div>
 
 		    <!-- TABELA -->
-		    <div class="col-lg-9">
+		    <div class="col-12">
 		        <div class="card shadow-sm border-0 tabela-card">
 		            <div class="card-body">
+		                <div class="input-group input-group-sm mb-3">
+		                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+		                    <input type="search" class="form-control" id="filtroRapidoTabela" placeholder="Filtrar nesta página...">
+		                </div>
 		                <div class="table-responsive">
 		                    <table class="table tabela-tarefas-clean align-middle" id="tabela-tarefas">
 		                        <thead>
 		                            <tr>
 		                                <th>Título</th>
 		                                <th>Cliente</th>
+		                                <th>Caso</th>
 		                                <th>Processo</th>
 		                                <th>Responsável</th>
 		                                <th width="130">Status</th>
+		                                <th width="150">Atualizado em</th>
 		                                <th width="140" class="text-end">Ações</th>
 		                            </tr>
 		                        </thead>
@@ -380,11 +473,13 @@
 	<script>
 
 		var _paginaAtual = 0;
-		var _urlAtual = "/judi/tarefas";
+
+		var LIMITE_PROXIMO_HORAS = 48;
 
 		function badgeStatus(status) {
 			var cfg = {
 				ABERTA:        { cor: 'secondary', label: 'Aberta' },
+				AGENDADA:      { cor: 'info',       label: 'Agendada' },
 				EM_ANDAMENTO:  { cor: 'primary',   label: 'Em andamento' },
 				CONCLUIDA:     { cor: 'success',   label: 'Concluída' },
 				CANCELADA:     { cor: 'dark',      label: 'Cancelada' }
@@ -393,13 +488,45 @@
 			return '<span class="badge bg-' + c.cor + '">' + c.label + '</span>';
 		}
 
+		// Converte "dd/MM/yyyy HH:mm" (formato vindo do backend) para Date.
+		function parseDataBr(str) {
+			if (!str) return null;
+			var partes = str.split(' ');
+			var d = partes[0].split('/');
+			var h = (partes[1] || '00:00').split(':');
+			return new Date(d[2], d[1] - 1, d[0], h[0], h[1]);
+		}
+
+		// Retorna 'vencido', 'proximo' ou null com base na distância até o agendamento.
+		function situacaoAgendamento(dataAgendamentoStr) {
+			var data = parseDataBr(dataAgendamentoStr);
+			if (!data) return null;
+			var diffHoras = (data.getTime() - Date.now()) / 36e5;
+			if (diffHoras < 0) return 'vencido';
+			if (diffHoras <= LIMITE_PROXIMO_HORAS) return 'proximo';
+			return null;
+		}
+
 		function linhaTarefa(i) {
-			return '<tr id=linha' + i.id + '>'
+			var situacao = i.status === 'AGENDADA' ? situacaoAgendamento(i.dataAgendamento) : null;
+			var classeLinha = situacao === 'vencido' ? ' tarefa-vencida' : situacao === 'proximo' ? ' tarefa-proxima' : '';
+
+			var alarme = '';
+			if (i.status === 'AGENDADA' && i.dataAgendamento) {
+				var icone = situacao === 'vencido' ? 'bi-exclamation-triangle-fill' : 'bi-alarm';
+				var classeTexto = situacao === 'vencido' ? 'agendamento-vencido' : situacao === 'proximo' ? 'agendamento-proximo' : 'text-muted';
+				var rotulo = situacao === 'vencido' ? ' (vencido)' : situacao === 'proximo' ? ' (próximo)' : '';
+				alarme = ' <span class="small text-nowrap ' + classeTexto + '"><i class="bi ' + icone + '"></i> ' + i.dataAgendamento + rotulo + '</span>';
+			}
+			var celulaStatus = badgeStatus(i.status) + alarme;
+			return '<tr id="linha' + i.id + '" data-status="' + i.status + '" class="' + classeLinha.trim() + '">'
 				+ '<td>' + (i.titulo || '—') + '</td>'
 				+ '<td>' + (i.nomeCliente || '—') + '</td>'
+				+ '<td>' + (i.casoId ? '<a href="/judi/caso/detalhe?id=' + i.casoId + '">' + i.tituloCaso + '</a>' : '<span class="text-muted">—</span>') + '</td>'
 				+ '<td>' + (i.numeroProcesso ? '<span class="numero-processo">' + i.numeroProcesso + '</span>' : '<span class="text-muted">—</span>') + '</td>'
 				+ '<td>' + (i.nomeFuncionarioResponsavel || '<span class="text-muted">—</span>') + '</td>'
-				+ '<td>' + badgeStatus(i.status) + '</td>'
+				+ '<td>' + celulaStatus + '</td>'
+				+ '<td>' + (i.dataAtualizacao || '<span class="text-muted">—</span>') + '</td>'
 				+ `
 				<td class="text-end">
 				    <div class="acoes-wrapper d-inline-flex gap-1">
@@ -440,7 +567,7 @@
 			$('#qtdFiltrados').text(data.totalElements);
 
 			if (!data.content || data.content.length === 0) {
-				$('#corpoTarefas').html('<tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-list-check"></i> Nenhuma tarefa encontrada</td></tr>');
+				$('#corpoTarefas').html('<tr><td colspan="8" class="text-center text-muted py-4"><i class="bi bi-list-check"></i> Nenhuma tarefa encontrada</td></tr>');
 				renderPaginas(data);
 				return;
 			}
@@ -448,15 +575,40 @@
 			data.content.forEach(function(i) {
 				$('#corpoTarefas').append(linhaTarefa(i));
 			});
-			aplicarFiltroStatus();
 			renderPaginas(data);
+			filtrarLinhasTabela();
 		}
 
-		function carregar(url) {
+		function filtrarLinhasTabela() {
+			var termo = $('#filtroRapidoTabela').val().toLowerCase().trim();
+			$('#corpoTarefas tr').each(function () {
+				var texto = $(this).text().toLowerCase();
+				$(this).toggle(!termo || texto.indexOf(termo) > -1);
+			});
+		}
+
+		$(document).ready(function () {
+			$('#filtroRapidoTabela').on('input', filtrarLinhasTabela);
+		});
+
+		function paramsFiltroTarefa() {
+			var params = {};
+			var texto = $('#palavraChave').val(); if (texto) params.texto = texto;
+			var status = $('#statusFiltro').val(); if (status) params.status = status;
+			var funcionario = $('#funcionarioFiltro').val(); if (funcionario) params.funcionarioId = funcionario;
+			var cliente = $('#clienteFiltro').val(); if (cliente) params.clienteId = cliente;
+			var processo = $('#processoFiltro').val(); if (processo) params.processoId = processo;
+			return params;
+		}
+
+		function carregar() {
+			var params = paramsFiltroTarefa();
+			params.page = _paginaAtual;
 			$.ajax({
 				type: "GET",
 				contentType: "application/json",
-				url: url,
+				url: "/judi/tarefas/filtro",
+				data: params,
 				success: renderResultado,
 				statusCode: {
 					500: function() { alert('Erro! Contate o desenvolvedor!'); },
@@ -468,45 +620,44 @@
 			});
 		}
 
-		function listarTodos() {
-			_paginaAtual = 0;
-			_urlAtual = "/judi/tarefas";
-			carregar(_urlAtual + "?page=0");
-		}
-
 		function paginacao(num) {
 			_paginaAtual = num;
-			carregar(_urlAtual.split('?')[0] + '?page=' + num);
+			carregar();
 		}
 
-		function buscaPorPalavra() {
-			var palavra = document.getElementById('palavraChave').value;
-
-			if (palavra != '') {
-				_paginaAtual = 0;
-				_urlAtual = "/judi/tarefas/nome/" + encodeURIComponent(palavra);
-				carregar(_urlAtual + "?page=0");
-			} else {
-				listarTodos();
-			}
+		function aplicarFiltrosTarefa() {
+			_paginaAtual = 0;
+			carregar();
 		}
 
-		function aplicarFiltroStatus() {
-			var status = $('#statusFiltro').val();
-			if (!status) {
-				$('#corpoTarefas tr').show();
-				return;
-			}
-			var mapa = { ABERTA: 'Aberta', EM_ANDAMENTO: 'Em andamento', CONCLUIDA: 'Concluída', CANCELADA: 'Cancelada' };
-			$('#corpoTarefas tr').each(function() {
-				var txt = $(this).find('td').eq(4).text().trim();
-				$(this).toggle(txt === mapa[status]);
-			});
+		function limparFiltrosTarefa() {
+			$('#palavraChave').val('');
+			$('#statusFiltro, #funcionarioFiltro, #clienteFiltro, #processoFiltro').val('');
+			aplicarFiltrosTarefa();
 		}
 
-		$(document).ready(function() {
-			$('#statusFiltro').on('change', aplicarFiltroStatus);
-		});
+		function carregarOpcoesFiltroTarefa() {
+			$.ajax({ type: "GET", url: "/judi/funcionarios", success: function (data) {
+				var sel = $('#funcionarioFiltro');
+				(data || []).forEach(function (f) {
+					sel.append('<option value="' + f.id + '">' + f.nomeFuncionario + '</option>');
+				});
+			}});
+
+			$.ajax({ type: "GET", url: "/judi/clientes?size=10000", success: function (data) {
+				var sel = $('#clienteFiltro');
+				(data.content || []).forEach(function (c) {
+					sel.append('<option value="' + c.id + '">' + c.nomeCliente + '</option>');
+				});
+			}});
+
+			$.ajax({ type: "GET", url: "/judi/processos?size=1000", success: function (data) {
+				var sel = $('#processoFiltro');
+				(data.content || []).forEach(function (p) {
+					sel.append('<option value="' + p.id + '">' + p.numeroProcesso + '</option>');
+				});
+			}});
+		}
 
 		function excluir(id) {
 			if (confirm("Tem certeza que deseja excluir a tarefa de ID: " + id + " ?") == true) {
@@ -532,7 +683,8 @@
 			}
 		}
 
-		listarTodos();
+		carregarOpcoesFiltroTarefa();
+		aplicarFiltrosTarefa();
 	</script>
 </body>
 </html>

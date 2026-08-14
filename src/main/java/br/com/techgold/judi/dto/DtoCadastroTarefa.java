@@ -9,6 +9,7 @@ public record DtoCadastroTarefa(
 		String descricao,
 		@NotNull
 		Long clienteId,
+		Long casoId,
 		Long processoId,
 		Long funcionarioResponsavelId) {
 }

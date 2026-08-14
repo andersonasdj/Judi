@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import br.com.techgold.judi.model.MovimentacaoProcesso;
 
@@ -18,5 +19,8 @@ public interface MovimentacaoProcessoRepository extends JpaRepository<Movimentac
 	public long countByDataRegistroAfter(LocalDateTime data);
 
 	public List<MovimentacaoProcesso> findTop10ByOrderByDataRegistroDesc();
+
+	@Query("SELECT MAX(m.id) FROM MovimentacaoProcesso m")
+	public Long maxId();
 
 }

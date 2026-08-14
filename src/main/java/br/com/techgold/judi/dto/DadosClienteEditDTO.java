@@ -15,9 +15,12 @@ public record DadosClienteEditDTO(
 		String username,
 		String password,
 		String cnpj,
-		String bairro,
 		@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-		LocalDateTime dataUltimoLogin
+		LocalDateTime dataUltimoLogin,
+		String nomeFantasia,
+		String tipoPessoa,
+		String inscricaoEstadual,
+		String inscricaoMunicipal
 		) {
 
 	public DadosClienteEditDTO(Cliente c) {
@@ -29,7 +32,11 @@ public record DadosClienteEditDTO(
 				c.getUsername(),
 				c.getPassword(),
 				c.getCnpj(),
-				c.getBairro(),
-				c.getDataUltimoLogin());
+				c.getDataUltimoLogin(),
+				c.getNomeFantasia(),
+				c.getTipoPessoa(),
+				c.getInscricaoEstadual(),
+				c.getInscricaoMunicipal()
+		);
 	}
 }

@@ -13,7 +13,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,19 +24,23 @@ import br.com.techgold.judi.dto.DtoAlerta;
 import br.com.techgold.judi.dto.DtoAtualizarProcesso;
 import br.com.techgold.judi.dto.DtoCadastroProcesso;
 import br.com.techgold.judi.dto.DtoErroImportacaoProcesso;
+import br.com.techgold.judi.dto.DtoFiltroProcesso;
 import br.com.techgold.judi.dto.DtoMovimentacao;
 import br.com.techgold.judi.dto.DtoProcessoDetalhe;
 import br.com.techgold.judi.dto.DtoProcessoList;
 import br.com.techgold.judi.dto.DtoResultadoImportacaoProcessos;
+import br.com.techgold.judi.model.Caso;
 import br.com.techgold.judi.model.Cliente;
 import br.com.techgold.judi.model.Processo;
 import br.com.techgold.judi.model.enums.StatusConsultaDataJud;
 import br.com.techgold.judi.model.enums.StatusProcesso;
 import br.com.techgold.judi.repository.AlertaProcessoRepository;
+import br.com.techgold.judi.repository.CasoRepository;
 import br.com.techgold.judi.repository.ClienteRepository;
 import br.com.techgold.judi.repository.FuncionarioRepository;
 import br.com.techgold.judi.repository.MovimentacaoProcessoRepository;
 import br.com.techgold.judi.repository.ProcessoRepository;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class ProcessoService {
@@ -44,19 +50,33 @@ public class ProcessoService {
 	private final ProcessoRepository repository;
 	private final ClienteRepository clienteRepository;
 	private final FuncionarioRepository funcionarioRepository;
+	private final CasoRepository casoRepository;
 	private final MovimentacaoProcessoRepository movimentacaoRepository;
 	private final AlertaProcessoRepository alertaRepository;
 	private final DataJudSyncService dataJudSyncService;
 
 	ProcessoService(ProcessoRepository repository, ClienteRepository clienteRepository,
-			FuncionarioRepository funcionarioRepository, MovimentacaoProcessoRepository movimentacaoRepository,
+			FuncionarioRepository funcionarioRepository, CasoRepository casoRepository, MovimentacaoProcessoRepository movimentacaoRepository,
 			AlertaProcessoRepository alertaRepository, DataJudSyncService dataJudSyncService) {
 		this.repository = repository;
 		this.clienteRepository = clienteRepository;
 		this.funcionarioRepository = funcionarioRepository;
+		this.casoRepository = casoRepository;
 		this.movimentacaoRepository = movimentacaoRepository;
 		this.alertaRepository = alertaRepository;
 		this.dataJudSyncService = dataJudSyncService;
+	}
+
+	/** Se um caso for informado, ele precisa pertencer ao mesmo cliente do processo. */
+	private Caso resolverCaso(Long casoId, Long clienteId) {
+		if (casoId == null) {
+			return null;
+		}
+		Caso caso = casoRepository.getReferenceById(casoId);
+		if (!caso.getCliente().getId().equals(clienteId)) {
+			throw new IllegalStateException("O caso selecionado pertence a outro cliente.");
+		}
+		return caso;
 	}
 
 	public Page<DtoProcessoList> listar(Pageable page) {
@@ -71,8 +91,50 @@ public class ProcessoService {
 		return repository.findByFuncionarioResponsavelIdAndAtivoTrue(funcionarioId, page).map(DtoProcessoList::new);
 	}
 
+	public Page<DtoProcessoList> listarPorCaso(Long casoId, Pageable page) {
+		return repository.findByCasoIdAndAtivoTrue(casoId, page).map(DtoProcessoList::new);
+	}
+
+	/** Para o card "Últimos processos criados" da home. */
+	public List<DtoProcessoList> listarUltimosCriados(int limite) {
+		return repository.findByAtivoTrueOrderByDataCadastroDesc(PageRequest.of(0, limite))
+				.map(DtoProcessoList::new).getContent();
+	}
+
 	public Page<DtoProcessoList> buscarPorPalavra(Pageable page, String conteudo) {
 		return repository.buscarPorPalavra(page, conteudo).map(DtoProcessoList::new);
+	}
+
+	/** Filtro rápido combinável da listagem: qualquer combinação de texto (nº processo/cliente), cliente, funcionário, caso e status. */
+	public Page<DtoProcessoList> listarFiltrado(DtoFiltroProcesso filtro, Pageable page) {
+		return repository.findAll(especificacao(filtro), page).map(DtoProcessoList::new);
+	}
+
+	private Specification<Processo> especificacao(DtoFiltroProcesso filtro) {
+		return (root, query, cb) -> {
+			List<Predicate> predicados = new ArrayList<>();
+			predicados.add(cb.isTrue(root.get("ativo")));
+
+			if (filtro.texto() != null && !filtro.texto().isBlank()) {
+				String termo = "%" + filtro.texto().toLowerCase() + "%";
+				predicados.add(cb.or(
+						cb.like(cb.lower(root.get("numeroProcesso")), termo),
+						cb.like(cb.lower(root.get("cliente").get("nomeCliente")), termo)));
+			}
+			if (filtro.clienteId() != null) {
+				predicados.add(cb.equal(root.get("cliente").get("id"), filtro.clienteId()));
+			}
+			if (filtro.funcionarioId() != null) {
+				predicados.add(cb.equal(root.get("funcionarioResponsavel").get("id"), filtro.funcionarioId()));
+			}
+			if (filtro.casoId() != null) {
+				predicados.add(cb.equal(root.get("caso").get("id"), filtro.casoId()));
+			}
+			if (filtro.status() != null) {
+				predicados.add(cb.equal(root.get("status"), filtro.status()));
+			}
+			return cb.and(predicados.toArray(new Predicate[0]));
+		};
 	}
 
 	public DtoProcessoDetalhe buscarDetalhe(Long id) {
@@ -96,6 +158,7 @@ public class ProcessoService {
 		Processo processo = new Processo();
 		processo.setNumeroProcesso(dados.numeroProcesso());
 		processo.setCliente(clienteRepository.getReferenceById(dados.clienteId()));
+		processo.setCaso(resolverCaso(dados.casoId(), dados.clienteId()));
 		if (dados.funcionarioResponsavelId() != null) {
 			processo.setFuncionarioResponsavel(funcionarioRepository.getReferenceById(dados.funcionarioResponsavelId()));
 		}
@@ -104,6 +167,9 @@ public class ProcessoService {
 		processo.setAssunto(dados.assunto());
 		processo.setOrgaoJulgador(dados.orgaoJulgador());
 		processo.setGrau(dados.grau());
+		processo.setParteAdversa(dados.parteAdversa());
+		processo.setDocumentoParteAdversa(dados.documentoParteAdversa());
+		processo.setPoloCliente(dados.poloCliente());
 		processo.setDataDistribuicao(dados.dataDistribuicao());
 		processo.setValorCausa(dados.valorCausa());
 		processo.setObservacoes(dados.observacoes());
@@ -124,6 +190,7 @@ public class ProcessoService {
 
 		processo.setNumeroProcesso(dados.numeroProcesso());
 		processo.setCliente(clienteRepository.getReferenceById(dados.clienteId()));
+		processo.setCaso(resolverCaso(dados.casoId(), dados.clienteId()));
 		processo.setFuncionarioResponsavel(dados.funcionarioResponsavelId() != null
 				? funcionarioRepository.getReferenceById(dados.funcionarioResponsavelId())
 				: null);
@@ -132,6 +199,9 @@ public class ProcessoService {
 		processo.setAssunto(dados.assunto());
 		processo.setOrgaoJulgador(dados.orgaoJulgador());
 		processo.setGrau(dados.grau());
+		processo.setParteAdversa(dados.parteAdversa());
+		processo.setDocumentoParteAdversa(dados.documentoParteAdversa());
+		processo.setPoloCliente(dados.poloCliente());
 		processo.setStatus(dados.status() != null ? dados.status() : processo.getStatus());
 		processo.setDataDistribuicao(dados.dataDistribuicao());
 		processo.setValorCausa(dados.valorCausa());

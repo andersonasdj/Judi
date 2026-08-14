@@ -96,6 +96,17 @@
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
 			<div class="sidebar-group" id="sgProcessos">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
 					<i class="bi bi-briefcase"></i>
@@ -126,6 +137,10 @@
 			<a href="/judi/tarefa/despesas" class="sidebar-item active">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
 			</a>
 		</div>
 		<div class="sidebar-footer">
@@ -227,6 +242,15 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-briefcase"></i> Processos
 							</a>
 							<ul class="dropdown-menu">
@@ -252,6 +276,11 @@
 						<li class="nav-item">
 							<a class="nav-link-modern active" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
 							</a>
 						</li>
 					</ul>
@@ -309,6 +338,49 @@
 		                    <button class="btn btn-outline-primary btn-check-label" id="btnPendentes" onclick="selecionarModo('pendentes')" style="display:none;">
 		                        <i class="bi bi-hourglass-split"></i> Todas pendentes
 		                    </button>
+		                    <button class="btn btn-outline-primary btn-check-label" id="btnFiltrado" onclick="selecionarModo('filtrado')" style="display:none;">
+		                        <i class="bi bi-funnel"></i> Filtrado
+		                    </button>
+		                </div>
+
+		                <div id="painelFiltros" style="display:none;">
+		                    <hr class="border-0 border-top border-1 opacity-25 my-3">
+		                    <label class="form-label fw-semibold small">Funcionário</label>
+		                    <select class="form-select form-select-sm mb-3" id="fDespFuncionario">
+		                        <option value="">Todos</option>
+		                    </select>
+
+		                    <label class="form-label fw-semibold small">Cliente</label>
+		                    <select class="form-select form-select-sm mb-3" id="fDespCliente">
+		                        <option value="">Todos</option>
+		                    </select>
+
+		                    <div class="row g-2 mb-3">
+		                        <div class="col-6">
+		                            <label class="form-label fw-semibold small">De</label>
+		                            <input type="date" class="form-control form-control-sm" id="fDespDataInicio">
+		                        </div>
+		                        <div class="col-6">
+		                            <label class="form-label fw-semibold small">Até</label>
+		                            <input type="date" class="form-control form-control-sm" id="fDespDataFim">
+		                        </div>
+		                    </div>
+
+		                    <label class="form-label fw-semibold small">Status</label>
+		                    <select class="form-select form-select-sm mb-3" id="fDespStatus">
+		                        <option value="">Todas</option>
+		                        <option value="false">Pendentes</option>
+		                        <option value="true">Reembolsadas</option>
+		                    </select>
+
+		                    <div class="d-grid gap-2">
+		                        <button class="btn btn-primary btn-sm" onclick="aplicarFiltrosDespesa()">
+		                            <i class="bi bi-funnel"></i> Filtrar
+		                        </button>
+		                        <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltrosDespesa()">
+		                            <i class="bi bi-x-circle"></i> Limpar
+		                        </button>
+		                    </div>
 		                </div>
 
 		                <hr class="border-0 border-top border-1 opacity-25 my-3">
@@ -328,6 +400,7 @@
 		                        <thead>
 		                            <tr>
 		                                <th>Tarefa</th>
+		                                <th>Cliente</th>
 		                                <th>Descrição</th>
 		                                <th>Valor</th>
 		                                <th>Data</th>
@@ -381,17 +454,22 @@
 			var statusBadge = d.reembolsada
 				? '<span class="badge bg-success">Reembolsada</span>'
 				: '<span class="badge bg-warning text-dark">Pendente</span>';
+			var comprovante = d.comprovanteNomeOriginal
+				? '<a href="/judi/despesas/' + d.id + '/comprovante" target="_blank" class="btn-action btn btn-outline-secondary btn-sm" title="Ver comprovante">'
+					+ '<i class="bi ' + ((d.comprovanteMimeType || '').indexOf('pdf') > -1 ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image') + '"></i></a>'
+				: '';
 			var acoes = (!d.reembolsada && _isAdmin)
 				? '<button class="btn-action btn btn-outline-success btn-sm" title="Marcar reembolsada" onclick="reembolsar(' + d.id + ')"><i class="bi bi-check2-circle"></i></button>'
 				: '';
 			return '<tr id="linha' + d.id + '">'
 				+ '<td><a href="/judi/tarefa/detalhe?id=' + d.tarefaId + '">' + escapeHtml(d.tituloTarefa || ('#' + d.tarefaId)) + '</a></td>'
+				+ '<td>' + escapeHtml(d.nomeCliente || '—') + '</td>'
 				+ '<td>' + escapeHtml(d.descricao || '—') + '</td>'
 				+ '<td>R$ ' + Number(d.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</td>'
 				+ '<td>' + (d.data || '—') + '</td>'
 				+ '<td>' + escapeHtml(d.nomeFuncionario || '—') + '</td>'
 				+ '<td>' + statusBadge + '</td>'
-				+ '<td class="text-end">' + acoes + '</td>'
+				+ '<td class="text-end">' + comprovante + ' ' + acoes + '</td>'
 				+ '</tr>';
 		}
 
@@ -411,7 +489,7 @@
 			$('#qtdFiltrados').text(data.totalElements);
 
 			if (!data.content || data.content.length === 0) {
-				$('#corpoDespesas').html('<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-receipt"></i> Nenhuma despesa encontrada</td></tr>');
+				$('#corpoDespesas').html('<tr><td colspan="8" class="text-center text-muted py-4"><i class="bi bi-receipt"></i> Nenhuma despesa encontrada</td></tr>');
 				renderPaginas(data);
 				return;
 			}
@@ -423,14 +501,29 @@
 		}
 
 		function urlModo() {
-			return _modo === 'pendentes' ? '/judi/despesas/pendentes' : '/judi/despesas/minhas';
+			if (_modo === 'pendentes') return '/judi/despesas/pendentes';
+			if (_modo === 'filtrado') return '/judi/financeiro/despesas';
+			return '/judi/despesas/minhas';
+		}
+
+		function paramsFiltroDespesa() {
+			var params = {};
+			var funcionario = $('#fDespFuncionario').val(); if (funcionario) params.funcionarioId = funcionario;
+			var cliente = $('#fDespCliente').val(); if (cliente) params.clienteId = cliente;
+			var inicio = $('#fDespDataInicio').val(); if (inicio) params.dataInicio = inicio;
+			var fim = $('#fDespDataFim').val(); if (fim) params.dataFim = fim;
+			var status = $('#fDespStatus').val(); if (status !== '') params.reembolsada = status;
+			return params;
 		}
 
 		function carregar() {
+			var params = _modo === 'filtrado' ? paramsFiltroDespesa() : {};
+			params.page = _paginaAtual;
 			$.ajax({
 				type: "GET",
 				contentType: "application/json",
-				url: urlModo() + "?page=" + _paginaAtual,
+				url: urlModo(),
+				data: params,
 				success: renderResultado,
 				statusCode: {
 					403: function() { alert('Você não possui permissão'); },
@@ -448,7 +541,36 @@
 			_paginaAtual = 0;
 			$('#btnMinhas').toggleClass('btn-primary', modo === 'minhas').toggleClass('btn-outline-primary', modo !== 'minhas');
 			$('#btnPendentes').toggleClass('btn-primary', modo === 'pendentes').toggleClass('btn-outline-primary', modo !== 'pendentes');
+			$('#btnFiltrado').toggleClass('btn-primary', modo === 'filtrado').toggleClass('btn-outline-primary', modo !== 'filtrado');
+			$('#painelFiltros').toggle(modo === 'filtrado');
 			carregar();
+		}
+
+		function aplicarFiltrosDespesa() {
+			_paginaAtual = 0;
+			carregar();
+		}
+
+		function limparFiltrosDespesa() {
+			$('#fDespFuncionario, #fDespCliente, #fDespStatus').val('');
+			$('#fDespDataInicio, #fDespDataFim').val('');
+			aplicarFiltrosDespesa();
+		}
+
+		function carregarOpcoesFiltroDespesa() {
+			$.ajax({ type: "GET", url: "/judi/funcionarios", success: function (data) {
+				var sel = $('#fDespFuncionario');
+				(data || []).forEach(function (f) {
+					sel.append('<option value="' + f.id + '">' + escapeHtml(f.nomeFuncionario) + '</option>');
+				});
+			}});
+
+			$.ajax({ type: "GET", url: "/judi/clientes?size=10000", success: function (data) {
+				var sel = $('#fDespCliente');
+				(data.content || []).forEach(function (c) {
+					sel.append('<option value="' + c.id + '">' + escapeHtml(c.nomeCliente) + '</option>');
+				});
+			}});
 		}
 
 		function paginacao(num) {
@@ -489,6 +611,17 @@
 				},
 				error: function () {
 					selecionarModo('minhas');
+				}
+			});
+
+			$.ajax({
+				type: "GET",
+				url: "/judi/funcionarios/acessoFinanceiro",
+				success: function (data) {
+					if (data === true) {
+						$('#btnFiltrado').show();
+						carregarOpcoesFiltroDespesa();
+					}
 				}
 			});
 		}

@@ -7,11 +7,12 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import br.com.techgold.judi.model.Timesheet;
 
-public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
+public interface TimesheetRepository extends JpaRepository<Timesheet, Long>, JpaSpecificationExecutor<Timesheet> {
 
 	public List<Timesheet> findByTarefaIdOrderByDataInicioDesc(Long tarefaId);
 

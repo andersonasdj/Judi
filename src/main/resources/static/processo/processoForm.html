@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
-    <title>Judi - Processos</title>
+    <title>Judera One - Processos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="../assets/img/favicon.ico">
     <!-- CSS -->
@@ -53,6 +53,23 @@
 		body {
 		    background: #f4f6f9;
 		}
+
+		/* ===== Combobox com busca (Cliente / Caso) ===== */
+		.combo-busca { position: relative; }
+		.combo-busca-dropdown {
+		    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+		    background: #fff; border: 1px solid #d1d5db; border-radius: 10px;
+		    box-shadow: 0 10px 26px rgba(0,0,0,.14);
+		    max-height: 260px; overflow-y: auto; z-index: 40;
+		    display: none;
+		}
+		.combo-busca-dropdown.show { display: block; }
+		.combo-busca-item { padding: 8px 12px; cursor: pointer; font-size: .9rem; }
+		.combo-busca-item:hover { background: #eef2ff; }
+		.combo-busca-item .combo-busca-sub { color: #6b7280; font-size: .78rem; margin-left: 6px; }
+		.combo-busca-vazio { padding: 10px 12px; color: #9ca3af; font-size: .86rem; }
+		body.dark-mode .combo-busca-dropdown { background: #2a2a2a; border-color: #444; }
+		body.dark-mode .combo-busca-item:hover { background: #3a3a3a; }
     </style>
 </head>
 <body>
@@ -66,18 +83,13 @@
 			<div class="sidebar-brand-icon">
 				<i class="bi bi-bank2" style="font-size:13px;color:#fff;"></i>
 			</div>
-			<span class="sidebar-brand-text">Dashboard</span>
+			<span class="sidebar-brand-text">Judera One</span>
 		</div>
 		<div class="sidebar-scroll">
 			<a href="/judi/home" class="sidebar-item">
 				<i class="bi bi-house-fill"></i>
 				<span class="sidebar-item-label">Início</span>
 			</a>
-			<a href="/judi/painel" class="sidebar-item" target="_blank">
-				<i class="bi bi-tv"></i>
-				<span class="sidebar-item-label">Painel TV</span>
-			</a>
-
 			<div class="sidebar-group" id="sgClientes">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgClientes')">
 					<i class="bi bi-building"></i>
@@ -92,12 +104,23 @@
 			<div class="sidebar-group" id="sgFuncionarios">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgFuncionarios')">
 					<i class="bi bi-person-badge"></i>
-					<span class="sidebar-group-label">Funcionários</span>
+					<span class="sidebar-group-label">Equipe</span>
 					<i class="bi bi-chevron-down sidebar-chevron"></i>
 				</button>
 				<div class="sidebar-group-items">
 					<a href="/judi/funcionario/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
 			<div class="sidebar-group" id="sgProcessos">
@@ -112,10 +135,6 @@
 					<a href="/judi/processo/importar" class="sidebar-subitem"><i class="bi bi-upload text-info"></i>Importar</a>
 				</div>
 			</div>
-			<a href="/judi/processo/alertas" class="sidebar-item">
-				<i class="bi bi-bell"></i>
-				<span class="sidebar-item-label">Alertas</span>
-			</a>
 			<div class="sidebar-group" id="sgTarefas">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgTarefas')">
 					<i class="bi bi-list-check"></i>
@@ -127,11 +146,22 @@
 					<a href="/judi/tarefa/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Nova</a>
 				</div>
 			</div>
+			<a href="/judi/processo/alertas" class="sidebar-item">
+				<i class="bi bi-bell"></i>
+				<span class="sidebar-item-label">Alertas</span>
+			</a>
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
 			</a>
-
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
+			</a>
+			<a href="/judi/painel" class="sidebar-item" target="_blank">
+				<i class="bi bi-tv"></i>
+				<span class="sidebar-item-label">Painel TV</span>
+			</a>
 		</div>
 		<div class="sidebar-footer">
 			<button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" title="Recolher barra lateral">
@@ -154,7 +184,7 @@
 		<button class="icon-btn d-lg-none" onclick="openSidebarMobile()" title="Menu" style="font-size:1.1rem;">
 			<i class="bi bi-list"></i>
 		</button>
-		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judi</span>
+		<span style="font-size:.8rem;font-weight:600;color:#374151;" class="d-none d-sm-inline" id="slimTopbarTitle">Judera One</span>
 		<div class="ms-auto d-flex align-items-center gap-2">
 			<button class="layout-toggle-btn" onclick="toggleLayout()" title="Voltar ao navbar no topo">
 				<i class="bi bi-layout-three-columns"></i>
@@ -189,7 +219,7 @@
 					<div class="brand-icon">
 						<i class="bi bi-bank2" style="font-size:15px;color:#fff;"></i>
 					</div>
-					<span class="brand-text">Judi</span>
+					<span class="brand-text">Judera One</span>
 				</a>
 				<!-- Mobile toggle -->
 				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -207,11 +237,6 @@
 								<i class="bi bi-house-fill"></i> Início
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/painel" target="_blank">
-								<i class="bi bi-tv"></i> Painel TV
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-building"></i> Clientes
@@ -223,11 +248,20 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-person-badge"></i> Funcionários
+								<i class="bi bi-person-badge"></i> Equipe
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="/judi/funcionario/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
 								<li><a class="dropdown-item" href="/judi/funcionario/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
 							</ul>
 						</li>
 						<li class="nav-item dropdown">
@@ -240,11 +274,6 @@
 								<li><a class="dropdown-item" href="/judi/processo/importar"><i class="bi bi-upload me-2 text-info"></i>Importar</a></li>
 							</ul>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link-modern" href="/judi/processo/alertas">
-								<i class="bi bi-bell"></i> Alertas
-							</a>
-						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list-check"></i> Tarefas
@@ -255,8 +284,23 @@
 							</ul>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/processo/alertas">
+								<i class="bi bi-bell"></i> Alertas
+							</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/painel" target="_blank">
+								<i class="bi bi-tv"></i> Painel TV
 							</a>
 						</li>
 					</ul>
@@ -292,348 +336,189 @@
 		</nav>
 		<!-- / NAVBAR -->
 	<br />
-	<div class="container py-3 corpoFormulario"
-	     style="max-width: 1100px;">
-
+	<div class="container py-3 corpoFormulario" style="max-width: 1100px;">
 	    <div class="d-flex justify-content-between align-items-center mb-4">
-
 	        <div>
-	            <h4 class="fw-bold mb-0">
-	                <i class="bi bi-briefcase" id="iconeTitulo"></i>
+				<h4 class="fw-bold mb-0"><i class="bi bi-briefcase" id="iconeTitulo"></i>
 	                <span id="tituloPagina">Novo Processo</span>
 	            </h4>
-
 	            <small class="text-muted" id="subtituloPagina">
 	                Cadastro de processos e informações do acompanhamento
 	            </small>
 	        </div>
-
 	    </div>
 
 	    <!-- DADOS DO PROCESSO -->
-
 	    <div class="card card-cor shadow-sm border-0 mb-4">
-
 	        <div class="card-body">
-
-	            <h6 class="mb-3">
-	                <i class="bi bi-file-earmark-text"></i>
-	                Dados do Processo
-	            </h6>
-
+	            <h6 class="mb-3"><i class="bi bi-file-earmark-text"></i>Dados do Processo</h6>
 	            <div class="row g-3">
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-hash"></i>
-	                        Número do Processo (CNJ)
-	                    </label>
-
-	                    <input type="text"
-	                           id="numeroProcesso"
-	                           maxlength="25"
-	                           placeholder="0000000-00.0000.0.00.0000"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-hash"></i>Número do Processo (CNJ)</label>
+	                    <input type="text" id="numeroProcesso" maxlength="25" placeholder="0000000-00.0000.0.00.0000" class="form-control mt-2">
 	                </div>
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-bank"></i>
-	                        Tribunal
-	                    </label>
-
-	                    <input type="text"
-	                           id="tribunal"
-	                           placeholder="Ex: TJSP"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-bank"></i>Tribunal</label>
+	                    <input type="text" id="tribunal" placeholder="Ex: TJSP" class="form-control mt-2">
 	                </div>
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-folder"></i>
-	                        Classe Processual
-	                    </label>
-
-	                    <input type="text"
-	                           id="classeProcessual"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-folder"></i>Classe Processual</label>
+	                    <input type="text" id="classeProcessual" class="form-control mt-2">
 	                </div>
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-tag"></i>
-	                        Assunto
-	                    </label>
-
-	                    <input type="text"
-	                           id="assunto"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-tag"></i>Assunto</label>
+	                    <input type="text" id="assunto" class="form-control mt-2">
 	                </div>
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-building"></i>
-	                        Órgão Julgador
-	                    </label>
-
-	                    <input type="text"
-	                           id="orgaoJulgador"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-building"></i>Órgão Julgador</label>
+	                    <input type="text" id="orgaoJulgador" class="form-control mt-2">
 	                </div>
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-layers"></i>
-	                        Grau
-	                    </label>
-
-	                    <input type="text"
-	                           id="grau"
-	                           placeholder="Ex: 1º Grau"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-layers"></i>Grau</label>
+	                    <input type="text" id="grau" placeholder="Ex: 1º Grau" class="form-control mt-2">
 	                </div>
-
 	            </div>
-
 	        </div>
-
 	    </div>
 
 	    <!-- PARTES E RESPONSÁVEL -->
-
 	    <div class="card card-cor shadow-sm border-0 mb-4">
-
 	        <div class="card-body">
-
-	            <h6 class="mb-3">
-	                <i class="bi bi-people"></i>
-	                Partes e Responsável
-	            </h6>
-
+	            <h6 class="mb-3"><i class="bi bi-people"></i> Partes e Responsável</h6>
 	            <div class="row g-3">
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-building"></i>
-	                        Cliente
-	                    </label>
-
-	                    <select id="clienteId" class="form-select mt-2">
-	                        <option value="">Selecione...</option>
-	                    </select>
-
+	                    <label><i class="bi bi-building"></i>Cliente</label>
+	                    <div class="combo-busca mt-2">
+	                        <input type="text" id="clienteBusca" class="form-control" placeholder="Digite para buscar o cliente..." autocomplete="off">
+	                        <input type="hidden" id="clienteId">
+	                        <div id="clienteBuscaResultados" class="combo-busca-dropdown"></div>
+	                    </div>
+	                </div>
+	                <div class="col-lg-6">
+	                    <label><i class="bi bi-folder2-open"></i>Caso</label>
+	                    <div class="combo-busca mt-2">
+	                        <input type="text" id="casoBusca" class="form-control" placeholder="Selecione um cliente primeiro" autocomplete="off" disabled>
+	                        <input type="hidden" id="casoId">
+	                        <div id="casoBuscaResultados" class="combo-busca-dropdown"></div>
+	                    </div>
 	                </div>
 
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-person-badge"></i>
-	                        Funcionário Responsável
-	                    </label>
-
+	                    <label><i class="bi bi-person-badge"></i>Funcionário Responsável</label>
 	                    <select id="funcionarioResponsavelId" class="form-select mt-2">
 	                        <option value="">Nenhum</option>
 	                    </select>
-
 	                </div>
 
+	                <div class="col-lg-4">
+	                    <label><i class="bi bi-person-x"></i>Parte Adversa</label>
+	                    <input type="text" id="parteAdversa" placeholder="Nome ou razão social" class="form-control mt-2">
+	                </div>
+	                <div class="col-lg-4">
+	                    <label><i class="bi bi-card-heading"></i>Documento (CPF/CNPJ)</label>
+	                    <div class="input-group mt-2">
+	                        <input type="text" id="documentoParteAdversa" class="form-control">
+	                        <button class="btn btn-outline-secondary" type="button" id="btnBuscarDocumentoParteAdversa" title="CNPJ: busca dados na Receita Federal. CPF: valida o dígito verificador.">
+	                            <i class="bi bi-search"></i>
+	                        </button>
+	                    </div>
+	                    <small class="text-muted" id="statusDocumentoParteAdversa"></small>
+	                </div>
+	                <div class="col-lg-4">
+	                    <label><i class="bi bi-arrow-left-right"></i>Polo do Cliente</label>
+	                    <select id="poloCliente" class="form-select mt-2">
+	                        <option value="">Não informado</option>
+	                        <option value="ATIVO">Ativo (autor/exequente)</option>
+	                        <option value="PASSIVO">Passivo (réu/executado)</option>
+	                    </select>
+	                </div>
 	            </div>
-
 	        </div>
-
 	    </div>
 
 	    <!-- OUTRAS INFORMAÇÕES -->
-
 	    <div class="card card-cor shadow-sm border-0 mb-4">
-
 	        <div class="card-body">
-
-	            <h6 class="mb-3">
-	                <i class="bi bi-info-circle"></i>
-	                Outras Informações
-	            </h6>
-
+	            <h6 class="mb-3"><i class="bi bi-info-circle"></i>Outras Informações</h6>
 	            <div class="row g-3">
-
 	                <div class="col-lg-4">
-
-	                    <label>
-	                        <i class="bi bi-calendar-event"></i>
-	                        Data de Distribuição
-	                    </label>
-
-	                    <input type="date"
-	                           id="dataDistribuicao"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-calendar-event"></i>Data de Distribuição</label>
+	                    <input type="date" id="dataDistribuicao" class="form-control mt-2">
 	                </div>
 
 	                <div class="col-lg-4">
-
-	                    <label>
-	                        <i class="bi bi-cash-coin"></i>
-	                        Valor da Causa
-	                    </label>
-
-	                    <input type="number"
-	                           step="0.01"
-	                           min="0"
-	                           id="valorCausa"
-	                           class="form-control mt-2">
-
+	                    <label><i class="bi bi-cash-coin"></i>Valor da Causa</label>
+	                    <input type="number" step="0.01" min="0" id="valorCausa" class="form-control mt-2">
 	                </div>
-
 	                <div class="col-lg-4">
-
-	                    <label>
-	                        <i class="bi bi-broadcast"></i>
-	                        Monitorado
-	                    </label>
-
+	                    <label><i class="bi bi-broadcast"></i>Monitorado</label>
 	                    <select id="monitorado" class="form-select mt-2">
 	                        <option value="true" selected>Sim</option>
 	                        <option value="false">Não</option>
 	                    </select>
-
 	                </div>
-
 	                <div class="col-lg-12">
-
-	                    <label>
-	                        <i class="bi bi-card-text"></i>
-	                        Observações
-	                    </label>
-
-	                    <textarea id="observacoes"
-	                              rows="3"
-	                              class="form-control mt-2"></textarea>
-
+	                    <label><i class="bi bi-card-text"></i>Observações</label>
+	                    <textarea id="observacoes" rows="3" class="form-control mt-2"></textarea>
 	                </div>
-
 	            </div>
-
 	        </div>
-
 	    </div>
 
 	    <!-- STATUS (só em edição) -->
-
 	    <div class="card card-cor shadow-sm border-0 mb-4" id="blocoStatusEdicao" style="display:none;">
-
 	        <div class="card-body">
-
-	            <h6 class="mb-3">
-	                <i class="bi bi-flag"></i>
-	                Status
-	            </h6>
-
+	            <h6 class="mb-3"><i class="bi bi-flag"></i>Status</h6>
 	            <div class="row g-3">
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-signpost-split"></i>
-	                        Status do Processo
-	                    </label>
-
+	                    <label><i class="bi bi-signpost-split"></i>Status do Processo</label>
 	                    <select id="status" class="form-select mt-2">
 	                        <option value="ATIVO">Ativo</option>
 	                        <option value="SUSPENSO">Suspenso</option>
 	                        <option value="ARQUIVADO">Arquivado</option>
 	                        <option value="EXTINTO">Extinto</option>
 	                    </select>
-
 	                </div>
-
 	                <div class="col-lg-6">
-
-	                    <label>
-	                        <i class="bi bi-toggle-on"></i>
-	                        Ativo no sistema
-	                    </label>
-
+	                    <label><i class="bi bi-toggle-on"></i>Ativo no sistema</label>
 	                    <select id="ativo" class="form-select mt-2">
 	                        <option value="true">Sim</option>
 	                        <option value="false">Não (inativado)</option>
 	                    </select>
-
 	                </div>
-
 	            </div>
-
 	        </div>
-
 	    </div>
 
 	    <!-- BOTÕES -->
-
 	    <div class="d-flex gap-2">
-
-	        <button class="btn btn-success"
-	                id="btnSalvar">
-
-	            <i class="bi bi-save"></i>
-	            Salvar
-
+	        <button class="btn btn-success" id="btnSalvar">
+	            <i class="bi bi-save"></i>Salvar
 	        </button>
-
-	        <a href="/judi/processo/list"
-	           class="btn btn-primary">
-
-	            <i class="bi bi-arrow-left"></i>
-	            Voltar
-
+	        <a href="/judi/processo/list" class="btn btn-primary">
+	            <i class="bi bi-arrow-left"></i>Voltar
 	        </a>
-
 	    </div>
-
 	</div>
 
     <!-- FOOTER -->
-
     <footer class="container-fluid fixed-bottom text-center text-white">
         © 2026 Copyright:
         <a class="text-white" href="#">TechGold</a>
     </footer>
-
 </div>
 
-<!-- ############################################ TOAST ########################################## -->
-
-<div class="toast-container">
-
-    <div class="toast align-items-center text-bg-success border-0"
-         id="successToast"
-         role="alert">
-
-        <div class="d-flex">
-
-            <div class="toast-body" id="toastMensagem">
-                Processo cadastrado com sucesso!
-            </div>
-
-            <button type="button"
-                    class="btn-close btn-close-white me-2 m-auto"
-                    data-bs-dismiss="toast"></button>
-
-        </div>
-    </div>
-
-</div>
+	<!-- ############################################ TOAST ########################################## -->
+	<div class="toast-container">
+		<div class="toast align-items-center text-bg-success border-0" id="successToast" role="alert">
+			<div class="d-flex">
+				<div class="toast-body" id="toastMensagem">
+					Processo cadastrado com sucesso!
+				</div>
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- JS -->
@@ -654,6 +539,186 @@
     // ########################################
     btnSalvar.addEventListener('click', salvar);
     document.getElementById('numeroProcesso').addEventListener('input', handleNumeroProcesso);
+    document.getElementById('clienteId').addEventListener('change', function () {
+        var clienteId = this.value;
+        if (clienteId) {
+            carregarCasosDoCliente(clienteId, null);
+        } else {
+            resetSelectCaso();
+        }
+    });
+    document.getElementById('btnBuscarDocumentoParteAdversa').addEventListener('click', buscarDocumentoParteAdversa);
+
+    // ########################################
+    // CONSULTA DOCUMENTO DA PARTE ADVERSA
+    // CNPJ (14 dígitos): busca razão social na Receita Federal (BrasilAPI).
+    // CPF (11 dígitos): não existe consulta pública de identidade por CPF
+    // (LGPD) — só validamos o dígito verificador, sem preencher nada.
+    // ########################################
+    function cpfValido(cpf) {
+        cpf = (cpf || '').replace(/\D/g, '');
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+
+        function digitoVerificador(base) {
+            var soma = 0;
+            for (var i = 0; i < base.length; i++) {
+                soma += parseInt(base[i], 10) * (base.length + 1 - i);
+            }
+            var resto = (soma * 10) % 11;
+            return resto === 10 ? 0 : resto;
+        }
+
+        var d1 = digitoVerificador(cpf.substring(0, 9));
+        var d2 = digitoVerificador(cpf.substring(0, 9) + d1);
+        return cpf === cpf.substring(0, 9) + String(d1) + String(d2);
+    }
+
+    async function buscarDocumentoParteAdversa() {
+        const documentoLimpo = getValue('documentoParteAdversa').replace(/\D/g, '');
+        const statusEl = document.getElementById('statusDocumentoParteAdversa');
+        statusEl.textContent = '';
+        statusEl.className = 'text-muted';
+
+        if (documentoLimpo.length === 11) {
+            if (cpfValido(documentoLimpo)) {
+                statusEl.textContent = 'CPF com dígito verificador válido.';
+                statusEl.className = 'text-success';
+            } else {
+                statusEl.textContent = 'CPF inválido — confira os números.';
+                statusEl.className = 'text-danger';
+            }
+            return;
+        }
+
+        if (documentoLimpo.length !== 14) {
+            alert('Informe um CPF (11 dígitos) ou CNPJ (14 dígitos) para consultar.');
+            return;
+        }
+
+        const btn = document.getElementById('btnBuscarDocumentoParteAdversa');
+        const iconeOriginal = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        try {
+            const response = await fetch('/judi/consulta/cnpj/' + documentoLimpo);
+            if (response.status === 401) {
+                alert('Realize login novamente!');
+                window.location.href = "/judi/login";
+                return;
+            }
+
+            const data = await response.json().catch(() => null);
+            if (!data || !data.cnpj) {
+                statusEl.textContent = 'CNPJ não encontrado ou falha na consulta.';
+                statusEl.className = 'text-danger';
+                return;
+            }
+
+            if (!getValue('parteAdversa') && data.razaoSocial) {
+                document.getElementById('parteAdversa').value = data.razaoSocial;
+            }
+            statusEl.textContent = 'Dados encontrados na Receita Federal.';
+            statusEl.className = 'text-success';
+        } catch (error) {
+            console.error(error);
+            alert('Falha na comunicação com o servidor.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = iconeOriginal;
+        }
+    }
+
+    // ########################################
+    // COMBOBOX COM BUSCA (Cliente / Caso)
+    // ########################################
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function criarComboBusca(opts) {
+        function renderizar(filtro) {
+            const termo = (filtro || '').trim().toLowerCase();
+            const itens = opts.getItens();
+            const filtrados = termo ? itens.filter(i => i.label.toLowerCase().includes(termo)) : itens;
+
+            opts.dropdownEl.innerHTML = filtrados.length
+                ? filtrados.map(i =>
+                    '<div class="combo-busca-item" data-id="' + i.id + '">' + escapeHtml(i.label)
+                    + (i.sub ? '<span class="combo-busca-sub">' + escapeHtml(i.sub) + '</span>' : '')
+                    + '</div>'
+                  ).join('')
+                : '<div class="combo-busca-vazio">' + (opts.textoVazio || 'Nenhum resultado') + '</div>';
+
+            opts.dropdownEl.classList.add('show');
+        }
+
+        opts.inputEl.addEventListener('focus', () => {
+            if (!opts.inputEl.disabled) renderizar(opts.inputEl.value);
+        });
+
+        opts.inputEl.addEventListener('input', () => {
+            renderizar(opts.inputEl.value);
+            if (!opts.inputEl.value.trim() && opts.hiddenEl.value) {
+                opts.hiddenEl.value = '';
+                opts.hiddenEl.dispatchEvent(new Event('change'));
+            }
+        });
+
+        opts.inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                opts.dropdownEl.classList.remove('show');
+                opts.inputEl.blur();
+            }
+        });
+
+        opts.inputEl.addEventListener('blur', () => {
+            setTimeout(() => {
+                const id = opts.hiddenEl.value;
+                const encontrado = id ? opts.getItens().find(i => String(i.id) === String(id)) : null;
+                opts.inputEl.value = encontrado ? encontrado.label : '';
+                opts.dropdownEl.classList.remove('show');
+            }, 150);
+        });
+
+        opts.dropdownEl.addEventListener('click', (e) => {
+            const item = e.target.closest('.combo-busca-item');
+            if (!item || !item.dataset.id) return;
+            const encontrado = opts.getItens().find(i => String(i.id) === String(item.dataset.id));
+            if (!encontrado) return;
+            opts.hiddenEl.value = encontrado.id;
+            opts.inputEl.value = encontrado.label;
+            opts.dropdownEl.classList.remove('show');
+            opts.hiddenEl.dispatchEvent(new Event('change'));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!opts.inputEl.contains(e.target) && !opts.dropdownEl.contains(e.target)) {
+                opts.dropdownEl.classList.remove('show');
+            }
+        });
+    }
+
+    criarComboBusca({
+        inputEl: document.getElementById('clienteBusca'),
+        hiddenEl: document.getElementById('clienteId'),
+        dropdownEl: document.getElementById('clienteBuscaResultados'),
+        getItens: () => _clientesData,
+        textoVazio: 'Nenhum cliente encontrado'
+    });
+
+    criarComboBusca({
+        inputEl: document.getElementById('casoBusca'),
+        hiddenEl: document.getElementById('casoId'),
+        dropdownEl: document.getElementById('casoBuscaResultados'),
+        getItens: () => _casosData,
+        textoVazio: 'Nenhum caso encontrado'
+    });
 
     // ########################################
     // MODO EDIÇÃO
@@ -687,7 +752,9 @@
             document.getElementById('assunto').value = data.assunto || '';
             document.getElementById('orgaoJulgador').value = data.orgaoJulgador || '';
             document.getElementById('grau').value = data.grau || '';
-            document.getElementById('clienteId').value = data.clienteId || '';
+            document.getElementById('parteAdversa').value = data.parteAdversa || '';
+            document.getElementById('documentoParteAdversa').value = data.documentoParteAdversa || '';
+            document.getElementById('poloCliente').value = data.poloCliente || '';
             document.getElementById('funcionarioResponsavelId').value = data.funcionarioResponsavelId || '';
             document.getElementById('dataDistribuicao').value = data.dataDistribuicao || '';
             document.getElementById('valorCausa').value = data.valorCausa != null ? data.valorCausa : '';
@@ -695,6 +762,15 @@
             document.getElementById('observacoes').value = data.observacoes || '';
             document.getElementById('status').value = data.status || 'ATIVO';
             document.getElementById('ativo').value = data.ativo ? 'true' : 'false';
+
+            if (data.clienteId) {
+                const clienteEncontrado = _clientesData.find(c => String(c.id) === String(data.clienteId));
+                document.getElementById('clienteId').value = data.clienteId;
+                document.getElementById('clienteBusca').value = clienteEncontrado ? clienteEncontrado.label : '';
+                await carregarCasosDoCliente(data.clienteId, data.casoId || null);
+            } else {
+                resetSelectCaso();
+            }
         } catch (e) {
             console.error('Erro ao carregar processo', e);
             alert('Falha ao carregar dados do processo.');
@@ -702,20 +778,66 @@
     }
 
     // ########################################
+    // CASO (dependente do cliente selecionado)
+    // ########################################
+    function rotuloNatureza(natureza) {
+        var cfg = { CONSULTIVO: 'Consultivo', PREVENTIVO: 'Preventivo', CONTENCIOSO: 'Contencioso' };
+        return cfg[natureza] || natureza || '';
+    }
+
+    function resetSelectCaso() {
+        _casosData = [];
+        document.getElementById('casoId').value = '';
+        const buscaInput = document.getElementById('casoBusca');
+        buscaInput.value = '';
+        buscaInput.placeholder = 'Selecione um cliente primeiro';
+        buscaInput.disabled = true;
+    }
+
+    async function carregarCasosDoCliente(clienteId, casoIdSelecionado) {
+        const buscaInput = document.getElementById('casoBusca');
+        buscaInput.disabled = true;
+        buscaInput.value = '';
+        buscaInput.placeholder = 'Carregando...';
+        document.getElementById('casoId').value = '';
+        try {
+            const response = await fetch('/judi/casos/cliente/' + clienteId + '?page=0&size=1000');
+            if (!response.ok) {
+                _casosData = [];
+                buscaInput.placeholder = 'Nenhum caso encontrado';
+                buscaInput.disabled = false;
+                return;
+            }
+            const data = await response.json();
+            _casosData = (data.content || []).map(c => ({ id: c.id, label: c.titulo, sub: rotuloNatureza(c.natureza) }));
+            buscaInput.placeholder = 'Nenhum (opcional) — digite para buscar...';
+            buscaInput.disabled = false;
+
+            if (casoIdSelecionado) {
+                const encontrado = _casosData.find(c => String(c.id) === String(casoIdSelecionado));
+                document.getElementById('casoId').value = casoIdSelecionado;
+                buscaInput.value = encontrado ? encontrado.label : '';
+            }
+        } catch (e) {
+            console.error('Erro ao carregar casos do cliente', e);
+            _casosData = [];
+            buscaInput.placeholder = 'Nenhum caso encontrado';
+            buscaInput.disabled = false;
+        }
+    }
+
+    // ########################################
     // CARREGAR SELECTS
     // ########################################
+    let _clientesData = [];
+    let _casosData = [];
+
     async function carregarClientes() {
         try {
             const response = await fetch('/judi/clientes?page=0&size=10000');
             if (!response.ok) return;
             const data = await response.json();
-            const select = document.getElementById('clienteId');
-            (data.content || []).forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.id;
-                opt.textContent = c.nomeCliente;
-                select.appendChild(opt);
-            });
+            _clientesData = (data.content || []).map(c => ({ id: c.id, label: c.nomeCliente }));
         } catch (e) {
             console.error('Erro ao carregar clientes', e);
         }
@@ -763,16 +885,21 @@
 
             const funcionarioId = getValue('funcionarioResponsavelId');
             const valorCausa = getValue('valorCausa');
+            const casoId = getValue('casoId');
 
             const payload = {
                 numeroProcesso: numero,
                 clienteId: Number(clienteId),
+                casoId: casoId ? Number(casoId) : null,
                 funcionarioResponsavelId: funcionarioId ? Number(funcionarioId) : null,
                 tribunal: getValue('tribunal'),
                 classeProcessual: getValue('classeProcessual'),
                 assunto: getValue('assunto'),
                 orgaoJulgador: getValue('orgaoJulgador'),
                 grau: getValue('grau'),
+                parteAdversa: getValue('parteAdversa'),
+                documentoParteAdversa: getValue('documentoParteAdversa'),
+                poloCliente: getValue('poloCliente') || null,
                 dataDistribuicao: getValue('dataDistribuicao') || null,
                 valorCausa: valorCausa ? Number(valorCausa) : null,
                 observacoes: getValue('observacoes'),

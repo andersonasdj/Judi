@@ -267,12 +267,15 @@ body.dark-mode .sistech-slim-topbar { background: #1e1e1e; border-bottom-color: 
 .sistech-slim-topbar .user-btn { opacity: 1 !important; }
 
 /* ── Offset de conteúdo com sidebar visível ── */
-body[data-layout="side"] > .container-fluid { margin-left: 210px; width: calc(100% - 210px); padding-top: 60px; transition: margin-left .22s ease, width .22s ease; }
-body[data-layout="side"].sidebar-collapsed > .container-fluid { margin-left: 64px; width: calc(100% - 64px); }
+/* :not(.fixed-bottom) exclui o <footer class="container-fluid fixed-bottom">:
+   sem isso, ele também recebia o margin-left deste seletor genérico além do
+   próprio "left" da regra dedicada abaixo, ficando deslocado em dobro. */
+body[data-layout="side"] > .container-fluid:not(.fixed-bottom) { margin-left: 210px; width: calc(100% - 210px); padding-top: 60px; transition: margin-left .22s ease, width .22s ease; }
+body[data-layout="side"].sidebar-collapsed > .container-fluid:not(.fixed-bottom) { margin-left: 64px; width: calc(100% - 64px); }
 body[data-layout="side"] footer.fixed-bottom { left: 210px; transition: left .22s ease; }
 body[data-layout="side"].sidebar-collapsed footer.fixed-bottom { left: 64px; }
 @media (max-width: 991.98px) {
-    body[data-layout="side"] > .container-fluid { margin-left: 0 !important; width: 100% !important; padding-top: 60px; }
+    body[data-layout="side"] > .container-fluid:not(.fixed-bottom) { margin-left: 0 !important; width: 100% !important; padding-top: 60px; }
     body[data-layout="side"] footer.fixed-bottom { left: 0 !important; }
 }
 

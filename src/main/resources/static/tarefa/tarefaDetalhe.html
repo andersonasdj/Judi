@@ -84,6 +84,17 @@
 					<a href="/judi/funcionario/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
 				</div>
 			</div>
+			<div class="sidebar-group" id="sgCasos">
+				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgCasos')">
+					<i class="bi bi-folder2-open"></i>
+					<span class="sidebar-group-label">Casos</span>
+					<i class="bi bi-chevron-down sidebar-chevron"></i>
+				</button>
+				<div class="sidebar-group-items">
+					<a href="/judi/caso/list" class="sidebar-subitem"><i class="bi bi-list-ul text-primary"></i>Listar</a>
+					<a href="/judi/caso/form" class="sidebar-subitem"><i class="bi bi-plus-circle text-success"></i>Novo</a>
+				</div>
+			</div>
 			<div class="sidebar-group" id="sgProcessos">
 				<button class="sidebar-group-header" onclick="toggleSidebarGroup('sgProcessos')">
 					<i class="bi bi-briefcase"></i>
@@ -114,6 +125,10 @@
 			<a href="/judi/tarefa/despesas" class="sidebar-item">
 				<i class="bi bi-receipt"></i>
 				<span class="sidebar-item-label">Despesas</span>
+			</a>
+			<a href="/judi/financeiro/list" class="sidebar-item">
+				<i class="bi bi-cash-coin"></i>
+				<span class="sidebar-item-label">Financeiro</span>
 			</a>
 		</div>
 		<div class="sidebar-footer">
@@ -215,6 +230,15 @@
 						</li>
 						<li class="nav-item dropdown">
 							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-folder2-open"></i> Casos
+							</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/judi/caso/list"><i class="bi bi-list-ul me-2 text-primary"></i>Listar</a></li>
+								<li><a class="dropdown-item" href="/judi/caso/form"><i class="bi bi-plus-circle me-2 text-success"></i>Novo</a></li>
+							</ul>
+						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link-modern dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-briefcase"></i> Processos
 							</a>
 							<ul class="dropdown-menu">
@@ -240,6 +264,11 @@
 						<li class="nav-item">
 							<a class="nav-link-modern" href="/judi/tarefa/despesas">
 								<i class="bi bi-receipt"></i> Despesas
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link-modern" href="/judi/financeiro/list">
+								<i class="bi bi-cash-coin"></i> Financeiro
 							</a>
 						</li>
 					</ul>
@@ -304,7 +333,12 @@
 							<div class="row g-3">
 								<div class="col-6"><div class="dado-label"><i class="bi bi-flag"></i> Status</div><div class="dado-valor" id="dStatus">—</div></div>
 								<div class="col-6"><div class="dado-label"><i class="bi bi-calendar3"></i> Cadastrada em</div><div class="dado-valor" id="dDataCadastro">—</div></div>
+								<div class="col-12" id="blocoAgendamento" style="display:none;">
+									<div class="dado-label"><i class="bi bi-alarm"></i> Agendada para</div>
+									<div class="dado-valor" id="dAgendamento">—</div>
+								</div>
 								<div class="col-12"><div class="dado-label"><i class="bi bi-building"></i> Cliente</div><div class="dado-valor" id="dCliente">—</div></div>
+								<div class="col-12"><div class="dado-label"><i class="bi bi-folder2-open"></i> Caso</div><div class="dado-valor" id="dCaso">—</div></div>
 								<div class="col-12"><div class="dado-label"><i class="bi bi-briefcase"></i> Processo</div><div class="dado-valor" id="dProcesso">—</div></div>
 								<div class="col-12"><div class="dado-label"><i class="bi bi-person-check"></i> Responsável Atual</div><div class="dado-valor" id="dResponsavel">—</div></div>
 								<div class="col-12"><div class="dado-label"><i class="bi bi-card-text"></i> Descrição</div><div class="dado-valor" id="dDescricao">—</div></div>
@@ -418,14 +452,16 @@
 											<th>Data</th>
 											<th>Funcionário</th>
 											<th>Status</th>
+											<th>Comprovante</th>
 											<th class="text-end">Ações</th>
 										</tr>
 									</thead>
 									<tbody id="corpoDespesas">
-										<tr><td colspan="6" class="text-center text-muted py-3">Carregando...</td></tr>
+										<tr><td colspan="7" class="text-center text-muted py-3">Carregando...</td></tr>
 									</tbody>
 								</table>
 							</div>
+							<input type="file" id="inputComprovante" accept="application/pdf,image/*" style="display:none">
 						</div>
 					</div>
 				</div>
@@ -440,6 +476,27 @@
 				<a class="text-white" href="#">TechGold</a>
 			</div>
 	</footer>
+	</div>
+
+	<!-- MODAL AGENDAMENTO -->
+	<div class="modal fade" id="modalAgendamento" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title mb-0"><i class="bi bi-alarm"></i> Agendar Tarefa</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<label class="form-label small"><i class="bi bi-calendar-event"></i> Data/hora do agendamento</label>
+					<input type="datetime-local" id="agendamentoData" class="form-control form-control-sm">
+					<small class="text-muted d-block mt-2">Serve de base para alertas de tarefas agendadas (recurso futuro).</small>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-primary btn-sm" onclick="confirmarAgendamento()">Confirmar</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<!-- MODAL EDIÇÃO DE TIMESHEET -->
@@ -502,6 +559,7 @@
 		function badgeStatus(status) {
 			var cfg = {
 				ABERTA:        { cor: 'secondary', label: 'Aberta' },
+				AGENDADA:      { cor: 'info',       label: 'Agendada' },
 				EM_ANDAMENTO:  { cor: 'primary',   label: 'Em andamento' },
 				CONCLUIDA:     { cor: 'success',   label: 'Concluída' },
 				CANCELADA:     { cor: 'dark',      label: 'Cancelada' }
@@ -614,6 +672,19 @@
 			$('#dDataCadastro').text(data.dataCadastro || '—');
 			$('#dCliente').text(data.nomeCliente || '—');
 
+			if (data.dataAgendamento) {
+				$('#dAgendamento').text(data.dataAgendamento);
+				$('#blocoAgendamento').show();
+			} else {
+				$('#blocoAgendamento').hide();
+			}
+
+			if (data.casoId) {
+				$('#dCaso').html('<a href="/judi/caso/detalhe?id=' + data.casoId + '">' + escapeHtml(data.tituloCaso || ('#' + data.casoId)) + '</a>');
+			} else {
+				$('#dCaso').text('—');
+			}
+
 			if (data.processoId) {
 				$('#dProcesso').html('<a href="/judi/processo/detalhe?id=' + data.processoId + '"><span class="numero-processo">' + escapeHtml(data.numeroProcesso || ('#' + data.processoId)) + '</span></a>');
 			} else {
@@ -661,6 +732,7 @@
 						'</button>' +
 						'<ul class="dropdown-menu dropdown-menu-end">' +
 							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'ABERTA\');return false;"><i class="bi bi-circle text-secondary me-2"></i>Aberta</a></li>' +
+							'<li><a class="dropdown-item" href="#" onclick="abrirAgendamento();return false;"><i class="bi bi-alarm text-info me-2"></i>Agendada</a></li>' +
 							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'EM_ANDAMENTO\');return false;"><i class="bi bi-play-circle text-primary me-2"></i>Em andamento</a></li>' +
 							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'CONCLUIDA\');return false;"><i class="bi bi-check-circle text-success me-2"></i>Concluir</a></li>' +
 							'<li><a class="dropdown-item" href="#" onclick="mudarStatus(\'CANCELADA\');return false;"><i class="bi bi-x-circle text-dark me-2"></i>Cancelar</a></li>' +
@@ -679,6 +751,38 @@
 
 		function reabrirTarefa() {
 			mudarStatus('ABERTA');
+		}
+
+		// ########################################
+		// AGENDAMENTO
+		// ########################################
+		var _modalAgendamento;
+
+		function abrirAgendamento() {
+			document.getElementById('agendamentoData').value = '';
+			if (!_modalAgendamento) {
+				_modalAgendamento = new bootstrap.Modal(document.getElementById('modalAgendamento'));
+			}
+			_modalAgendamento.show();
+		}
+
+		function confirmarAgendamento() {
+			var valor = document.getElementById('agendamentoData').value;
+			if (!valor) {
+				alert('Informe a data/hora do agendamento.');
+				return;
+			}
+			$.ajax({
+				type: "PUT",
+				contentType: "application/json",
+				url: "/judi/tarefas/" + _tarefaId + "/agendar",
+				data: JSON.stringify({ dataAgendamento: valor.length === 16 ? valor + ':00' : valor }),
+				success: function () {
+					_modalAgendamento.hide();
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
+			});
 		}
 
 		function atualizarFormulariosBloqueio(status) {
@@ -960,7 +1064,7 @@
 			var el = $('#corpoDespesas');
 			el.empty();
 			if (!lista.length) {
-				el.html('<tr><td colspan="6" class="text-center text-muted py-3">Nenhuma despesa registrada.</td></tr>');
+				el.html('<tr><td colspan="7" class="text-center text-muted py-3">Nenhuma despesa registrada.</td></tr>');
 				return;
 			}
 			lista.forEach(function (d) {
@@ -977,9 +1081,79 @@
 					'<td>' + (d.data || '—') + '</td>' +
 					'<td>' + escapeHtml(d.nomeFuncionario || '—') + '</td>' +
 					'<td>' + statusBadge + '</td>' +
+					'<td>' + celulaComprovante(d) + '</td>' +
 					'<td class="text-end">' + acoes + '</td>'
 				);
 				el.append(linha);
+			});
+		}
+
+		// ########################################
+		// COMPROVANTE DA DESPESA (PDF ou imagem)
+		// ########################################
+		var _despesaComprovanteAlvo = null;
+
+		function podeGerenciarComprovante(d) {
+			return _isAdmin || (_meuId != null && d.funcionarioId === _meuId);
+		}
+
+		function iconeComprovante(mimeType) {
+			return (mimeType || '').indexOf('pdf') > -1 ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image';
+		}
+
+		function celulaComprovante(d) {
+			var pode = podeGerenciarComprovante(d);
+
+			if (d.comprovanteNomeOriginal) {
+				var html = '<a href="/judi/despesas/' + d.id + '/comprovante" target="_blank" class="me-2" title="Ver comprovante">'
+					+ '<i class="bi ' + iconeComprovante(d.comprovanteMimeType) + '"></i></a>';
+				if (pode) {
+					html += '<button class="btn btn-link btn-sm p-0 me-2 text-muted" title="Trocar comprovante" onclick="selecionarComprovante(' + d.id + ')"><i class="bi bi-arrow-repeat"></i></button>'
+						+ '<button class="btn btn-link btn-sm p-0 text-danger" title="Remover comprovante" onclick="removerComprovante(' + d.id + ')"><i class="bi bi-trash"></i></button>';
+				}
+				return html;
+			}
+
+			return pode
+				? '<button class="btn btn-outline-secondary btn-sm" title="Anexar comprovante" onclick="selecionarComprovante(' + d.id + ')"><i class="bi bi-paperclip"></i> Anexar</button>'
+				: '<span class="text-muted small">—</span>';
+		}
+
+		function selecionarComprovante(despesaId) {
+			_despesaComprovanteAlvo = despesaId;
+			document.getElementById('inputComprovante').click();
+		}
+
+		document.getElementById('inputComprovante').addEventListener('change', function () {
+			var arquivo = this.files[0];
+			this.value = '';
+			if (!arquivo || !_despesaComprovanteAlvo) return;
+
+			var formData = new FormData();
+			formData.append('arquivo', arquivo);
+
+			$.ajax({
+				type: "POST",
+				url: "/judi/despesas/" + _despesaComprovanteAlvo + "/comprovante",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function () {
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
+			});
+		});
+
+		function removerComprovante(despesaId) {
+			if (!confirm('Remover o comprovante desta despesa?')) return;
+			$.ajax({
+				type: "DELETE",
+				url: "/judi/despesas/" + despesaId + "/comprovante",
+				success: function () {
+					carregarDetalhe();
+				},
+				error: tratarErroPadrao
 			});
 		}
 
